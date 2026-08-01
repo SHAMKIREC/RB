@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 30% 97%;
+    --foreground: 20 10% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 10% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 10% 8%;
+    --primary: 18 100% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 20% 94%;
+    --secondary-foreground: 20 10% 20%;
+    --muted: 40 15% 92%;
+    --muted-foreground: 20 8% 45%;
+    --accent: 18 100% 52%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 18 100% 52%;
+    --chart-1: 18 100% 52%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 20 10% 6%;
+    --foreground: 40 20% 93%;
+    --card: 20 10% 9%;
+    --card-foreground: 40 20% 93%;
+    --popover: 20 10% 9%;
+    --popover-foreground: 40 20% 93%;
+    --primary: 18 100% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 20 10% 14%;
+    --secondary-foreground: 40 20% 85%;
+    --muted: 20 10% 14%;
+    --muted-foreground: 40 10% 55%;
+    --accent: 18 100% 52%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 20 10% 18%;
+    --input: 20 10% 18%;
+    --ring: 18 100% 52%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+  }
+}
+
+/* Logo gradient */
+.logo-gradient {
+  background: linear-gradient(135deg, #FF6B35 0%, #FF3300 100%);
+}
+
+/* SOS pulse */
+@keyframes sos-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 80, 0, 0.35); }
+  50% { box-shadow: 0 0 0 12px rgba(255, 80, 0, 0); }
+}
+.sos-pulse { animation: sos-pulse 2.5s ease-in-out infinite; }
+
+/* Subtle grid for light mode */
+.light-grid {
+  background-image:
+    linear-gradient(rgba(0,0,0,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.025) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.dark .light-grid {
+  background-image:
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
