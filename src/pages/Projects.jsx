@@ -7,7 +7,7 @@ const money = (value) => `${Math.round(value || 0).toLocaleString('ru-RU')} ₽`
 export default function Projects() {
   const [projects, setProjects] = useState([]);
   useEffect(() => {
-    const refresh = () => setProjects(getPublishedProjects());
+    const refresh = async () => setProjects(await getPublishedProjects());
     const onStorage = (event) => { if (event.key === PROJECTS_STORAGE_KEY) refresh(); };
     refresh();
     window.addEventListener('storage', onStorage);

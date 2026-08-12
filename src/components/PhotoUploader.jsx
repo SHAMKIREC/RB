@@ -6,11 +6,7 @@ export default function PhotoUploader({ value = [], onChange, label = 'Фото�
 
   const addFiles = async (event) => {
     const files = Array.from(event.target.files || []).filter((file) => file.type.startsWith('image/'));
-    const imageData = await Promise.all(files.map((file) => new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.readAsDataURL(file);
-    })));
+    const imageData = files.map((file) => ({ file, name: file.name, src: URL.createObjectURL(file) }));
     onChange([...value, ...imageData]);
     event.target.value = '';
   };
@@ -30,13 +26,13 @@ export default function PhotoUploader({ value = [], onChange, label = 'Фото�
       <input className="sr-only" type="file" accept="image/*" multiple onChange={addFiles} />
     </label>
     {value.length > 0 && <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-      {value.map((photo, index) => <div key={`${photo.slice(0, 24)}-${index}`} className="rb-card group relative overflow-hidden rounded-xl p-2">
-        <button type="button" onClick={() => setPreview(index)} className="block aspect-[4/3] w-full bg-secondary/60"><img src={photo} alt={`Фото ${index + 1}`} className="h-full w-full object-contain object-center" /></button>
+      {value.map((photo, index) => { const src = typeof photo === 'string' ? photo : photo?.src || ''; return <div key={`${src.slice(0, 24)}-${index}`} className="rb-card group relative overflow-hidden rounded-xl p-2">
+        <button type="button" onClick={() => setPreview(index)} className="block aspect-[4/3] w-full bg-secondary/60"><img src={src} alt={`Фото ${index + 1}`} className="h-full w-full object-contain object-center" /></button>
         <div className="absolute left-3 top-3 flex gap-1"><button type="button" onClick={() => move(index, -1)} disabled={index === 0} aria-label="Переместить фотографию назад" className="rounded-lg bg-white/90 p-1.5 text-foreground shadow-sm disabled:opacity-40 dark:bg-card/95 dark:shadow-black/40"><ChevronLeft className="h-3.5 w-3.5" /></button><button type="button" onClick={() => move(index, 1)} disabled={index === value.length - 1} aria-label="Переместить фотографию вперёд" className="rounded-lg bg-white/90 p-1.5 text-foreground shadow-sm disabled:opacity-40 dark:bg-card/95 dark:shadow-black/40"><ChevronRight className="h-3.5 w-3.5" /></button></div>
         <button type="button" onClick={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))} aria-label="Удалить фотографию" className="absolute right-3 top-3 rounded-lg bg-white/90 p-1.5 text-destructive shadow-sm dark:bg-card/95 dark:shadow-black/40"><Trash2 className="h-3.5 w-3.5" /></button>
         {showPhotoLabels && <p className="mt-2 truncate text-[11px] font-medium text-muted-foreground">{photoLabels[index] || `Фото ${index + 1}`}</p>}
-      </div>)}
+      </div>})}
     </div>}
-    {preview !== null && <div onClick={() => setPreview(null)} className="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 p-4"><button type="button" onClick={() => setPreview(null)} className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white"><X className="h-5 w-5" /></button><img onClick={(event) => event.stopPropagation()} src={value[preview]} alt="Просмотр фотографии" className="max-h-[90vh] max-w-[95vw] object-contain" /></div>}
+    {preview !== null && <div onClick={() => setPreview(null)} className="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 p-4"><button type="button" onClick={() => setPreview(null)} className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white"><X className="h-5 w-5" /></button><img onClick={(event) => event.stopPropagation()} src={typeof value[preview] === 'string' ? value[preview] : value[preview]?.src} alt="Просмотр фотографии" className="max-h-[90vh] max-w-[95vw] object-contain" /></div>}
   </section>;
 }

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { getPricingOverrides, isInlineEditModeActive, subscribeToInlineEditMode, subscribeToPricing } from '../lib/pricingStorage';
+import { getPricingOverrides, isInlineEditModeActive, loadPricingOverrides, subscribeToInlineEditMode, subscribeToPricing } from '../lib/pricingStorage';
 
 export function usePricingOverrides() {
   const [overrides, setOverrides] = useState(getPricingOverrides);
-  useEffect(() => subscribeToPricing(() => setOverrides(getPricingOverrides())), []);
+  useEffect(() => { loadPricingOverrides().catch(() => {}); return subscribeToPricing(() => setOverrides(getPricingOverrides())); }, []);
   return overrides;
 }
 

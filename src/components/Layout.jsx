@@ -4,24 +4,25 @@ import Header from "./Header";
 import FixPanel from "./FixPanel";
 import Footer from "./Footer";
 import { useTheme } from "../hooks/useTheme";
-import { endAdminSession, isAdminSessionActive } from "../lib/adminSession";
+import { endAdminSession, isAdminSessionActive, subscribeToAdminSession } from "../lib/adminSession";
 import { disableInlineEditMode } from "../lib/pricingStorage";
 import { AdminNavigation } from "./AdminGate";
 
 export default function Layout() {
   const { theme, toggle } = useTheme();
   const { pathname } = useLocation();
-  const [adminSessionActive, setAdminSessionActive] = useState(isAdminSessionActive);
+  const [adminSessionActive, setAdminSessionActive] = useState(false);
   const isAdminRoute = pathname.startsWith('/admin');
   const showAdminNavigation = adminSessionActive && !isAdminRoute;
 
   useEffect(() => {
-    setAdminSessionActive(isAdminSessionActive());
+    isAdminSessionActive().then(setAdminSessionActive);
+    return subscribeToAdminSession(setAdminSessionActive);
   }, [pathname]);
 
-  const exitAdminSession = () => {
+  const exitAdminSession = async () => {
     disableInlineEditMode();
-    endAdminSession();
+    await endAdminSession();
     setAdminSessionActive(false);
   };
 

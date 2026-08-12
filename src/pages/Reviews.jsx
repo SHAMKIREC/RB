@@ -7,7 +7,7 @@ const photoSrc = (photo) => (typeof photo === "string" ? photo : photo?.src || "
 
 export default function Reviews() {
   const [reviews, setReviews] = useState([]);
-  useEffect(() => setReviews(getPublishedReviews()), []);
+  useEffect(() => { getPublishedReviews().then(setReviews).catch(() => setReviews([])); }, []);
 
   return (
     <div className="page-shell py-7 sm:py-10">

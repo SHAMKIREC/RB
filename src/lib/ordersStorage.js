@@ -1,67 +1,60 @@
-import { CALC_CATEGORIES } from './calcData';
+import { requireSupabase } from './supabaseClient';
+import { removeFiles, signedUrls, STORAGE_BUCKETS, uploadOrderPhotos } from './mediaStorage';
 
-const KEY = 'rb_orders_mvp';
-const DEMO_IDS = new Set(['demo-order-1001', 'demo-order-1002', 'demo-order-1003']);
+const numberValue = (value) => Number(value || 0);
+const camelWork = (row) => ({ workId: row.work_id, categoryId: row.category_id, groupId: row.group_id, title: row.title, unit: row.unit, unitPrice: numberValue(row.unit_price), quantity: numberValue(row.quantity), totalPrice: numberValue(row.total_price), sortOrder: row.sort_order });
+const camelOrder = (row) => ({ id: row.id, number: row.number, title: row.title, location: row.location, description: row.description, preferredDeadline: row.preferred_deadline, selectedWorks: (row.order_works || row.selected_works || []).map(camelWork), workSubtotal: numberValue(row.work_subtotal), materialsSubtotal: numberValue(row.materials_subtotal), surcharges: numberValue(row.surcharges), calculatedCost: numberValue(row.calculated_cost), calculatedTotal: numberValue(row.calculated_total), finalTotal: numberValue(row.final_total), total: numberValue(row.total), contractorPayment: numberValue(row.contractor_payment), clientPrice: numberValue(row.client_price), ownerExpenses: numberValue(row.owner_expenses), expectedProfit: numberValue(row.expected_profit), photos: row.photos || [], status: row.status || 'draft', isPublished: row.is_published ?? true, isManualTotal: row.is_manual_total || false, isDemo: row.is_demo || false, createdAt: row.created_at, updatedAt: row.updated_at });
 
-const read = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
-const write = (orders) => localStorage.setItem(KEY, JSON.stringify(orders));
-const integerQuantity = (value) => Math.max(0, Math.round(Number(value) || 0));
-const normalizeSelectedWorks = (works) => Array.isArray(works)
-  ? works.map((work) => {
-      const quantity = integerQuantity(work.quantity);
-      return {
-        ...work,
-        quantity,
-        totalPrice: Number(work.unitPrice || 0) * quantity,
-      };
-    })
-  : [];
-const calculatorWorks = CALC_CATEGORIES.flatMap((category) => category.groups.flatMap((group) => group.items.map((item) => ({
-  workId: item.id, categoryId: category.id, groupId: group.id, title: item.name, unit: item.unit, unitPrice: item.mount,
-}))));
-
-export const getOrders = () => read().sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-export const getPublishedOrders = () => getOrders().filter((order) => order.isPublished && order.status === 'active');
-export const getOrder = (id) => getOrders().find((order) => order.id === id);
-export const getNextOrderNumber = () => Math.max(1046, ...getOrders().map((order) => Number(order.number) || 0)) + 1;
-export const saveOrder = (order) => {
-  const orders = read(); const now = new Date().toISOString();
-  const next = { ...order, selectedWorks: normalizeSelectedWorks(order.selectedWorks), id: order.id || crypto.randomUUID(), number: order.number || getNextOrderNumber(), updatedAt: now, createdAt: order.createdAt || now };
-  const index = orders.findIndex((item) => item.id === next.id);
-  if (index >= 0) orders[index] = next; else orders.push(next);
-  write(orders); return next;
-};
-export const deleteOrder = (id) => write(read().filter((order) => order.id !== id));
-export const setOrderPublished = (id, isPublished) => {
-  const order = getOrder(id);
-  return order ? saveOrder({ ...order, isPublished, status: isPublished ? 'active' : 'draft' }) : null;
-};
-export const setOrderStatus = (id, status) => {
-  const order = getOrder(id);
-  return order ? saveOrder({ ...order, status, isPublished: status === 'active' ? order.isPublished : false }) : null;
+const withPhotoUrls = async (order, admin = false) => {
+  const urls = await signedUrls(STORAGE_BUCKETS.orders, order.photos);
+  return { ...order, photos: admin ? urls : urls.map((item) => item.src) };
 };
 
-const makeWorks = (specification) => specification.map(([workId, quantity]) => {
-  const work = calculatorWorks.find((item) => item.workId === workId);
-  if (!work) return null;
-  return { ...work, quantity, totalPrice: work.unitPrice * quantity };
-}).filter(Boolean);
-const makeDemo = (id, number, title, location, description, preferredDeadline, specification) => {
-  const selectedWorks = makeWorks(specification);
-  const workSubtotal = selectedWorks.reduce((sum, work) => sum + work.totalPrice, 0);
-  const now = new Date().toISOString();
-  return { id, number, title, location, description, preferredDeadline, selectedWorks, workSubtotal, materialsSubtotal: 0, surcharges: 0, total: workSubtotal, photos: [], status: 'active', isPublished: true, isDemo: true, createdAt: now, updatedAt: now };
-};
+export async function getOrders() {
+  const { data, error } = await requireSupabase().from('orders').select('*, order_works(*)').order('updated_at', { ascending: false });
+  if (error) throw error;
+  return Promise.all((data || []).map((row) => withPhotoUrls(camelOrder(row), true)));
+}
 
-export const createDemoOrders = () => {
-  const current = read();
-  if (current.some((order) => DEMO_IDS.has(order.id))) return getOrders();
-  const demos = [
-    makeDemo('demo-order-1001', 1001, 'Ремонт комнаты', 'Люберцы, ул. Побратимов', 'Требуется аккуратная подготовка стен, поклейка обоев и укладка напольного покрытия.', 'По договорённости', [['paint_putty_wallpaper', 28], ['wp_no_match', 28], ['floor_laminate', 18]]),
-    makeDemo('demo-order-1002', 1002, 'Ремонт санузла', 'Москва, Некрасовка', 'Комплекс работ по демонтажу старой отделки, укладке плитки и установке сантехники.', 'В ближайшие две недели', [['dem_tile_wall', 18], ['tile_300', 18], ['plumb_toilet', 1], ['plumb_mixer', 1]]),
-    makeDemo('demo-order-1003', 1003, 'Монтаж забора', 'Московская область', 'Монтаж сварного забора с подготовкой основания и финишной покраской.', 'По договорённости', [['fence_weld', 30], ['fence_foundation', 30], ['fence_paint', 60]]),
-  ];
-  write([...current, ...demos]);
-  return getOrders();
-};
-export const deleteDemoOrders = () => write(read().filter((order) => !DEMO_IDS.has(order.id)));
+export async function getPublishedOrders() {
+  const { data, error } = await requireSupabase().from('published_orders').select('*').order('updated_at', { ascending: false });
+  if (error) throw error;
+  return Promise.all((data || []).map((row) => withPhotoUrls(camelOrder({ ...row, status: 'active', is_published: true }), false)));
+}
+
+export async function getOrder(id) {
+  const { data, error } = await requireSupabase().from('published_orders').select('*').eq('id', id).maybeSingle();
+  if (error) throw error;
+  return data ? withPhotoUrls(camelOrder({ ...data, status: 'active', is_published: true }), false) : null;
+}
+
+export async function getNextOrderNumber() {
+  const { data, error } = await requireSupabase().from('orders').select('number').order('number', { ascending: false }).limit(1).maybeSingle();
+  if (error) throw error;
+  return Math.max(1046, Number(data?.number) || 0) + 1;
+}
+
+export async function saveOrder(order) {
+  const client = requireSupabase();
+  const id = order.id || crypto.randomUUID();
+  const { data: current } = order.id ? await client.from('orders').select('photos').eq('id', id).maybeSingle() : { data: null };
+  const payload = { id, title: order.title, location: order.location || '', description: order.description || '', preferred_deadline: order.preferredDeadline || '', work_subtotal: numberValue(order.workSubtotal), materials_subtotal: numberValue(order.materialsSubtotal), surcharges: numberValue(order.surcharges), calculated_cost: numberValue(order.calculatedCost), calculated_total: numberValue(order.calculatedTotal), final_total: numberValue(order.finalTotal), total: numberValue(order.total), contractor_payment: numberValue(order.contractorPayment), client_price: numberValue(order.clientPrice), owner_expenses: numberValue(order.ownerExpenses), expected_profit: numberValue(order.expectedProfit), status: order.status || 'draft', is_published: Boolean(order.isPublished), is_manual_total: Boolean(order.isManualTotal), is_demo: Boolean(order.isDemo) };
+  if (order.number) payload.number = Number(order.number);
+  const { data: saved, error } = await client.from('orders').upsert(payload).select().single();
+  if (error) throw error;
+  const photos = await uploadOrderPhotos(id, order.photos || []);
+  const { error: photoError } = await client.from('orders').update({ photos }).eq('id', id);
+  if (photoError) throw photoError;
+  await removeFiles(STORAGE_BUCKETS.orders, (current?.photos || []).filter((path) => !photos.includes(path)));
+  const { error: deleteError } = await client.from('order_works').delete().eq('order_id', id);
+  if (deleteError) throw deleteError;
+  const works = (order.selectedWorks || []).map((work, index) => ({ order_id: id, work_id: work.workId || null, category_id: work.categoryId || null, group_id: work.groupId || null, title: work.title, unit: work.unit || '', unit_price: numberValue(work.unitPrice), quantity: numberValue(work.quantity), total_price: numberValue(work.totalPrice), sort_order: index }));
+  if (works.length) { const { error: worksError } = await client.from('order_works').insert(works); if (worksError) throw worksError; }
+  return camelOrder({ ...saved, photos, order_works: works });
+}
+
+export async function deleteOrder(id) { const client = requireSupabase(); const { data } = await client.from('orders').select('photos').eq('id', id).maybeSingle(); const { error } = await client.from('orders').delete().eq('id', id); if (error) throw error; await removeFiles(STORAGE_BUCKETS.orders, data?.photos || []); }
+export async function setOrderPublished(id, isPublished) { const { data, error } = await requireSupabase().from('orders').update({ is_published: isPublished, status: isPublished ? 'active' : 'draft' }).eq('id', id).select().single(); if (error) throw error; return camelOrder(data); }
+export async function setOrderStatus(id, status) { const updates = { status }; if (status !== 'active') updates.is_published = false; const { data, error } = await requireSupabase().from('orders').update(updates).eq('id', id).select().single(); if (error) throw error; return camelOrder(data); }
+export const createDemoOrders = getOrders;
+export async function deleteDemoOrders() { const { error } = await requireSupabase().from('orders').delete().eq('is_demo', true); if (error) throw error; return getOrders(); }

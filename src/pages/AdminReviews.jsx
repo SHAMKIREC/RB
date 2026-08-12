@@ -18,7 +18,7 @@ const photoSrc = (photo) => (typeof photo === "string" ? photo : photo?.src || "
 const toPhotoRecords = (photos) => (Array.isArray(photos) ? photos : [])
   .map((photo, index) => {
     const src = photoSrc(photo);
-    return src ? { src, name: photo?.name || `photo-${index + 1}` } : null;
+    return src ? { ...photo, src, path: photo?.path, file: photo?.file, name: photo?.name || `photo-${index + 1}` } : null;
   })
   .filter(Boolean);
 
@@ -45,23 +45,23 @@ function Content() {
   const [reviews, setReviews] = useState([]);
   const [editing, setEditing] = useState(null);
   const [actionError, setActionError] = useState("");
-  const refresh = () => setReviews(getReviews());
-  useEffect(refresh, []);
+  const refresh = async () => setReviews(await getReviews());
+  useEffect(() => { refresh(); }, []);
 
-  const act = (callback) => {
+  const act = async (callback) => {
     try {
-      callback();
+      await callback();
       setActionError("");
-      refresh();
+      await refresh();
     } catch {
       setActionError("Не удалось сохранить изменения в браузере. Уменьшите размер файлов и повторите попытку.");
     }
   };
 
-  const saveEditing = (event) => {
+  const saveEditing = async (event) => {
     event.preventDefault();
     if (!editing) return;
-    act(() => saveReview({
+    await act(() => saveReview({
       ...editing,
       rating: Number(editing.rating),
       photos: toPhotoRecords(editing.photos),

@@ -32,7 +32,7 @@ const money = (value) => `${Math.round(value || 0).toLocaleString("ru-RU")} ₽`
 const photoSrc = (photo) =>
   typeof photo === "string" ? photo : photo?.src || "";
 const asPhotos = (photos) =>
-  Array.isArray(photos) ? photos.map(photoSrc).filter(Boolean) : [];
+  Array.isArray(photos) ? photos.filter((photo) => photoSrc(photo)) : [];
 
 const normalizePhotoGroups = (project) => {
   const groups = project?.photoGroups;
@@ -58,9 +58,12 @@ const normalizeDocuments = (project) => {
   const documents = project?.documents || {};
   const list = (type) => (Array.isArray(documents[type]) ? documents[type] : [])
     .map((document) => ({
+      ...document,
       name: document?.name || "Документ",
       type: document?.type || "application/octet-stream",
       src: document?.src || document?.data || "",
+      path: document?.path,
+      file: document?.file,
       isPublic: document?.isPublic === true,
     }))
     .filter((document) => document.src);
@@ -99,7 +102,7 @@ function Content() {
   const [error, setError] = useState("");
   const [listError, setListError] = useState("");
 
-  const refresh = () => setItems(getProjects());
+  const refresh = async () => setItems(await getProjects());
   useEffect(() => {
     const onStorage = (event) => { if (event.key === PROJECTS_STORAGE_KEY) refresh(); };
     refresh();
@@ -118,7 +121,7 @@ function Content() {
     ? Number(form.finalTotal || 0)
     : calculatedTotal;
 
-  const save = (published) => {
+  const save = async (published) => {
     const message = published ? publicationError(form, finalTotal) : "";
     if (message) {
       setError(message);
@@ -129,7 +132,7 @@ function Content() {
     const photos = flattenPhotoGroups(photoGroups);
     setError("");
     try {
-      saveProject({
+      await saveProject({
         ...form,
         photoGroups,
         photos,
@@ -144,7 +147,7 @@ function Content() {
         isPublished: published,
       });
       setForm(blank());
-      refresh();
+      await refresh();
     } catch {
       setError("Не удалось сохранить проект в браузере. Уменьшите размер файлов и повторите попытку.");
     }
@@ -178,17 +181,7 @@ function Content() {
 
   const addDocuments = async (type, event) => {
     const files = Array.from(event.target.files || []);
-    const added = await Promise.all(
-      files.map(
-        (file) =>
-          new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = () =>
-              resolve({ name: file.name, type: file.type, src: reader.result, isPublic: false });
-            reader.readAsDataURL(file);
-          }),
-      ),
-    );
+    const added = files.map((file) => ({ name: file.name, type: file.type, file, src: URL.createObjectURL(file), isPublic: false }));
     const documents = normalizeDocuments(form);
     setForm({
       ...form,
@@ -208,7 +201,7 @@ function Content() {
     });
   };
 
-  const publishFromList = (project) => {
+  const publishFromList = async (project) => {
     const nextPublished = !project.isPublished;
     if (nextPublished) {
       const message = publicationError(project, projectTotal(project));
@@ -222,8 +215,8 @@ function Content() {
 
     try {
       setListError("");
-      setProjectPublished(project.id, nextPublished);
-      refresh();
+      await setProjectPublished(project.id, nextPublished);
+      await refresh();
     } catch {
       setListError("Не удалось обновить публикацию проекта в браузере.");
     }
@@ -559,9 +552,9 @@ function Content() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      deleteProject(project.id);
-                      refresh();
+                    onClick={async () => {
+                      await deleteProject(project.id);
+                      await refresh();
                     }}
                     className="text-destructive"
                   >

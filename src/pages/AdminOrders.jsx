@@ -11,7 +11,7 @@ import {
   setOrderStatus,
 } from "../lib/ordersStorage";
 const blank = () => ({
-  number: getNextOrderNumber(),
+  number: "",
   title: "",
   location: "",
   description: "",
@@ -47,8 +47,8 @@ function Content() {
   const [orders, setOrders] = useState([]),
     [form, setForm] = useState(blank()),
     [error, setError] = useState("");
-  const refresh = () => setOrders(getOrders());
-  useEffect(refresh, []);
+  const refresh = async () => setOrders(await getOrders());
+  useEffect(() => { refresh(); getNextOrderNumber().then((number) => setForm((current) => ({ ...current, number }))); }, []);
   const works = useMemo(
     () => form.selectedWorks.reduce((s, w) => s + Number(w.totalPrice || 0), 0),
     [form.selectedWorks],
@@ -63,7 +63,7 @@ function Content() {
   const displayedTotal = form.isManualTotal
     ? Number(form.finalTotal || 0)
     : calculatedTotal;
-  const save = (published) => {
+  const save = async (published) => {
     const selectedWorks = normalizeSelectedWorks(form.selectedWorks);
     const normalizedWorksSubtotal = selectedWorks.reduce(
       (sum, work) => sum + Number(work.totalPrice || 0),
@@ -107,7 +107,7 @@ function Content() {
       return;
     }
     setError("");
-    saveOrder({
+    await saveOrder({
       ...form,
       selectedWorks,
       workSubtotal: normalizedWorksSubtotal,
@@ -124,15 +124,15 @@ function Content() {
       isPublished: published,
       status: published ? "active" : "draft",
     });
-    setForm(blank());
-    refresh();
+    setForm({ ...blank(), number: await getNextOrderNumber() });
+    await refresh();
   };
   return (
     <div className="page-shell py-6 sm:py-10">
       <div className="flex flex-col items-stretch gap-4 min-[420px]:flex-row min-[420px]:items-start min-[420px]:justify-between">
         <h1 className="text-3xl font-black">Управление заказами</h1>
         <button
-          onClick={() => setForm(blank())}
+          onClick={async () => setForm({ ...blank(), number: await getNextOrderNumber() })}
           className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white min-[420px]:w-auto min-[420px]:py-2"
         >
           Создать заказ
@@ -140,9 +140,9 @@ function Content() {
       </div>
       <div className="mt-5 grid gap-4 sm:mt-6 sm:gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
-            save(false);
+            await save(false);
           }}
           className="w-full min-w-0 space-y-4 rounded-2xl border border-border bg-card p-4 sm:space-y-5 sm:p-5"
         >
@@ -317,27 +317,27 @@ function Content() {
                 Редактировать
               </button>
               <button
-                onClick={() => {
-                  setOrderPublished(o.id, !o.isPublished);
-                  refresh();
+                onClick={async () => {
+                  await setOrderPublished(o.id, !o.isPublished);
+                  await refresh();
                 }}
                 className="ml-3"
               >
                 {o.isPublished ? "Снять" : "Опубликовать"}
               </button>
               <button
-                onClick={() => {
-                  setOrderStatus(o.id, "closed");
-                  refresh();
+                onClick={async () => {
+                  await setOrderStatus(o.id, "closed");
+                  await refresh();
                 }}
                 className="ml-3"
               >
                 Закрыть
               </button>
               <button
-                onClick={() => {
-                  deleteOrder(o.id);
-                  refresh();
+                onClick={async () => {
+                  await deleteOrder(o.id);
+                  await refresh();
                 }}
                 className="ml-3 text-destructive"
               >

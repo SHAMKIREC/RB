@@ -14,27 +14,19 @@ const blank = {
   contact: "",
   consent: false,
 };
-const photoSrc = (photo) => (typeof photo === "string" ? photo : photo?.src || "");
-const toPhotoRecords = (photos) => (Array.isArray(photos) ? photos : [])
-  .map((photo, index) => {
-    const src = photoSrc(photo);
-    return src ? { src, name: photo?.name || `photo-${index + 1}` } : null;
-  })
-  .filter(Boolean);
-
 export default function NewReview() {
   const [form, setForm] = useState(blank);
   const [done, setDone] = useState(false);
   const [error, setError] = useState("");
   const update = (key, value) => setForm({ ...form, [key]: value });
 
-  const submit = (event) => {
+  const submit = async (event) => {
     event.preventDefault();
     if (!form.consent) return;
     try {
-      saveReview({
+      await saveReview({
         ...form,
-        photos: toPhotoRecords(form.photos),
+        photos: [],
         rating: Number(form.rating),
         status: "pending",
         isPublished: false,

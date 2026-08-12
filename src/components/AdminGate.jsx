@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LogOut } from 'lucide-react';
-import { endAdminSession, isAdminSessionActive, startAdminSession } from '../lib/adminSession';
+import { endAdminSession, isAdminSessionActive, startAdminSession, subscribeToAdminSession } from '../lib/adminSession';
+import { isSupabaseConfigured } from '../lib/supabaseClient';
 import { enableInlineEditMode } from '../lib/pricingStorage';
 
 export function AdminNavigation({ onExit }) {
@@ -9,8 +10,13 @@ export function AdminNavigation({ onExit }) {
 }
 
 export default function AdminGate({ children }) {
-  const [allowed, setAllowed] = useState(isAdminSessionActive); const [pin, setPin] = useState(''); const [error, setError] = useState('');
-  const configured = Boolean(import.meta.env.VITE_ADMIN_PIN);
-  if (allowed) return <><AdminNavigation onExit={() => { endAdminSession(); setAllowed(false); }} />{children}</>;
-  return <div className="page-shell py-12"><div className="mx-auto max-w-md rounded-2xl border border-border bg-card p-6 shadow-sm"><h1 className="text-2xl font-black">Вход владельца сайта</h1><p className="mt-2 text-sm text-muted-foreground">Локальный режим управления заказами и проектами.</p>{!configured ? <p className="mt-3 text-sm text-destructive">Административный PIN не настроен. Добавьте VITE_ADMIN_PIN в .env.local и перезапустите приложение.</p> : <form onSubmit={(event) => { event.preventDefault(); if (startAdminSession(pin)) setAllowed(true); else setError('Неверный PIN.'); }} className="mt-5 space-y-3"><input value={pin} onChange={(event) => setPin(event.target.value)} type="password" inputMode="numeric" className="w-full rounded-xl border border-border bg-background px-3 py-2.5" placeholder="PIN"/><button className="w-full rounded-xl bg-primary py-2.5 text-sm font-bold text-white">Войти</button>{error && <p className="text-xs text-destructive">{error}</p>}</form>}<p className="mt-4 text-xs text-muted-foreground">Это временная клиентская защита MVP, не серверная авторизация.</p></div></div>;
+  const [allowed, setAllowed] = useState(false); const [loading, setLoading] = useState(true); const [pin, setPin] = useState(''); const [error, setError] = useState('');
+  const configured = isSupabaseConfigured && Boolean(import.meta.env.VITE_ADMIN_EMAIL);
+  useEffect(() => {
+    isAdminSessionActive().then(setAllowed).finally(() => setLoading(false));
+    return subscribeToAdminSession(setAllowed);
+  }, []);
+  if (loading) return <div className="page-shell py-12" />;
+  if (allowed) return <><AdminNavigation onExit={async () => { await endAdminSession(); setAllowed(false); }} />{children}</>;
+  return <div className="page-shell py-12"><div className="mx-auto max-w-md rounded-2xl border border-border bg-card p-6 shadow-sm"><h1 className="text-2xl font-black">Вход владельца сайта</h1><p className="mt-2 text-sm text-muted-foreground">Локальный режим управления заказами и проектами.</p>{!configured ? <p className="mt-3 text-sm text-destructive">Административный доступ не настроен.</p> : <form onSubmit={async (event) => { event.preventDefault(); setError(''); const ok = await startAdminSession(pin); if (ok) setAllowed(true); else setError('Неверный PIN.'); }} className="mt-5 space-y-3"><input value={pin} onChange={(event) => setPin(event.target.value)} type="password" inputMode="text" autoCapitalize="none" autoCorrect="off" className="w-full rounded-xl border border-border bg-background px-3 py-2.5" placeholder="PIN"/><button className="w-full rounded-xl bg-primary py-2.5 text-sm font-bold text-white">Войти</button>{error && <p className="text-xs text-destructive">{error}</p>}</form>}</div></div>;
 }

@@ -23,10 +23,11 @@ export default function ProjectDetail() {
   const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
-    const refresh = () => {
-      const item = getProject(projectId);
+    const refresh = async () => {
+      const item = await getProject(projectId);
       setProject(item);
-      setReview(item ? getPublishedReviews().find((entry) => entry.clientName === item.clientName && entry.serviceTitle === item.title) || null : null);
+      const reviews = item ? await getPublishedReviews() : [];
+      setReview(item ? reviews.find((entry) => entry.clientName === item.clientName && entry.serviceTitle === item.title) || null : null);
     };
     const onStorage = (event) => { if (event.key === PROJECTS_STORAGE_KEY) refresh(); };
     refresh();
