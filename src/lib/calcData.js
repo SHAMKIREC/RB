@@ -1,10 +1,10 @@
 export const PHONE = "+79063052828";
 export const PHONE_DISPLAY = "+7 906 305-28-28";
-export const WHATSAPP = "https://wa.me/79063052828";
+export const WHATSAPP = "https://wa.me/79878377006";
 export const TELEGRAM = "https://t.me/+79063052828";
-export const VK_MSG = "https://vk.com/rb_remont";
-export const VK_GROUP = "https://vk.com/rb_remont";
-export const MAX_URL = "https://max.ru";
+export const VK_MSG = "https://vk.ru/club237262784";
+export const VK_GROUP = "https://vk.ru/club237262784";
+export const MAX_URL = "https://max.ru/u/f9LHodD0cOIb9PdcCXifaM12GV0KjbZx_SwQETBtKdS8TwY9ztAeoO6Y8V0";
 export const CITY = "Саратов";
 
 export const COEFFICIENTS = [

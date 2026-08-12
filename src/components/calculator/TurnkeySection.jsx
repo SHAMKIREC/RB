@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { TURNKEY_OPTIONS } from "../../lib/servicesData";
 
+const integerQuantity = (value) => Math.max(0, Math.round(Number(value) || 0));
+
 export default function TurnkeySection({ onTotalChange }) {
   const [selected, setSelected] = useState(null);
   const [area, setArea] = useState("");
@@ -10,17 +12,18 @@ export default function TurnkeySection({ onTotalChange }) {
     setSelected(newSelected);
     if (newSelected && area) {
       const option = TURNKEY_OPTIONS.find((o) => o.id === newSelected);
-      onTotalChange(option.price * parseFloat(area));
+      onTotalChange(option.price * integerQuantity(area));
     } else {
       onTotalChange(0);
     }
   };
 
   const handleArea = (val) => {
-    setArea(val);
-    if (selected && val) {
+    const nextArea = integerQuantity(val);
+    setArea(val === "" ? "" : String(nextArea));
+    if (selected && nextArea) {
       const option = TURNKEY_OPTIONS.find((o) => o.id === selected);
-      onTotalChange(option.price * parseFloat(val));
+      onTotalChange(option.price * nextArea);
     } else {
       onTotalChange(0);
     }
@@ -58,6 +61,7 @@ export default function TurnkeySection({ onTotalChange }) {
           <input
             type="number"
             min="0"
+            step="1"
             value={area}
             onChange={(e) => handleArea(e.target.value)}
             placeholder="0"

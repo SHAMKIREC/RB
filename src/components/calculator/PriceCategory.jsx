@@ -51,7 +51,8 @@ export default function PriceCategory({ category, quantities, onQuantityChange }
                   type="number"
                   min="0"
                   value={qty || ""}
-                  onChange={(e) => onQuantityChange(idx, parseFloat(e.target.value) || 0)}
+                  step="1"
+                  onChange={(e) => onQuantityChange(idx, Math.max(0, Math.round(Number(e.target.value) || 0)))}
                   placeholder="0"
                   className="w-20 sm:w-24 px-3 py-2 bg-secondary border border-border rounded-lg font-mono text-sm text-foreground text-center placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                 />

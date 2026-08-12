@@ -1,76 +1,53 @@
-import { motion } from "framer-motion";
-import ReviewCard from "../components/ReviewCard";
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { MapPin, Star } from "lucide-react";
+import { getPublishedReviews } from "../lib/reviewsStorage";
 
-const REVIEWS = [
-  {
-    name: "Алексей М.",
-    date: "Февраль 2026",
-    rating: 5,
-    text: "Делали капитальный ремонт двушки. Ребята приехали быстро, оценили объём работ, дали точную смету. Ни разу не пришлось переплачивать. Стены идеально ровные, полы как зеркало. Рекомендую!",
-    work: "Капитальный ремонт",
-  },
-  {
-    name: "Ольга К.",
-    date: "Январь 2026",
-    rating: 5,
-    text: "Срочно понадобилось поменять сантехнику в ванной — позвонила в воскресенье, приехали через час. Всё поставили аккуратно, чисто убрали за собой. Цены адекватные.",
-    work: "Сантехника",
-  },
-  {
-    name: "Дмитрий В.",
-    date: "Декабрь 2025",
-    rating: 5,
-    text: "Заказывал укладку плитки в ванную и туалет. Мозаику положили идеально, швы ровные. Мастер реально знает своё дело. Буду обращаться ещё.",
-    work: "Плитка",
-  },
-  {
-    name: "Марина С.",
-    date: "Ноябрь 2025",
-    rating: 4,
-    text: "Поклейка обоев и покраска потолка в трёх комнатах. Сделали за 3 дня. Единственное — пришлось подождать начала работ пару дней. Но результат отличный.",
-    work: "Малярные работы",
-  },
-  {
-    name: "Игорь П.",
-    date: "Октябрь 2025",
-    rating: 5,
-    text: "Электрика под ключ в новостройке. Штробили, прокладывали кабель, ставили розетки и выключатели. Всё по схеме, ни одного косяка. Профессионалы.",
-    work: "Электрика",
-  },
-  {
-    name: "Елена Р.",
-    date: "Сентябрь 2025",
-    rating: 5,
-    text: "Установка 5 межкомнатных дверей. Быстро, ровно, без лишнего мусора. Двери закрываются идеально. Спасибо, что не пришлось переделывать.",
-    work: "Двери",
-  },
-];
+const photoSrc = (photo) => (typeof photo === "string" ? photo : photo?.src || "");
 
 export default function Reviews() {
-  return (
-    <div className="py-10 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="mb-10 sm:mb-14"
-      >
-        <p className="text-sm font-mono text-primary font-bold uppercase tracking-widest mb-2">
-          Отзывы
-        </p>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-foreground mb-4">
-          Что говорят клиенты
-        </h1>
-        <p className="text-muted-foreground text-lg max-w-2xl">
-          Реальные отзывы от жителей Саратова, которые уже доверили нам свой ремонт.
-        </p>
-      </motion.div>
+  const [reviews, setReviews] = useState([]);
+  useEffect(() => setReviews(getPublishedReviews()), []);
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-        {REVIEWS.map((review, index) => (
-          <ReviewCard key={index} review={review} index={index} />
-        ))}
+  return (
+    <div className="page-shell py-7 sm:py-10">
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="mb-1 text-xs font-mono font-bold uppercase tracking-widest text-primary">ОТЗЫВЫ</p>
+          <h1 className="mb-2 text-3xl font-black text-foreground sm:text-4xl">Отзывы клиентов</h1>
+          <p className="max-w-2xl text-sm text-muted-foreground">Опубликованные отзывы о выполненных работах.</p>
+        </div>
+        <Link to="/reviews/new" className="rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white">Оставить отзыв</Link>
       </div>
+      {reviews.length ? (
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {reviews.map((review) => (
+            <article key={review.id} className="rb-card flex flex-col rounded-2xl p-5">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <h2 className="font-black text-foreground">{review.clientName}</h2>
+                  <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />{review.location}</p>
+                </div>
+                <span className="inline-flex items-center gap-1 rounded-lg border border-primary/20 bg-primary/5 px-2 py-1 text-sm font-bold text-primary">
+                  <Star className="h-4 w-4 fill-current" />{review.rating}
+                </span>
+              </div>
+              <span className="mt-4 w-fit rounded-lg bg-secondary px-2.5 py-1 text-[11px] font-bold text-secondary-foreground">{review.serviceTitle}</span>
+              <p className="mt-4 line-clamp-5 text-sm leading-relaxed text-muted-foreground">{review.reviewText}</p>
+              {Array.isArray(review.photos) && review.photos.length > 0 && (
+                <div className="mt-4 grid grid-cols-3 gap-2">
+                  {review.photos.map((photo, index) => (
+                    <img key={index} src={photoSrc(photo)} alt={`Фото к отзыву ${index + 1}`} className="aspect-square w-full rounded-lg border border-border bg-secondary/50 object-contain" />
+                  ))}
+                </div>
+              )}
+              <p className="mt-auto pt-5 text-xs text-muted-foreground">{new Date(review.createdAt).toLocaleDateString("ru-RU")}</p>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-2xl border border-dashed border-border px-6 py-14 text-center text-muted-foreground">Отзывов пока нет.</div>
+      )}
     </div>
   );
 }

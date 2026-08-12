@@ -1,0 +1,18 @@
+import { useEffect, useState } from 'react';
+import { Minus, Plus, X } from 'lucide-react';
+import { setPriceOverride } from '../../lib/pricingStorage';
+import { useInlineEditMode } from '../../hooks/usePricingState';
+import InlinePriceEditor from '../admin/InlinePriceEditor';
+
+export default function MaterialModal({ work, materials, onAdd, onClose }) {
+  const inlineEditMode = useInlineEditMode();
+  const [materialQuantity, setMaterialQuantity] = useState(1);
+
+  useEffect(() => {
+    if (work) setMaterialQuantity(1);
+  }, [work]);
+
+  if (!work) return null;
+
+  return <div className="fixed inset-0 z-[70] flex items-end justify-center bg-black/45 p-3 sm:items-center"><div className="flex max-h-[calc(100dvh-1.5rem)] w-full max-w-2xl flex-col rounded-2xl border border-border bg-card p-4 shadow-2xl"><div className="flex items-start justify-between gap-3"><div><h2 className="font-black">Подобрать материал</h2><p className="text-xs text-muted-foreground">{work.name}</p></div><button onClick={onClose} aria-label="Закрыть" className="rounded-lg p-1 hover:bg-secondary"><X className="h-4 w-4"/></button></div><div className={`mt-4 min-h-0 flex-1 overflow-y-auto pr-1 ${materials.length > 1 ? 'grid gap-3 sm:grid-cols-2' : 'grid grid-cols-1 gap-3'}`}>{materials.map((material) => { const unitPrice = Number(material.pricePerPackage) || 0; const total = unitPrice * materialQuantity; return <article key={material.id} className="overflow-hidden rounded-xl border border-border bg-background"><div className="aspect-[2/1] bg-secondary/60 p-4">{material.image ? <img src={material.image} alt={material.name} loading="lazy" decoding="async" className="h-full w-full object-contain object-center"/> : <div className="flex h-full items-center justify-center text-xs text-muted-foreground">Фото материала отсутствует</div>}</div><div className="space-y-2 p-3"><p className="text-sm font-bold">{material.name}</p><p className="text-[11px] text-muted-foreground">{material.brand} · {material.type}</p><p className="text-[11px] text-muted-foreground">{material.description}</p><p className="text-xs text-muted-foreground">Фасовка: {material.packageAmount} {material.packageUnit}</p><p className="text-xs font-bold">{unitPrice.toLocaleString('ru-RU')} ₽ / шт.</p>{inlineEditMode && <InlinePriceEditor value={material.pricePerPackage} onSave={(value) => setPriceOverride('materials', material.id, value)} />}<div className="flex items-center justify-between gap-3 text-xs"><span className="font-medium">Количество</span><div className="inline-flex items-center rounded-lg border border-border bg-secondary/50"><button type="button" onClick={() => setMaterialQuantity((current) => Math.max(1, current - 1))} disabled={materialQuantity <= 1} aria-label="Уменьшить количество" className="p-1.5 text-muted-foreground hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"><Minus className="h-3.5 w-3.5"/></button><span className="min-w-8 text-center font-bold">{materialQuantity}</span><button type="button" onClick={() => setMaterialQuantity((current) => Math.max(1, Math.round(current) + 1))} aria-label="Увеличить количество" className="p-1.5 text-muted-foreground hover:text-foreground"><Plus className="h-3.5 w-3.5"/></button></div></div><p className="text-xs text-muted-foreground">{materialQuantity} шт. × {unitPrice.toLocaleString('ru-RU')} ₽</p><p className="text-sm font-black text-primary">Итого: {total.toLocaleString('ru-RU')} ₽</p><button onClick={() => onAdd(material, materialQuantity)} className="w-full rounded-lg bg-primary py-2 text-sm font-bold text-white">Добавить в смету</button></div></article>; })}</div></div></div>;
+}

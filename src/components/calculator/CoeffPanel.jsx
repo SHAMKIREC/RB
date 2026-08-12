@@ -7,8 +7,8 @@ export default function CoeffPanel({ active, onChange }) {
   }, 0);
 
   return (
-    <div className="border border-border rounded-2xl bg-card p-4 sm:p-5 shadow-sm">
-      <div className="flex items-center justify-between mb-3">
+    <div className="rb-card rounded-2xl p-3 sm:p-4">
+      <div className="flex items-center justify-between mb-2">
         <h3 className="text-sm font-bold text-foreground">Коэффициенты сложности</h3>
         {total > 0 && (
           <span className="text-xs font-mono font-bold text-orange-600 bg-orange-50 dark:bg-orange-950/30 px-2.5 py-1 rounded-lg">
@@ -16,7 +16,7 @@ export default function CoeffPanel({ active, onChange }) {
           </span>
         )}
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5">
         {COEFFICIENTS.map(coeff => {
           const isOn = active.includes(coeff.id);
           return (
@@ -26,8 +26,8 @@ export default function CoeffPanel({ active, onChange }) {
                 if (isOn) onChange(active.filter(id => id !== coeff.id));
                 else onChange([...active, coeff.id]);
               }}
-              className={`flex items-center gap-3 p-3 rounded-xl border-2 text-left transition-all text-sm ${
-                isOn ? "border-primary bg-primary/10 text-primary font-bold" : "border-border hover:border-primary/40 text-foreground"
+              className={`flex items-center gap-2 p-2.5 rounded-xl border-2 text-left transition-all text-xs ${
+                isOn ? "border-primary bg-primary/10 text-primary font-bold" : "border-primary/60 bg-white hover:border-primary text-foreground dark:bg-card dark:hover:bg-secondary"
               }`}
             >
               <div className={`w-5 h-5 rounded flex items-center justify-center flex-shrink-0 border-2 transition-all ${isOn ? "bg-primary border-primary" : "border-border"}`}>

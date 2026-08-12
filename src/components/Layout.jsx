@@ -1,21 +1,38 @@
-import { Outlet } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Outlet, useLocation } from "react-router-dom";
 import Header from "./Header";
 import FixPanel from "./FixPanel";
-import MobileNav from "./MobileNav";
 import Footer from "./Footer";
 import { useTheme } from "../hooks/useTheme";
+import { endAdminSession, isAdminSessionActive } from "../lib/adminSession";
+import { disableInlineEditMode } from "../lib/pricingStorage";
+import { AdminNavigation } from "./AdminGate";
 
 export default function Layout() {
   const { theme, toggle } = useTheme();
+  const { pathname } = useLocation();
+  const [adminSessionActive, setAdminSessionActive] = useState(isAdminSessionActive);
+  const isAdminRoute = pathname.startsWith('/admin');
+  const showAdminNavigation = adminSessionActive && !isAdminRoute;
+
+  useEffect(() => {
+    setAdminSessionActive(isAdminSessionActive());
+  }, [pathname]);
+
+  const exitAdminSession = () => {
+    disableInlineEditMode();
+    endAdminSession();
+    setAdminSessionActive(false);
+  };
 
   return (
     <div className="min-h-screen bg-background light-grid">
       <Header theme={theme} onToggleTheme={toggle} />
-      <main className="pt-16 sm:pt-20 pb-[140px] md:pb-0">
+      <main className="pb-[calc(5.75rem+env(safe-area-inset-bottom))] pt-16 sm:pt-20 xl:pb-0">
+        {showAdminNavigation && <AdminNavigation onExit={exitAdminSession} />}
         <Outlet />
       </main>
       <Footer />
-      <MobileNav />
       <FixPanel />
     </div>
   );

@@ -11,16 +11,20 @@ export default function ServiceCard({ service, index }) {
       transition={{ duration: 0.5, delay: index * 0.07 }}
     >
       <Link
-        to={`/category/${service.slug}`}
-        className="group block relative overflow-hidden rounded-2xl border border-border bg-card shadow-sm hover:shadow-xl hover:shadow-primary/10 hover:border-primary/25 transition-all duration-300"
+        to={`/services?category=${service.slug}`}
+        className="rb-card rb-card-action group block relative overflow-hidden rounded-2xl border-2 border-primary/70"
       >
         <div className="relative aspect-[4/3] overflow-hidden">
           <img
             src={service.image}
-            alt={service.name}
+            alt={service.imageAlt}
+            loading="lazy"
+            decoding="async"
+            width="800"
+            height="600"
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-107"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent" />
           <div className="absolute top-2.5 right-2.5 px-2.5 py-1 bg-white/90 dark:bg-black/70 backdrop-blur-sm rounded-lg border border-white/20">
             <span className="text-xs font-mono font-bold text-primary">{service.priceFrom}</span>
           </div>

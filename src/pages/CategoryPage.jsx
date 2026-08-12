@@ -1,17 +1,23 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Phone, MessageCircle, Calculator } from "lucide-react";
+import { ArrowLeft, Phone, Calculator } from "lucide-react";
 import {
   SERVICE_CATEGORIES,
   PRICE_LIST,
   CATEGORY_PRICE_MAP,
+  formatCategoryPrice,
   PHONE_NUMBER,
   VK_URL,
 } from "../lib/servicesData";
+import { getServiceCategoryPrice, getServiceItemPrice, setPriceOverride } from "../lib/pricingStorage";
+import { useInlineEditMode, usePricingOverrides } from "../hooks/usePricingState";
+import InlinePriceEditor from "../components/admin/InlinePriceEditor";
 
 export default function CategoryPage() {
   const { slug } = useParams();
   const category = SERVICE_CATEGORIES.find((c) => c.slug === slug);
+  const overrides = usePricingOverrides();
+  const inlineEditMode = useInlineEditMode();
 
   if (!category) {
     return (
@@ -26,7 +32,7 @@ export default function CategoryPage() {
   const priceSections = priceKeys.map((key) => PRICE_LIST[key]).filter(Boolean);
 
   return (
-    <div className="py-10 sm:py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <div className="page-shell py-10 sm:py-16">
       <Link
         to="/services"
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors mb-6"
@@ -45,15 +51,19 @@ export default function CategoryPage() {
         <div className="relative aspect-[21/8] sm:aspect-[3/1]">
           <img
             src={category.image}
-            alt={category.name}
+            alt={category.imageAlt}
+            decoding="async"
+            width="2100"
+            height="800"
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-transparent" />
           <div className="absolute inset-0 flex items-center px-6 sm:px-10 lg:px-14">
             <div>
               <p className="text-sm font-mono font-bold uppercase tracking-widest text-orange-400 mb-2">
-                {category.priceFrom}
+                {formatCategoryPrice(category, getServiceCategoryPrice(category, overrides))}
               </p>
+              {inlineEditMode && <InlinePriceEditor value={getServiceCategoryPrice(category, overrides)} onSave={(value) => setPriceOverride(category.pricingScope || 'serviceCategories', category.pricingId || category.id, value)} />}
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white mb-3">
                 {category.name}
               </h1>
@@ -81,20 +91,25 @@ export default function CategoryPage() {
                 <div className="px-5 py-4 bg-secondary/50 border-b border-border">
                   <h3 className="font-bold text-foreground">{section.name}</h3>
                 </div>
-                {section.items.map((item, idx) => (
+                {section.items.map((item, idx) => {
+                  const price = getServiceItemPrice(item, overrides);
+                  return (
                   <div
-                    key={idx}
+                    key={item.id}
                     className={`flex items-center justify-between px-5 py-3.5 transition-colors hover:bg-secondary/30 ${
                       idx !== section.items.length - 1 ? "border-b border-border/50" : ""
                     }`}
                   >
                     <span className="text-sm text-foreground">{item.name}</span>
-                    <span className="font-mono font-bold text-primary text-sm whitespace-nowrap ml-4">
-                      {item.price.toLocaleString("ru-RU")} ₽
-                      <span className="text-muted-foreground font-normal"> / {item.unit}</span>
-                    </span>
+                    <div className="ml-4 flex shrink-0 flex-col items-end">
+                      <span className="font-mono font-bold text-primary text-sm whitespace-nowrap">
+                        {price.toLocaleString("ru-RU")} ₽
+                        <span className="text-muted-foreground font-normal"> / {item.unit}</span>
+                      </span>
+                      {inlineEditMode && <InlinePriceEditor value={price} onSave={(value) => setPriceOverride(item.pricingScope || 'serviceItems', item.pricingId || item.id, value)} />}
+                    </div>
                   </div>
-                ))}
+                ); })}
               </motion.div>
             ))}
           </div>

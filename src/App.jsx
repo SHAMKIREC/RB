@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Navigate, Route, Routes, useParams } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -10,7 +10,24 @@ import Home from './pages/Home';
 import Services from './pages/Services';
 import Calculator from './pages/Calculator';
 import Reviews from './pages/Reviews';
-import CategoryPage from './pages/CategoryPage';
+import Orders from './pages/Orders';
+import OrderDetail from './pages/OrderDetail';
+import Projects from './pages/Projects';
+import ProjectDetail from './pages/ProjectDetail';
+import AdminOrders from './pages/AdminOrders';
+import AdminProjects from './pages/AdminProjects';
+import AdminReviews from './pages/AdminReviews';
+import NewReview from './pages/NewReview';
+import Documentation from './pages/Documentation';
+import About from './pages/About';
+import NrvDigital from './pages/NrvDigital';
+import ScrollToTop from './components/ScrollToTop';
+import PageSeo from './components/PageSeo';
+
+const LegacyCategoryRedirect = () => {
+  const { slug } = useParams();
+  return <Navigate to={`/services?category=${slug}`} replace />;
+};
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -41,9 +58,20 @@ const AuthenticatedApp = () => {
       <Route element={<Layout />}>
         <Route path="/" element={<Home />} />
         <Route path="/services" element={<Services />} />
+        <Route path="/documentation" element={<Documentation />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/nrv-digital" element={<NrvDigital />} />
         <Route path="/calculator" element={<Calculator />} />
         <Route path="/reviews" element={<Reviews />} />
-        <Route path="/category/:slug" element={<CategoryPage />} />
+        <Route path="/reviews/new" element={<NewReview />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/orders/:orderId" element={<OrderDetail />} />
+        <Route path="/projects" element={<Projects />} />
+        <Route path="/projects/:projectId" element={<ProjectDetail />} />
+        <Route path="/admin/orders" element={<AdminOrders />} />
+        <Route path="/admin/projects" element={<AdminProjects />} />
+        <Route path="/admin/reviews" element={<AdminReviews />} />
+        <Route path="/category/:slug" element={<LegacyCategoryRedirect />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
     </Routes>
@@ -57,6 +85,8 @@ function App() {
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
         <Router>
+          <ScrollToTop />
+          <PageSeo />
           <AuthenticatedApp />
         </Router>
         <Toaster />

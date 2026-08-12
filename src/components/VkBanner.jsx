@@ -4,7 +4,7 @@ import { VK_URL } from "../lib/servicesData";
 
 export default function VkBanner() {
   return (
-    <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+    <section className="page-shell pt-6 pb-10 sm:pt-8 sm:pb-12">
       <motion.a
         href={VK_URL}
         target="_blank"
@@ -15,7 +15,7 @@ export default function VkBanner() {
         whileHover={{ y: -3 }}
         transition={{ duration: 0.5 }}
         style={{ background: "rgba(255,255,255,0.05)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderRadius: "24px", border: "1px solid rgba(255,255,255,0.1)", boxShadow: "0 10px 40px rgba(0,0,0,0.3)", position: "relative", overflow: "hidden" }}
-        className="group flex flex-col sm:flex-row items-center gap-6 p-6 sm:p-8 transition-all cursor-pointer"
+        className="group flex flex-col sm:flex-row items-center gap-4 sm:gap-6 p-5 sm:p-7 transition-all cursor-pointer"
       >
         {/* Glow */}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(59,130,246,0.15), rgba(147,51,234,0.15))", filter: "blur(40px)", opacity: 0.6, pointerEvents: "none" }} />
@@ -31,7 +31,7 @@ export default function VkBanner() {
             Смотрите портфолио, отзывы клиентов и актуальные акции прямо в нашей группе ВК
           </p>
         </div>
-        <div style={{ background: "rgba(255,255,255,0.1)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", border: "1px solid rgba(255,255,255,0.2)" }} className="flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm flex-shrink-0 text-white group-hover:bg-white/20 transition-all">
+        <div className="flex items-center gap-2 rounded-xl bg-[#0077FF] px-6 py-3 font-bold text-sm text-white shadow-md shadow-blue-500/25 transition-all group-hover:bg-[#0069e0] group-focus-visible:ring-2 group-focus-visible:ring-[#0077FF] group-focus-visible:ring-offset-2 flex-shrink-0">
           Открыть группу
           <ExternalLink className="w-4 h-4" />
         </div>

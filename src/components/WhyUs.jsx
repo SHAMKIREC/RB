@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Shield, Clock, Wrench, ThumbsUp } from "lucide-react";
 
 const ITEMS = [
@@ -9,17 +9,18 @@ const ITEMS = [
 ];
 
 export default function WhyUs() {
+  const shouldReduceMotion = useReducedMotion();
+
   return (
-    <section className="py-16 sm:py-24 bg-secondary/50 border-y border-border">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="pt-7 pb-4 sm:pt-10 sm:pb-4 bg-secondary/50 border-y border-border">
+      <div className="page-shell">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          className="text-center mb-10"
         >
-          <p className="text-sm font-bold text-primary uppercase tracking-widest mb-2 font-mono">Почему мы</p>
-          <h2 className="text-3xl sm:text-4xl font-black text-foreground">Наши преимущества</h2>
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-foreground">Наши преимущества</h2>
         </motion.div>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
           {ITEMS.map((item, i) => {
@@ -31,11 +32,20 @@ export default function WhyUs() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="bg-card rounded-2xl p-5 sm:p-6 border border-border hover:border-primary/30 hover:shadow-lg transition-all"
+                className={`rb-card rb-card-action rounded-2xl p-5 sm:p-6 ${i === 0 ? "relative" : ""}`}
               >
                 <div className="w-12 h-12 rounded-xl logo-gradient flex items-center justify-center mb-4 shadow-md shadow-orange-500/20">
                   <Icon className="w-6 h-6 text-white" />
                 </div>
+                {i === 0 && (
+                  <motion.span
+                    animate={shouldReduceMotion ? undefined : { scale: [1, 1.06, 1, 1] }}
+                    transition={shouldReduceMotion ? undefined : { duration: 2.1, ease: "easeInOut", repeat: Infinity }}
+                    className="absolute right-5 top-5 bg-gradient-to-br from-[#FF6B35] to-[#FF3300] bg-clip-text text-[30px] font-black leading-none tracking-tight text-transparent drop-shadow-[0_5px_11px_rgba(255,80,0,0.34)] sm:right-6 sm:top-6 sm:text-[34px]"
+                  >
+                    24/7
+                  </motion.span>
+                )}
                 <h3 className="font-bold text-foreground mb-2">{item.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
               </motion.div>

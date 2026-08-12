@@ -1,5 +1,5 @@
-ыimport { Phone } from "lucide-react";
-import { PHONE, PHONE_DISPLAY, WHATSAPP, TELEGRAM, VK_MSG, MAX_URL } from "../lib/calcData";
+import { Phone } from "lucide-react";
+import { PHONE, WHATSAPP, TELEGRAM, VK_MSG, MAX_URL } from "../lib/calcData";
 
 // SVG Icons
 export function TelegramIcon({ size = 20 }) {
@@ -24,7 +24,7 @@ export function WhatsAppIcon({ size = 20 }) {
 export function MaxIcon({ size = 20 }) {
   return (
     <img
-      src="https://media.base44.com/images/public/69cbd0280d63703e9c98400e/507e4c144_ffX5j2Jpa1tuB8XO2Ei6G.png"
+      src="/assets/social-links.png"
       alt="MAX"
       width={size}
       height={size}

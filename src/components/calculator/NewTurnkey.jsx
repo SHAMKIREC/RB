@@ -1,59 +1,64 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { TURNKEY_NEW } from "../../lib/calcData";
+import { getTurnkeyPrice, setPriceOverride } from "../../lib/pricingStorage";
+import { useInlineEditMode, usePricingOverrides } from "../../hooks/usePricingState";
+import InlinePriceEditor from "../admin/InlinePriceEditor";
+
+const integerQuantity = (value) => Math.max(0, Math.round(Number(value) || 0));
 
 export default function NewTurnkey({ onTotalChange }) {
   const [selected, setSelected] = useState(null);
   const [qty, setQty] = useState("");
+  const pricingOverrides = usePricingOverrides();
+  const inlineEditMode = useInlineEditMode();
+  const options = useMemo(() => TURNKEY_NEW.map((option) => ({ ...option, price: getTurnkeyPrice(option, pricingOverrides) })), [pricingOverrides]);
+  const selOpt = options.find((option) => option.id === selected);
+
+  useEffect(() => {
+    if (!selOpt) { onTotalChange(0, null); return; }
+    const quantity = integerQuantity(qty);
+    onTotalChange(selOpt.unit === "шт" ? selOpt.price : quantity ? selOpt.price * quantity : 0, selected);
+  }, [onTotalChange, qty, selected, selOpt]);
 
   const handleSelect = (id) => {
     const next = selected === id ? null : id;
     setSelected(next);
-    if (next && qty) {
-      const opt = TURNKEY_NEW.find(o => o.id === next);
-      onTotalChange(opt.unit === "шт" ? opt.price : opt.price * parseFloat(qty), next);
-    } else {
-      onTotalChange(0, null);
-    }
   };
 
   const handleQty = (val) => {
-    setQty(val);
-    if (selected && val) {
-      const opt = TURNKEY_NEW.find(o => o.id === selected);
-      onTotalChange(opt.unit === "шт" ? opt.price : opt.price * parseFloat(val), selected);
-    } else {
-      onTotalChange(0, null);
-    }
+    const nextQuantity = integerQuantity(val);
+    setQty(val === "" ? "" : String(nextQuantity));
   };
 
-  const selOpt = TURNKEY_NEW.find(o => o.id === selected);
-
   return (
-    <div className="border border-border rounded-2xl bg-card overflow-hidden shadow-sm">
-      <div className="p-4 sm:p-5 border-b border-border bg-gradient-to-r from-orange-50 to-amber-50 dark:from-orange-950/20 dark:to-amber-950/10">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="text-xl">🏠</span>
-          <h3 className="text-base font-bold text-foreground">Ремонт под ключ</h3>
+    <div className="turnkey-calculator-card rb-card overflow-hidden rounded-2xl bg-gradient-to-br from-orange-50 to-amber-50">
+      <div className="turnkey-calculator-header px-4 py-3 border-b border-border bg-gradient-to-r from-orange-50 to-amber-50">
+        <div className="flex items-center gap-2">
+          <span className="text-lg">🏠</span>
+          <h3 className="text-sm font-bold text-foreground">Ремонт под ключ</h3>
         </div>
         <p className="text-xs text-muted-foreground">Комплексный ремонт помещения</p>
       </div>
 
-      <div className="p-4 sm:p-5">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 mb-4">
-          {TURNKEY_NEW.map((option) => (
+      <div className="p-3 sm:p-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-3">
+          {options.map((option) => (
+            <div key={option.id} className="min-w-0">
             <button
-              key={option.id}
+              type="button"
               onClick={() => handleSelect(option.id)}
-              className={`p-3 sm:p-4 rounded-xl border-2 text-left transition-all ${
+              className={`w-full p-2.5 rounded-xl border-2 text-left transition-all ${
                 selected === option.id
-                  ? "border-primary bg-primary/10 shadow-md shadow-primary/10"
-                  : "border-border hover:border-primary/40 hover:bg-secondary/30"
+                  ? "calc-active-surface border-primary bg-primary/10 shadow-md shadow-primary/10"
+                  : "calc-base-surface border-primary/60 bg-white hover:border-primary hover:bg-secondary/30 dark:bg-card"
               }`}
             >
               <div className="text-xs font-bold text-foreground mb-1">{option.name}</div>
-              <div className="text-lg font-mono font-black text-primary">{option.price.toLocaleString("ru-RU")} ₽</div>
+              <div className="text-base font-mono font-black text-primary">{option.price.toLocaleString("ru-RU")} ₽</div>
               <div className="text-[10px] text-muted-foreground">за {option.unit}</div>
             </button>
+              {inlineEditMode && <InlinePriceEditor value={option.price} onSave={(value) => setPriceOverride('turnkey', option.id, value)} />}
+            </div>
           ))}
         </div>
 
@@ -70,6 +75,7 @@ export default function NewTurnkey({ onTotalChange }) {
                 <input
                   type="number"
                   min="0"
+                  step="1"
                   value={qty}
                   onChange={(e) => handleQty(e.target.value)}
                   placeholder="0"
@@ -77,10 +83,10 @@ export default function NewTurnkey({ onTotalChange }) {
                 />
               </div>
             )}
-            {(selOpt.unit === "шт" || (qty && parseFloat(qty) > 0)) && (
+            {(selOpt.unit === "шт" || (qty && integerQuantity(qty) > 0)) && (
               <div className="p-3 bg-primary/5 rounded-xl border border-primary/20">
                 <span className="text-sm font-bold text-primary">
-                  Итого: {(selOpt.unit === "шт" ? selOpt.price : selOpt.price * parseFloat(qty || 0)).toLocaleString("ru-RU")} ₽
+                  Итого: {(selOpt.unit === "шт" ? selOpt.price : selOpt.price * integerQuantity(qty)).toLocaleString("ru-RU")} ₽
                 </span>
               </div>
             )}

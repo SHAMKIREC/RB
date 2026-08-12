@@ -8,7 +8,7 @@ export default function ReviewCard({ review, index }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="premium-card border border-border rounded-2xl bg-card p-5 sm:p-6 shadow-sm"
+      className="rb-card premium-card rounded-2xl p-5 sm:p-6"
     >
       {/* Stars */}
       <div className="flex gap-0.5 mb-4">
