@@ -173,7 +173,11 @@ const createCategoryPrice = (id, priceFrom) => {
   };
 };
 
-export const formatCategoryPrice = (category, price) => String(category.priceFrom).replace(/[\d\s]+(?=\s*₽)/, Number(price).toLocaleString('ru-RU'));
+export const formatCategoryPrice = (category, price) => {
+  const formatted = Number(price).toLocaleString('ru-RU');
+  const suffix = category.priceFromSuffix ? ` ${category.priceFromSuffix.replace(/^\/+/, '/').trim()}` : '';
+  return `от ${formatted} ₽${suffix}`.replace(/\s*\/\s*/g, '/').replace(/\s+/g, ' ').trim();
+};
 
 export const SERVICE_CATEGORIES = catalog.map(([id,name,image,priceFrom,description]) => ({ id, name, slug:id, image: categoryImages[id] || image, imageAlt: categoryMetadata[id].alt, ...createCategoryPrice(id, priceFrom), description, seo: categoryMetadata[id], showOnHome: !HOME_HIDDEN_CATEGORY_IDS.has(id) }));
 export const PRICE_LIST = Object.fromEntries(catalog.flatMap(([, , , , , sections]) => sections.map(([id,name,,items]) => [id,{ name, items:items.map((item,index)=>createServiceItem(id,item,index)) }])));

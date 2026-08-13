@@ -53,8 +53,8 @@ function Content() {
       await callback();
       setActionError("");
       await refresh();
-    } catch {
-      setActionError("Не удалось сохранить изменения в браузере. Уменьшите размер файлов и повторите попытку.");
+    } catch (error) {
+      setActionError(error?.message || "Не удалось сохранить изменения в Supabase.");
     }
   };
 
@@ -108,7 +108,7 @@ function Content() {
               <input value={editing.contact || ""} onChange={(event) => setEditing({ ...editing, contact: event.target.value })} className="mt-1 block w-full rounded-xl border border-border bg-background px-3 py-2 font-normal" />
             </label>
           </div>
-          <PhotoUploader value={(editing.photos || []).map(photoSrc)} onChange={(photos) => setEditing({ ...editing, photos: toPhotoRecords(photos) })} label="Фотографии к отзыву" labelIcon={Image} showPhotoLabels photoLabels={(editing.photos || []).map((photo) => photo?.name || '')} />
+          <PhotoUploader value={editing.photos || []} onChange={(photos) => setEditing({ ...editing, photos: toPhotoRecords(photos) })} label="Фотографии к отзыву" labelIcon={Image} showPhotoLabels photoLabels={(editing.photos || []).map((photo) => photo?.name || '')} />
           <button className="rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white">Сохранить изменения</button>
         </form>
       )}

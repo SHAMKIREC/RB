@@ -30,6 +30,7 @@ const blank = () => ({
 });
 const money = (v) => `${Math.round(v || 0).toLocaleString("ru-RU")} ₽`;
 const integerQuantity = (value) => Math.max(0, Math.round(Number(value) || 0));
+const requestError = (error, fallback) => error?.message || fallback;
 const normalizeSelectedWorks = (selectedWorks) =>
   (Array.isArray(selectedWorks) ? selectedWorks : []).map((work) => {
     const quantity = integerQuantity(work.quantity);
@@ -107,25 +108,29 @@ function Content() {
       return;
     }
     setError("");
-    await saveOrder({
-      ...form,
-      selectedWorks,
-      workSubtotal: normalizedWorksSubtotal,
-      calculatedCost: normalizedWorksSubtotal,
-      contractorPayment,
-      clientPrice,
-      ownerExpenses,
-      expectedProfit,
-      calculatedTotal: normalizedCalculatedTotal,
-      finalTotal: contractorPayment,
-      total: contractorPayment,
-      materialsSubtotal: Number(form.materialsSubtotal || 0),
-      surcharges: Number(form.surcharges || 0),
-      isPublished: published,
-      status: published ? "active" : "draft",
-    });
-    setForm({ ...blank(), number: await getNextOrderNumber() });
-    await refresh();
+    try {
+      await saveOrder({
+        ...form,
+        selectedWorks,
+        workSubtotal: normalizedWorksSubtotal,
+        calculatedCost: normalizedWorksSubtotal,
+        contractorPayment,
+        clientPrice,
+        ownerExpenses,
+        expectedProfit,
+        calculatedTotal: normalizedCalculatedTotal,
+        finalTotal: contractorPayment,
+        total: contractorPayment,
+        materialsSubtotal: Number(form.materialsSubtotal || 0),
+        surcharges: Number(form.surcharges || 0),
+        isPublished: published,
+        status: published ? "active" : "draft",
+      });
+      setForm({ ...blank(), number: await getNextOrderNumber() });
+      await refresh();
+    } catch (saveError) {
+      setError(requestError(saveError, "Не удалось сохранить заказ в Supabase."));
+    }
   };
   return (
     <div className="page-shell py-6 sm:py-10">

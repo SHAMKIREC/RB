@@ -5,7 +5,7 @@ export default function PhotoUploader({ value = [], onChange, label = 'Фото�
   const [preview, setPreview] = useState(null);
 
   const addFiles = async (event) => {
-    const files = Array.from(event.target.files || []).filter((file) => file.type.startsWith('image/'));
+    const files = Array.from(event.target.files || []).filter((file) => ['image/jpeg', 'image/png', 'image/webp'].includes(file.type));
     const imageData = files.map((file) => ({ file, name: file.name, src: URL.createObjectURL(file) }));
     onChange([...value, ...imageData]);
     event.target.value = '';
@@ -23,7 +23,7 @@ export default function PhotoUploader({ value = [], onChange, label = 'Фото�
     <h2 className="flex items-center gap-1.5 font-black">{LabelIcon && <LabelIcon className="h-4 w-4 text-primary" />}{label}</h2>
     <label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-primary/45 bg-primary/5 px-4 py-3 text-sm font-bold text-primary hover:bg-primary/10">
       <ImagePlus className="h-4 w-4" />Добавить фотографии
-      <input className="sr-only" type="file" accept="image/*" multiple onChange={addFiles} />
+      <input className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={addFiles} />
     </label>
     {value.length > 0 && <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
       {value.map((photo, index) => { const src = typeof photo === 'string' ? photo : photo?.src || ''; return <div key={`${src.slice(0, 24)}-${index}`} className="rb-card group relative overflow-hidden rounded-xl p-2">

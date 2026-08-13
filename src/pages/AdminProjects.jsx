@@ -76,6 +76,7 @@ const normalizeDocuments = (project) => {
 
 const projectTotal = (project) =>
   Number(project.finalTotal ?? project.total ?? project.calculatedTotal ?? 0);
+const requestError = (error, fallback) => error?.message || fallback;
 
 const publicationError = (project, total) => {
   if (!String(project.title || "").trim()) return "Укажите название проекта.";
@@ -148,8 +149,8 @@ function Content() {
       });
       setForm(blank());
       await refresh();
-    } catch {
-      setError("Не удалось сохранить проект в браузере. Уменьшите размер файлов и повторите попытку.");
+    } catch (saveError) {
+      setError(requestError(saveError, "Не удалось сохранить проект в Supabase."));
     }
   };
 
@@ -217,8 +218,8 @@ function Content() {
       setListError("");
       await setProjectPublished(project.id, nextPublished);
       await refresh();
-    } catch {
-      setListError("Не удалось обновить публикацию проекта в браузере.");
+    } catch (publishError) {
+      setListError(requestError(publishError, "Не удалось обновить публикацию проекта в Supabase."));
     }
   };
 

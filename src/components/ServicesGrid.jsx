@@ -1,9 +1,12 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { SERVICE_CATEGORIES } from "../lib/servicesData";
+import { formatCategoryPrice, SERVICE_CATEGORIES } from "../lib/servicesData";
+import { getServiceCategoryPrice } from "../lib/pricingStorage";
+import { usePricingOverrides } from "../hooks/usePricingState";
 import { ArrowRight } from "lucide-react";
 
 export default function ServicesGrid() {
+  const overrides = usePricingOverrides();
   const homeServices = SERVICE_CATEGORIES.filter((service) => service.showOnHome !== false);
 
   return (
@@ -54,7 +57,7 @@ export default function ServicesGrid() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent" />
                 <div className="absolute top-2 right-2 px-2.5 py-1 bg-white/90 dark:bg-black/70 backdrop-blur-sm rounded-lg">
-                  <span className="text-xs font-mono font-bold text-primary">{service.priceFrom}</span>
+                  <span className="text-xs font-mono font-bold text-primary">{formatCategoryPrice(service, getServiceCategoryPrice(service, overrides))}</span>
                 </div>
               </div>
               {/* Text */}

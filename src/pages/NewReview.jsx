@@ -26,14 +26,14 @@ export default function NewReview() {
     try {
       await saveReview({
         ...form,
-        photos: [],
+        photos: form.photos,
         rating: Number(form.rating),
         status: "pending",
         isPublished: false,
       });
       setDone(true);
-    } catch {
-      setError("Не удалось сохранить отзыв. Уменьшите размер или количество фотографий и повторите попытку.");
+    } catch (submitError) {
+      setError(submitError?.message || "Не удалось сохранить отзыв в Supabase.");
     }
   };
 

@@ -1,8 +1,13 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { formatCategoryPrice } from "../lib/servicesData";
+import { getServiceCategoryPrice } from "../lib/pricingStorage";
+import { usePricingOverrides } from "../hooks/usePricingState";
 
 export default function ServiceCard({ service, index }) {
+  const overrides = usePricingOverrides();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 28 }}
@@ -26,7 +31,7 @@ export default function ServiceCard({ service, index }) {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent" />
           <div className="absolute top-2.5 right-2.5 px-2.5 py-1 bg-white/90 dark:bg-black/70 backdrop-blur-sm rounded-lg border border-white/20">
-            <span className="text-xs font-mono font-bold text-primary">{service.priceFrom}</span>
+            <span className="text-xs font-mono font-bold text-primary">{formatCategoryPrice(service, getServiceCategoryPrice(service, overrides))}</span>
           </div>
         </div>
         <div className="p-4 sm:p-5 flex items-center justify-between">
