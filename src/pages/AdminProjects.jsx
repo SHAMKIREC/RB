@@ -11,6 +11,7 @@ import {
   setProjectPublished,
 } from "../lib/projectsStorage";
 
+/** @returns {any} */
 const blank = () => ({
   clientName: "",
   location: "",
@@ -105,11 +106,20 @@ function Content() {
 
   const refresh = async () => setItems(await getProjects());
   useEffect(() => {
-    const onStorage = (event) => { if (event.key === PROJECTS_STORAGE_KEY) refresh(); };
-    refresh();
+    let active = true;
+    const safeRefresh = async () => {
+      try {
+        const projects = await getProjects();
+        if (active) { setItems(projects); setListError(""); }
+      } catch {
+        if (active) setListError("Не удалось загрузить проекты. Попробуйте обновить страницу.");
+      }
+    };
+    const onStorage = (event) => { if (event.key === PROJECTS_STORAGE_KEY) safeRefresh(); };
+    safeRefresh();
     window.addEventListener("storage", onStorage);
-    window.addEventListener(PROJECTS_CHANGED_EVENT, refresh);
-    return () => { window.removeEventListener("storage", onStorage); window.removeEventListener(PROJECTS_CHANGED_EVENT, refresh); };
+    window.addEventListener(PROJECTS_CHANGED_EVENT, safeRefresh);
+    return () => { active = false; window.removeEventListener("storage", onStorage); window.removeEventListener(PROJECTS_CHANGED_EVENT, safeRefresh); };
   }, []);
 
   const works = useMemo(
@@ -217,9 +227,14 @@ function Content() {
     try {
       setListError("");
       await setProjectPublished(project.id, nextPublished);
-      await refresh();
     } catch (publishError) {
       setListError(requestError(publishError, "Не удалось обновить публикацию проекта в Supabase."));
+      return;
+    }
+    try {
+      await refresh();
+    } catch {
+      setListError("Публикация изменена, но список не удалось обновить. Обновите страницу.");
     }
   };
 
@@ -470,11 +485,11 @@ function Content() {
 
           {items.map((project) => {
             const groups = normalizePhotoGroups(project);
-            const previewGroups = [
+            const previewGroups = /** @type {Array<[string, any[]]>} */ ([
               ["До", groups.before],
               ["Процесс", groups.process],
               ["После", groups.after],
-            ].filter(([, photos]) => photos.length);
+            ]).filter(([, photos]) => photos.length);
             const preview = photoSrc(project.coverPhoto) || asPhotos(project.photos)[0];
 
             return (
@@ -554,8 +569,19 @@ function Content() {
                   <button
                     type="button"
                     onClick={async () => {
-                      await deleteProject(project.id);
-                      await refresh();
+                      try {
+                        await deleteProject(project.id);
+                      } catch {
+                        setListError("Не удалось полностью удалить проект. Попробуйте ещё раз.");
+                        try { await refresh(); } catch { /* keep the current list */ }
+                        return;
+                      }
+                      try {
+                        await refresh();
+                        setListError("");
+                      } catch {
+                        setListError("Проект удалён, но список не удалось обновить. Обновите страницу.");
+                      }
                     }}
                     className="text-destructive"
                   >

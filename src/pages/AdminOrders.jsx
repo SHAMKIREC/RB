@@ -10,6 +10,7 @@ import {
   setOrderPublished,
   setOrderStatus,
 } from "../lib/ordersStorage";
+/** @returns {any} */
 const blank = () => ({
   number: "",
   title: "",
@@ -49,7 +50,38 @@ function Content() {
     [form, setForm] = useState(blank()),
     [error, setError] = useState("");
   const refresh = async () => setOrders(await getOrders());
-  useEffect(() => { refresh(); getNextOrderNumber().then((number) => setForm((current) => ({ ...current, number }))); }, []);
+  const runListAction = async (action, failureMessage) => {
+    try {
+      await action();
+    } catch {
+      setError(failureMessage);
+      try { await refresh(); } catch { /* keep the current list */ }
+      return false;
+    }
+    try {
+      await refresh();
+      setError("");
+    } catch {
+      setError("Изменение сохранено, но список не удалось обновить. Обновите страницу.");
+    }
+    return true;
+  };
+  useEffect(() => {
+    let active = true;
+    const load = async () => {
+      try {
+        const [nextOrders, number] = await Promise.all([getOrders(), getNextOrderNumber()]);
+        if (active) {
+          setOrders(nextOrders);
+          setForm((current) => ({ ...current, number }));
+        }
+      } catch {
+        if (active) setError("Не удалось загрузить заказы. Попробуйте обновить страницу.");
+      }
+    };
+    load();
+    return () => { active = false; };
+  }, []);
   const works = useMemo(
     () => form.selectedWorks.reduce((s, w) => s + Number(w.totalPrice || 0), 0),
     [form.selectedWorks],
@@ -119,15 +151,21 @@ function Content() {
         ownerExpenses,
         expectedProfit,
         calculatedTotal: normalizedCalculatedTotal,
-        finalTotal: contractorPayment,
-        total: contractorPayment,
+        finalTotal: normalizedDisplayedTotal,
+        total: normalizedDisplayedTotal,
         materialsSubtotal: Number(form.materialsSubtotal || 0),
         surcharges: Number(form.surcharges || 0),
         isPublished: published,
         status: published ? "active" : "draft",
       });
-      setForm({ ...blank(), number: await getNextOrderNumber() });
-      await refresh();
+      setForm(blank());
+      try {
+        const number = await getNextOrderNumber();
+        setForm({ ...blank(), number });
+        await refresh();
+      } catch {
+        setError("Заказ сохранён, но список не удалось обновить. Обновите страницу.");
+      }
     } catch (saveError) {
       setError(requestError(saveError, "Не удалось сохранить заказ в Supabase."));
     }
@@ -137,7 +175,14 @@ function Content() {
       <div className="flex flex-col items-stretch gap-4 min-[420px]:flex-row min-[420px]:items-start min-[420px]:justify-between">
         <h1 className="text-3xl font-black">Управление заказами</h1>
         <button
-          onClick={async () => setForm({ ...blank(), number: await getNextOrderNumber() })}
+          onClick={async () => {
+            try {
+              setForm({ ...blank(), number: await getNextOrderNumber() });
+              setError("");
+            } catch {
+              setError("Не удалось получить номер заказа. Попробуйте ещё раз.");
+            }
+          }}
           className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white min-[420px]:w-auto min-[420px]:py-2"
         >
           Создать заказ
@@ -323,8 +368,10 @@ function Content() {
               </button>
               <button
                 onClick={async () => {
-                  await setOrderPublished(o.id, !o.isPublished);
-                  await refresh();
+                  await runListAction(
+                    () => setOrderPublished(o.id, !o.isPublished),
+                    "Не удалось изменить публикацию заказа. Попробуйте ещё раз.",
+                  );
                 }}
                 className="ml-3"
               >
@@ -332,8 +379,10 @@ function Content() {
               </button>
               <button
                 onClick={async () => {
-                  await setOrderStatus(o.id, "closed");
-                  await refresh();
+                  await runListAction(
+                    () => setOrderStatus(o.id, "closed"),
+                    "Не удалось закрыть заказ. Попробуйте ещё раз.",
+                  );
                 }}
                 className="ml-3"
               >
@@ -341,8 +390,10 @@ function Content() {
               </button>
               <button
                 onClick={async () => {
-                  await deleteOrder(o.id);
-                  await refresh();
+                  await runListAction(
+                    () => deleteOrder(o.id),
+                    "Не удалось полностью удалить заказ. Попробуйте ещё раз.",
+                  );
                 }}
                 className="ml-3 text-destructive"
               >

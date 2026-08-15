@@ -22,7 +22,7 @@ const toPhotoRecords = (photos) => (Array.isArray(photos) ? photos : [])
   })
   .filter(Boolean);
 
-function FormLabel({ icon: Icon, children, privateNote }) {
+function FormLabel({ icon: Icon, children, privateNote = false }) {
   return <span className="flex items-center gap-1.5"><Icon className="h-3.5 w-3.5 text-primary" />{children}{privateNote && <small className="ml-1 font-normal text-muted-foreground">Не отображается публично</small>}</span>;
 }
 
@@ -46,27 +46,39 @@ function Content() {
   const [editing, setEditing] = useState(null);
   const [actionError, setActionError] = useState("");
   const refresh = async () => setReviews(await getReviews());
-  useEffect(() => { refresh(); }, []);
+  useEffect(() => {
+    let active = true;
+    getReviews()
+      .then((items) => { if (active) setReviews(items); })
+      .catch(() => { if (active) setActionError("Не удалось загрузить отзывы. Попробуйте обновить страницу."); });
+    return () => { active = false; };
+  }, []);
 
   const act = async (callback) => {
     try {
       await callback();
-      setActionError("");
-      await refresh();
     } catch (error) {
       setActionError(error?.message || "Не удалось сохранить изменения в Supabase.");
+      return false;
     }
+    try {
+      await refresh();
+      setActionError("");
+    } catch {
+      setActionError("Изменение сохранено, но список не удалось обновить. Обновите страницу.");
+    }
+    return true;
   };
 
   const saveEditing = async (event) => {
     event.preventDefault();
     if (!editing) return;
-    await act(() => saveReview({
+    const saved = await act(() => saveReview({
       ...editing,
       rating: Number(editing.rating),
       photos: toPhotoRecords(editing.photos),
     }));
-    setEditing(null);
+    if (saved) setEditing(null);
   };
 
   return (

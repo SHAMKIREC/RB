@@ -1,20 +1,35 @@
 import { supabase, requireSupabase } from './supabaseClient';
 
 const EVENT = 'rb-pricing-changed';
+const ERROR_EVENT = 'rb-pricing-error';
 const INLINE_EDIT_KEY = 'rb_inline_edit';
 const INLINE_EDIT_EVENT = 'rb-inline-edit-changed';
 let cache = {};
+let pricingError = null;
 const emit = () => window.dispatchEvent(new CustomEvent(EVENT));
+const emitError = () => window.dispatchEvent(new CustomEvent(ERROR_EVENT));
 
 export const getPricingOverrides = () => cache;
+export const getPricingError = () => pricingError;
 export async function loadPricingOverrides() {
-  if (!supabase) return cache;
+  if (!supabase) {
+    pricingError = new Error('Pricing is unavailable because Supabase is not configured.');
+    emitError();
+    throw pricingError;
+  }
   const { data, error } = await supabase.from('pricing_overrides').select('scope,item_id,price');
-  if (error) throw error;
+  if (error) {
+    pricingError = error;
+    emitError();
+    throw pricingError;
+  }
   cache = (data || []).reduce((result, row) => ({ ...result, [row.scope]: { ...(result[row.scope] || {}), [row.item_id]: Number(row.price) } }), {});
+  pricingError = null;
+  emitError();
   emit(); return cache;
 }
 export const subscribeToPricing = (callback) => { window.addEventListener(EVENT, callback); return () => window.removeEventListener(EVENT, callback); };
+export const subscribeToPricingError = (callback) => { window.addEventListener(ERROR_EVENT, callback); return () => window.removeEventListener(ERROR_EVENT, callback); };
 export async function setPriceOverride(scope, id, price) {
   const nextPrice = Number(price); if (!Number.isFinite(nextPrice) || nextPrice < 0) return false;
   const { error } = await requireSupabase().from('pricing_overrides').upsert({ scope, item_id: id, price: nextPrice }, { onConflict: 'scope,item_id' });

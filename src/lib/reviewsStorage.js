@@ -32,7 +32,11 @@ export async function saveReview(review) {
       return mapReview({ ...payload, photos, created_at: new Date().toISOString(), status: 'pending', is_published: false });
     } catch (submitError) {
       if (paths.length) await removeFiles(STORAGE_BUCKETS.reviews, paths).catch(() => {});
-      await client.rpc('discard_pending_review', { review_id: id }).catch(() => {});
+      try {
+        await client.rpc('discard_pending_review', { review_id: id });
+      } catch {
+        // Best-effort cleanup must never replace the original submit error.
+      }
       throw submitError;
     }
   }

@@ -13,10 +13,18 @@ export default function AdminGate({ children }) {
   const [allowed, setAllowed] = useState(false); const [loading, setLoading] = useState(true); const [pin, setPin] = useState(''); const [error, setError] = useState('');
   const configured = isSupabaseConfigured && Boolean(import.meta.env.VITE_ADMIN_EMAIL);
   useEffect(() => {
-    isAdminSessionActive().then(setAllowed).finally(() => setLoading(false));
-    return subscribeToAdminSession(setAllowed);
+    let active = true;
+    isAdminSessionActive()
+      .then((isAllowed) => { if (active) setAllowed(isAllowed); })
+      .catch(() => { if (active) { setAllowed(false); setError('Не удалось проверить доступ. Попробуйте ещё раз.'); } })
+      .finally(() => { if (active) setLoading(false); });
+    const unsubscribe = subscribeToAdminSession(
+      (isAllowed) => { if (active) { setAllowed(isAllowed); setLoading(false); } },
+      () => { if (active) setError('Не удалось проверить доступ. Попробуйте ещё раз.'); },
+    );
+    return () => { active = false; unsubscribe(); };
   }, []);
   if (loading) return <div className="page-shell py-12" />;
-  if (allowed) return <><AdminNavigation onExit={async () => { await endAdminSession(); setAllowed(false); }} />{children}</>;
-  return <div className="page-shell py-12"><div className="mx-auto max-w-md rounded-2xl border border-border bg-card p-6 shadow-sm"><h1 className="text-2xl font-black">Вход владельца сайта</h1><p className="mt-2 text-sm text-muted-foreground">Локальный режим управления заказами и проектами.</p>{!configured ? <p className="mt-3 text-sm text-destructive">Административный доступ не настроен.</p> : <form onSubmit={async (event) => { event.preventDefault(); setError(''); const ok = await startAdminSession(pin); if (ok) setAllowed(true); else setError('Неверный PIN.'); }} className="mt-5 space-y-3"><input value={pin} onChange={(event) => setPin(event.target.value)} type="password" inputMode="text" autoCapitalize="none" autoCorrect="off" className="w-full rounded-xl border border-border bg-background px-3 py-2.5" placeholder="PIN"/><button className="w-full rounded-xl bg-primary py-2.5 text-sm font-bold text-white">Войти</button>{error && <p className="text-xs text-destructive">{error}</p>}</form>}</div></div>;
+  if (allowed) return <><AdminNavigation onExit={async () => { try { await endAdminSession(); setAllowed(false); } catch { setError('Не удалось завершить сессию. Попробуйте ещё раз.'); } }} />{children}</>;
+  return <div className="page-shell py-12"><div className="mx-auto max-w-md rounded-2xl border border-border bg-card p-6 shadow-sm"><h1 className="text-2xl font-black">Вход владельца сайта</h1><p className="mt-2 text-sm text-muted-foreground">Локальный режим управления заказами и проектами.</p>{!configured ? <p className="mt-3 text-sm text-destructive">Административный доступ не настроен.</p> : <form onSubmit={async (event) => { event.preventDefault(); setError(''); try { const ok = await startAdminSession(pin); if (ok) setAllowed(true); else setError('Неверный PIN.'); } catch { setError('Не удалось выполнить вход. Попробуйте ещё раз.'); } }} className="mt-5 space-y-3"><input value={pin} onChange={(event) => setPin(event.target.value)} type="password" inputMode="text" autoCapitalize="none" autoCorrect="off" className="w-full rounded-xl border border-border bg-background px-3 py-2.5" placeholder="PIN"/><button className="w-full rounded-xl bg-primary py-2.5 text-sm font-bold text-white">Войти</button>{error && <p className="text-xs text-destructive">{error}</p>}</form>}</div></div>;
 }

@@ -21,13 +21,22 @@ export default function ProjectDetail() {
   const [review, setReview] = useState(null);
   const [openIndex, setOpenIndex] = useState(null);
   const [expanded, setExpanded] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     const refresh = async () => {
-      const item = await getProject(projectId);
-      setProject(item);
-      const reviews = item ? await getPublishedReviews() : [];
-      setReview(item ? reviews.find((entry) => entry.clientName === item.clientName && entry.serviceTitle === item.title) || null : null);
+      try {
+        const item = await getProject(projectId);
+        setProject(item);
+        const reviews = item ? await getPublishedReviews() : [];
+        setReview(item ? reviews.find((entry) => entry.clientName === item.clientName && entry.serviceTitle === item.title) || null : null);
+        setLoadError(false);
+      } catch {
+        setLoadError(true);
+      } finally {
+        setLoaded(true);
+      }
     };
     const onStorage = (event) => { if (event.key === PROJECTS_STORAGE_KEY) refresh(); };
     refresh();
@@ -57,6 +66,8 @@ export default function ProjectDetail() {
     return () => { window.removeEventListener('keydown', key); document.body.style.overflow = ''; };
   }, [openIndex, photos.length]);
 
+  if (!loaded) return <div className="page-shell py-16" />;
+  if (loadError) return <div className="page-shell py-16">Не удалось загрузить данные. Попробуйте обновить страницу.</div>;
   if (!project || !project.isPublished) return <div className="page-shell py-16">Проект не найден.</div>;
 
   return <div className="page-shell py-10 sm:py-16">

@@ -7,7 +7,8 @@ const photoSrc = (photo) => (typeof photo === "string" ? photo : photo?.src || "
 
 export default function Reviews() {
   const [reviews, setReviews] = useState([]);
-  useEffect(() => { getPublishedReviews().then(setReviews).catch(() => setReviews([])); }, []);
+  const [loadError, setLoadError] = useState(false);
+  useEffect(() => { getPublishedReviews().then((items) => { setReviews(items); setLoadError(false); }).catch(() => setLoadError(true)); }, []);
 
   return (
     <div className="page-shell py-7 sm:py-10">
@@ -19,7 +20,9 @@ export default function Reviews() {
         </div>
         <Link to="/reviews/new" className="rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white">Оставить отзыв</Link>
       </div>
-      {reviews.length ? (
+      {loadError ? (
+        <div className="rounded-2xl border border-dashed border-border px-6 py-14 text-center text-muted-foreground">Не удалось загрузить данные. Попробуйте обновить страницу.</div>
+      ) : reviews.length ? (
         <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {reviews.map((review) => (
             <article key={review.id} className="rb-card flex flex-col rounded-2xl p-5">
