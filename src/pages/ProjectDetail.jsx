@@ -12,6 +12,8 @@ import {
   PROJECTS_STORAGE_KEY,
 } from '../lib/projectsStorage';
 import { getPublishedReviewForProject } from '../lib/reviewsStorage';
+import SeoHead from '../components/SeoHead';
+import { breadcrumbSchema, compactDescription } from '../lib/seo';
 
 const money = (value) => `${Math.round(value || 0).toLocaleString('ru-RU')} ₽`;
 const groupLabels = { before: 'До ремонта', process: 'В процессе', after: 'После ремонта' };
@@ -82,10 +84,15 @@ export default function ProjectDetail() {
   }, [openIndex, photos.length]);
 
   if (!loaded) return <div className="page-shell py-16" />;
-  if (loadError) return <div className="page-shell py-16">Не удалось загрузить данные. Попробуйте обновить страницу.</div>;
-  if (!project || !project.isPublished) return <div className="page-shell py-16">Проект не найден.</div>;
+  if (loadError) return <><SeoHead title="Проект временно недоступен | РБ" description="Не удалось загрузить опубликованный проект." noIndex noFollow socialPreview={false} /><div className="page-shell py-16">Не удалось загрузить данные. Попробуйте обновить страницу.</div></>;
+  if (!project || !project.isPublished) return <><SeoHead title="Проект не найден | РБ" description="Опубликованный проект не найден." noIndex noFollow socialPreview={false} /><div className="page-shell py-16">Проект не найден.</div></>;
+
+  const seoTitle = `${project.title} — проект в Саратове | РБ`;
+  const seoDescription = compactDescription(project.description, `Завершённый проект «${project.title}»: выполненные работы, фотографии объекта и итоговая смета.`);
+  const canonicalPath = `/projects/${encodeURIComponent(project.id)}`;
 
   return <div className="page-shell py-10 sm:py-16">
+    <SeoHead title={seoTitle} description={seoDescription} canonicalPath={canonicalPath} type="article" schemas={[breadcrumbSchema([{ name: 'Главная', path: '/' }, { name: 'Проекты', path: '/projects' }, { name: project.title, path: canonicalPath }])]} />
     <Link to="/projects" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary"><ArrowLeft className="h-4 w-4" />Все проекты</Link>
     <div className="mt-6 text-sm">
       <p className="font-semibold text-foreground">{project.clientName || 'Клиент не указан'}</p>

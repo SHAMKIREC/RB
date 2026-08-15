@@ -1,0 +1,19 @@
+{
+  "name": "РБ Решаем Быстро",
+  "short_name": "РБ",
+  "description": "Ремонт и строительные услуги в Саратове",
+  "lang": "ru-RU",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ff4b19",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://rb-24.ru/</loc><priority>1.0</priority></url>
+  <url><loc>https://rb-24.ru/services</loc><priority>0.9</priority></url>
+  <url><loc>https://rb-24.ru/calculator</loc><priority>0.8</priority></url>
+  <url><loc>https://rb-24.ru/orders</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/projects</loc><priority>0.8</priority></url>
+  <url><loc>https://rb-24.ru/reviews</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/documentation</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/about</loc><priority>0.6</priority></url>
+  <url><loc>https://rb-24.ru/nrv-digital</loc><priority>0.6</priority></url>
+  <url><loc>https://rb-24.ru/services?category=floors</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=walls</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=tiles</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=electric</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=plumbing</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=doors</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=demolition</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=drywall</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=ceilings</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=balcony</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=turnkey</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=metal</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=fences</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=canopies</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=stairs</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=gazebos</loc><priority>0.7</priority></url>
+  <url><loc>https://rb-24.ru/services?category=bathhouses</loc><priority>0.7</priority></url>
+</urlset>

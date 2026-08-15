@@ -1,89 +1,77 @@
-import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-
-const DEFAULT_IMAGE = '/assets/hero-image.png';
+import SeoHead from './SeoHead';
+import { breadcrumbSchema, MAIN_SITE_SCHEMAS } from '../lib/seo';
 
 const pages = {
   '/': {
-    title: 'Ремонт квартир в Саратове под ключ | РБ Решаем Быстро',
-    description: 'Ремонт квартир, отделочные и строительные работы в Саратове. Компания РБ выполняет ремонт под ключ, электрику, сантехнику, отделку и строительные работы.',
+    title: 'Ремонт и строительные услуги в Саратове | РБ Решаем Быстро',
+    description: 'Ремонт квартир и строительные работы в Саратове. Полы, стены, плитка, электрика, сантехника, ремонт под ключ. Расчёт стоимости онлайн.',
+    schemas: MAIN_SITE_SCHEMAS,
   },
   '/calculator': {
-    title: 'Калькулятор ремонта в Саратове | РБ Решаем Быстро',
-    description: 'Рассчитайте предварительную стоимость ремонта, отделочных и строительных работ в Саратове.',
+    title: 'Калькулятор ремонта в Саратове — расчёт стоимости | РБ',
+    description: 'Рассчитайте предварительную стоимость ремонта, отделочных и строительных работ в Саратове с помощью онлайн-калькулятора РБ.',
+    label: 'Калькулятор ремонта',
   },
   '/orders': {
-    title: 'Активные заказы на строительные работы в Саратове | РБ',
-    description: 'Актуальные заказы на ремонтные, отделочные и строительные работы в Саратове.',
+    title: 'Заказы на ремонтные работы в Саратове | РБ',
+    description: 'Опубликованные заказы на ремонтные, отделочные и строительные работы в Саратове: состав работ, сроки и оплата исполнителю.',
+    label: 'Активные заказы',
   },
   '/projects': {
     title: 'Проекты ремонта и строительства в Саратове | РБ',
-    description: 'Примеры выполненных строительных и ремонтных работ компании РБ в Саратове.',
+    description: 'Завершённые проекты РБ в Саратове: фотографии объектов, выполненные ремонтные и строительные работы, сроки и итоговые сметы.',
+    label: 'Проекты',
   },
   '/reviews': {
-    title: 'Отзывы о ремонте в Саратове | РБ Решаем Быстро',
-    description: 'Отзывы клиентов о ремонте квартир, строительных и отделочных работах компании РБ.',
+    title: 'Отзывы клиентов о ремонте и строительстве | РБ Саратов',
+    description: 'Отзывы клиентов о ремонтных, отделочных и строительных работах компании РБ Решаем Быстро в Саратове.',
+    label: 'Отзывы',
   },
   '/reviews/new': {
     title: 'Оставить отзыв | РБ Решаем Быстро',
-    description: 'Оставьте отзыв о выполненных ремонтных, строительных или отделочных работах компании РБ.',
+    description: 'Форма для отзыва о выполненных ремонтных, строительных или отделочных работах компании РБ.',
+    label: 'Оставить отзыв',
+    noIndex: true,
+    noFollow: true,
   },
   '/documentation': {
-    title: 'ППР, ПОС, ПОР, КМД в Саратове | Строительная документация РБ',
-    description: 'Разработка строительной документации в Саратове: ППР, ПОС, ПОР, КМД, технологические карты и сметы.',
+    title: 'ППР, ПОС, ПОР, КМД и сметы | Строительная документация',
+    description: 'Разработка ППР, ПОС, ПОР, КМД, технологических карт и смет для строительных работ. Подготовка документации по исходным данным.',
+    label: 'Строительная документация',
   },
   '/about': {
-    title: 'О компании РБ Решаем Быстро | Строительные услуги в Саратове',
-    description: 'Информация о компании РБ Решаем Быстро и строительных услугах в Саратове.',
+    title: 'О компании РБ Решаем Быстро | Ремонт в Саратове',
+    description: 'О компании РБ Решаем Быстро: ремонт квартир, отделочные и строительные работы в Саратове, порядок работы и способы связи.',
+    label: 'О нас',
   },
   '/nrv-digital': {
-    title: 'NRV DIGITAL | Сайты и веб-приложения',
-    description: 'Разработка сайтов, каталогов, калькуляторов и веб-приложений NRV DIGITAL.',
+    title: 'NRV DIGITAL — разработка сайтов и веб-приложений',
+    description: 'NRV DIGITAL разрабатывает сайты, каталоги, онлайн-калькуляторы и веб-приложения: проектирование, автоматизация и поддержка.',
+    label: 'NRV DIGITAL',
   },
-};
-
-const setMeta = (selector, attribute, value) => {
-  let element = document.head.querySelector(selector);
-  if (!element) {
-    element = document.createElement('meta');
-    element.setAttribute(attribute, selector.match(/="([^"]+)"/)?.[1] || '');
-    document.head.appendChild(element);
-  }
-  element.setAttribute('content', value);
 };
 
 export default function PageSeo() {
   const { pathname } = useLocation();
 
-  useEffect(() => {
-    if (pathname === '/services' || pathname.startsWith('/category/')) return;
+  if (pathname === '/services' || pathname.startsWith('/category/')) return null;
+  if (/^\/(projects|orders)\/[^/]+$/.test(pathname)) return null;
 
-    const isAdmin = pathname.startsWith('/admin/');
-    const isOrder = pathname.startsWith('/orders/');
-    const isProject = pathname.startsWith('/projects/');
-    const isKnownPage = Boolean(pages[pathname] || isOrder || isProject);
-    const config = pages[pathname]
-      || (isOrder ? { title: 'Заказ на строительные работы | РБ', description: 'Информация об активном заказе на строительные и ремонтные работы.' } : null)
-      || (isProject ? { title: 'Проект ремонта и строительства | РБ', description: 'Информация о выполненном строительном или ремонтном проекте компании РБ.' } : null)
-      || { title: 'Страница не найдена | РБ Решаем Быстро', description: 'Запрашиваемая страница не найдена.' };
-    const title = isAdmin ? 'Администрирование | РБ' : config.title;
-    const description = isAdmin ? 'Панель администрирования сайта РБ.' : config.description;
-    const image = new URL(DEFAULT_IMAGE, window.location.origin).href;
+  const isAdmin = pathname === '/admin' || pathname.startsWith('/admin/');
+  if (isAdmin) {
+    return <SeoHead title="Администрирование | РБ" description="Служебный раздел сайта." noIndex noFollow socialPreview={false} />;
+  }
 
-    document.head.querySelector('link[rel="canonical"]')?.remove();
-    document.getElementById('service-schema')?.remove();
-    document.title = title;
-    setMeta('meta[name="description"]', 'name', description);
-    setMeta('meta[name="robots"]', 'name', isAdmin || !isKnownPage ? 'noindex, nofollow' : 'index, follow');
-    setMeta('meta[property="og:title"]', 'property', title);
-    setMeta('meta[property="og:description"]', 'property', description);
-    setMeta('meta[property="og:type"]', 'property', 'website');
-    setMeta('meta[property="og:image"]', 'property', image);
-    setMeta('meta[name="twitter:card"]', 'name', 'summary_large_image');
-    setMeta('meta[name="twitter:title"]', 'name', title);
-    setMeta('meta[name="twitter:description"]', 'name', description);
-    setMeta('meta[name="twitter:image"]', 'name', image);
-  }, [pathname]);
+  const config = pages[pathname];
+  if (!config) {
+    return <SeoHead title="Страница не найдена | РБ Решаем Быстро" description="Запрашиваемая страница не найдена." noIndex noFollow socialPreview={false} />;
+  }
 
-  return null;
+  const schemas = config.schemas || (config.label ? [breadcrumbSchema([
+    { name: 'Главная', path: '/' },
+    { name: config.label, path: pathname },
+  ])] : []);
+
+  return <SeoHead {...config} canonicalPath={pathname} schemas={schemas} />;
 }
