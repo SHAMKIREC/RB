@@ -32,6 +32,10 @@ export const VK_URL = 'https://vk.ru/club237262784';
 export const CITY = 'Саратов';
 export const MIN_ORDER = 5000;
 
+/** @typedef {[string, number, string]} CatalogItem */
+/** @typedef {[string, string, string, CatalogItem[]]} CatalogSection */
+/** @typedef {[string, string, string, string, string, CatalogSection[]]} CatalogCategory */
+/** @type {CatalogCategory[]} */
 const catalog = [
   ['floors','Полы','/assets/catalog-floors.png','от 450 ₽/м²','Укладка и ремонт напольных покрытий в квартирах и домах. Подбираем технологию под основание, покрытие и нагрузку.',[
     ['floors_finish','Напольные покрытия','https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=800&q=80',[['Укладка ламината',600,'м²'],['Укладка кварцвинила',800,'м²'],['Укладка линолеума',450,'м²'],['Укладка паркета',1200,'м²']]],

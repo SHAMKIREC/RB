@@ -144,7 +144,7 @@ export default function CalcCategory({ category, quantities, withMaterials, onCh
 
   const categoryTotal = category.groups.reduce((cs, group) =>
     cs + group.items.reduce((gs, item) => {
-      const price = mode === "dismount" ? item.dismount : item.mount;
+      const price = item.mount;
       const qty = quantities[item.id] || 0;
       let mat = 0;
       if (withMaterials && qty) mat = item.materials.reduce((ms, m) => ms + m.consumption * qty * m.price * 1.2, 0);
