@@ -3,7 +3,7 @@ import { errorMessage, removeFiles, signedImageUrl, signedUrls, STORAGE_BUCKETS,
 
 const numberValue = (value) => Number(value || 0);
 const camelWork = (row) => ({ workId: row.work_id, categoryId: row.category_id, groupId: row.group_id, title: row.title, unit: row.unit, unitPrice: numberValue(row.unit_price), quantity: numberValue(row.quantity), totalPrice: numberValue(row.total_price), sortOrder: row.sort_order });
-const camelOrder = (row) => ({ id: row.id, number: row.number, title: row.title, location: row.location, description: row.description, preferredDeadline: row.preferred_deadline, selectedWorks: (row.order_works || row.selected_works || []).map(camelWork), workSubtotal: numberValue(row.work_subtotal), materialsSubtotal: numberValue(row.materials_subtotal), surcharges: numberValue(row.surcharges), calculatedCost: numberValue(row.calculated_cost), calculatedTotal: numberValue(row.calculated_total), finalTotal: numberValue(row.final_total), total: numberValue(row.total), contractorPayment: numberValue(row.contractor_payment), clientPrice: numberValue(row.client_price), ownerExpenses: numberValue(row.owner_expenses), expectedProfit: numberValue(row.expected_profit), photos: row.photos || [], status: row.status || 'draft', isPublished: row.is_published ?? true, isManualTotal: row.is_manual_total || false, isDemo: row.is_demo || false, createdAt: row.created_at, updatedAt: row.updated_at });
+const camelOrder = (row) => ({ id: row.id, number: row.number, title: row.title, location: row.location, description: row.description, preferredDeadline: row.preferred_deadline, selectedWorks: (row.order_works || row.selected_works || []).map(camelWork), worksCount: row.works_count == null ? undefined : numberValue(row.works_count), workSubtotal: numberValue(row.work_subtotal), materialsSubtotal: numberValue(row.materials_subtotal), surcharges: numberValue(row.surcharges), calculatedCost: numberValue(row.calculated_cost), calculatedTotal: numberValue(row.calculated_total), finalTotal: numberValue(row.final_total), total: numberValue(row.total), contractorPayment: numberValue(row.contractor_payment), clientPrice: numberValue(row.client_price), ownerExpenses: numberValue(row.owner_expenses), expectedProfit: numberValue(row.expected_profit), photos: row.photos || [], status: row.status || 'draft', isPublished: row.is_published ?? true, isManualTotal: row.is_manual_total || false, isDemo: row.is_demo || false, createdAt: row.created_at, updatedAt: row.updated_at });
 
 const withPhotoUrls = async (order, admin = false) => {
   const urls = await signedUrls(STORAGE_BUCKETS.orders, order.photos);
@@ -22,9 +22,9 @@ export async function getOrders() {
 }
 
 export async function getPublishedOrders(from = 0, to = 11) {
-  const { data, error, count } = await requireSupabase().from('published_orders').select('id,number,title,location,description,preferred_deadline,contractor_payment,photos,created_at,updated_at,selected_works', { count: 'exact' }).order('updated_at', { ascending: false }).order('id', { ascending: false }).range(from, to);
+  const { data, error, count } = await requireSupabase().from('published_orders_list').select('id,number,title,location,description,preferred_deadline,contractor_payment,cover_path,works_count,created_at,updated_at', { count: 'exact' }).order('updated_at', { ascending: false }).order('id', { ascending: false }).range(from, to);
   if (error) throw new Error(`Database read error (published orders): ${errorMessage(error)}`);
-  const items = await Promise.all((data || []).map((row) => withCoverUrl(camelOrder({ ...row, status: 'active', is_published: true }))));
+  const items = await Promise.all((data || []).map((row) => withCoverUrl(camelOrder({ ...row, photos: row.cover_path ? [row.cover_path] : [], status: 'active', is_published: true }))));
   return { items, hasMore: count == null ? items.length === to - from + 1 : from + items.length < count };
 }
 
