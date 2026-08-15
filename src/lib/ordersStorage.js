@@ -28,11 +28,6 @@ export async function getOrder(id) {
   return data ? withPhotoUrls(camelOrder({ ...data, status: 'active', is_published: true }), false) : null;
 }
 
-export async function getNextOrderNumber() {
-  const { data, error } = await requireSupabase().from('orders').select('number').order('number', { ascending: false }).limit(1).maybeSingle();
-  if (error) throw error;
-  return Math.max(1046, Number(data?.number) || 0) + 1;
-}
 
 export async function saveOrder(order) {
   const client = requireSupabase();
@@ -40,9 +35,11 @@ export async function saveOrder(order) {
   const { data: current, error: currentError } = order.id ? await client.from('orders').select('photos').eq('id', id).maybeSingle() : { data: null, error: null };
   if (currentError) throw new Error(`Не удалось прочитать фотографии заказа: ${errorMessage(currentError)}`);
   const payload = { id, title: order.title, location: order.location || '', description: order.description || '', preferred_deadline: order.preferredDeadline || '', work_subtotal: numberValue(order.workSubtotal), materials_subtotal: numberValue(order.materialsSubtotal), surcharges: numberValue(order.surcharges), calculated_cost: numberValue(order.calculatedCost), calculated_total: numberValue(order.calculatedTotal), final_total: numberValue(order.finalTotal), total: numberValue(order.total), contractor_payment: numberValue(order.contractorPayment), client_price: numberValue(order.clientPrice), owner_expenses: numberValue(order.ownerExpenses), expected_profit: numberValue(order.expectedProfit), status: order.status || 'draft', is_published: Boolean(order.isPublished), is_manual_total: Boolean(order.isManualTotal), is_demo: Boolean(order.isDemo) };
-  if (order.number) payload.number = Number(order.number);
-  const { data: saved, error } = await client.from('orders').upsert(payload).select().single();
-  if (error) throw new Error(`Database insert error (orders): ${errorMessage(error)}`);
+  const saveQuery = isNew
+    ? client.from('orders').insert(payload, { defaultToNull: false })
+    : client.from('orders').update(payload).eq('id', id);
+  const { data: saved, error } = await saveQuery.select().single();
+  if (error) throw new Error(`Database ${isNew ? 'insert' : 'update'} error (orders): ${errorMessage(error)}`);
   const oldPhotos = current?.photos || []; let photos = [];
   try {
     photos = await uploadOrderPhotos(id, order.photos || []);

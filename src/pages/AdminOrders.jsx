@@ -4,7 +4,6 @@ import WorkPicker from "../components/admin/WorkPicker";
 import PhotoUploader from "../components/PhotoUploader";
 import {
   deleteOrder,
-  getNextOrderNumber,
   getOrders,
   saveOrder,
   setOrderPublished,
@@ -70,11 +69,8 @@ function Content() {
     let active = true;
     const load = async () => {
       try {
-        const [nextOrders, number] = await Promise.all([getOrders(), getNextOrderNumber()]);
-        if (active) {
-          setOrders(nextOrders);
-          setForm((current) => ({ ...current, number }));
-        }
+        const nextOrders = await getOrders();
+        if (active) setOrders(nextOrders);
       } catch {
         if (active) setError("Не удалось загрузить заказы. Попробуйте обновить страницу.");
       }
@@ -160,8 +156,6 @@ function Content() {
       });
       setForm(blank());
       try {
-        const number = await getNextOrderNumber();
-        setForm({ ...blank(), number });
         await refresh();
       } catch {
         setError("Заказ сохранён, но список не удалось обновить. Обновите страницу.");
@@ -175,13 +169,9 @@ function Content() {
       <div className="flex flex-col items-stretch gap-4 min-[420px]:flex-row min-[420px]:items-start min-[420px]:justify-between">
         <h1 className="text-3xl font-black">Управление заказами</h1>
         <button
-          onClick={async () => {
-            try {
-              setForm({ ...blank(), number: await getNextOrderNumber() });
-              setError("");
-            } catch {
-              setError("Не удалось получить номер заказа. Попробуйте ещё раз.");
-            }
+          onClick={() => {
+            setForm(blank());
+            setError("");
           }}
           className="w-full rounded-xl bg-primary px-4 py-3 text-sm font-bold text-white min-[420px]:w-auto min-[420px]:py-2"
         >
@@ -209,10 +199,11 @@ function Content() {
                   {label}
                   <input
                     required={key === "title" || key === "location"}
-                    value={form[key]}
-                    onChange={(e) =>
-                      setForm({ ...form, [key]: e.target.value })
-                    }
+                    value={key === "number" && !form.id ? "Новый заказ" : form[key]}
+                    readOnly={key === "number"}
+                    onChange={(e) => {
+                      if (key !== "number") setForm({ ...form, [key]: e.target.value });
+                    }}
                     className="mt-1 block w-full rounded-xl border border-border bg-background px-3 py-2 font-normal"
                   />
                 </label>
