@@ -23,6 +23,7 @@ import About from './pages/About';
 import NrvDigital from './pages/NrvDigital';
 import ScrollToTop from './components/ScrollToTop';
 import PageSeo from './components/PageSeo';
+import YandexMetrika from './components/YandexMetrika';
 
 const LegacyCategoryRedirect = () => {
   const { slug } = useParams();
@@ -87,6 +88,7 @@ function App() {
         <Router>
           <ScrollToTop />
           <PageSeo />
+          <YandexMetrika />
           <AuthenticatedApp />
         </Router>
         <Toaster />
