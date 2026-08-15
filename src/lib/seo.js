@@ -1,6 +1,6 @@
 export const SITE_URL = 'https://rb-24.ru';
 export const SITE_NAME = 'РБ Решаем Быстро';
-export const DEFAULT_OG_IMAGE = '/assets/hero-image.png';
+export const DEFAULT_OG_IMAGE = '/og/rb-preview-1200x630.jpg';
 
 export const absoluteUrl = (value = '/') => {
   try {
