@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Crown, LogOut, Ruler, Wrench } from 'lucide-react';
+import { Crown, LogOut } from 'lucide-react';
 import adminBuilderLeft from '@/assets/images/admin/admin-builder-left.png';
 import adminBuilderRight from '@/assets/images/admin/admin-builder-right.png';
+import adminLoginBackground from '@/assets/images/admin/admin-login-background.png';
+import adminLoginFrame from '@/assets/images/admin/admin-login-frame.png';
 import { endAdminSession, isAdminSessionActive, startAdminSession, subscribeToAdminSession } from '../lib/adminSession';
 import { isSupabaseConfigured } from '../lib/supabaseClient';
 import { enableInlineEditMode } from '../lib/pricingStorage';
@@ -29,46 +31,57 @@ export default function AdminGate({ children }) {
   if (loading) return <div className="page-shell py-12" />;
   if (allowed) return <><AdminNavigation onExit={async () => { try { await endAdminSession(); setAllowed(false); } catch { setError('Не удалось завершить сессию. Попробуйте ещё раз.'); } }} />{children}</>;
   return (
-    <section className="relative isolate overflow-hidden">
-      <Ruler aria-hidden="true" className="pointer-events-none absolute left-[7%] top-16 hidden h-24 w-24 -rotate-12 text-primary opacity-[0.07] md:block" />
-      <Wrench aria-hidden="true" className="pointer-events-none absolute right-[8%] top-20 hidden h-20 w-20 rotate-12 text-primary opacity-[0.06] md:block" />
-      <Crown aria-hidden="true" className="pointer-events-none absolute bottom-16 left-1/2 hidden h-24 w-24 -translate-x-1/2 rotate-6 text-primary opacity-[0.04] lg:block" />
+    <section className="relative isolate min-h-[540px] overflow-hidden bg-[#d9c1a3] sm:min-h-[570px] lg:min-h-[590px] xl:min-h-[610px]">
+      <img
+        src={adminLoginBackground}
+        alt=""
+        className="absolute inset-0 h-full w-full object-cover object-center xl:object-fill"
+      />
+      <div className="absolute inset-0 bg-white/5 md:bg-transparent" aria-hidden="true" />
 
-      <div className="page-shell grid min-h-[520px] items-end py-14 sm:min-h-[560px] sm:py-16 min-[1200px]:min-h-[600px] min-[1200px]:grid-cols-[minmax(240px,1fr)_minmax(420px,500px)_minmax(240px,1fr)] min-[1200px]:gap-5 min-[1200px]:py-10 2xl:gap-8">
-        <figure className="relative hidden h-[430px] min-w-0 items-end justify-center min-[1200px]:flex 2xl:h-[470px]">
+      <img
+        src={adminBuilderLeft}
+        alt=""
+        className="pointer-events-none absolute bottom-0 z-10 hidden h-[88%] w-auto max-w-none object-contain object-bottom lg:left-[-70px] lg:block xl:left-[calc(50%-700px)] xl:h-[96%] 2xl:left-[calc(50%-735px)]"
+      />
+      <img
+        src={adminBuilderRight}
+        alt=""
+        className="pointer-events-none absolute bottom-0 z-10 hidden h-[88%] w-auto max-w-none object-contain object-bottom lg:right-[-70px] lg:block xl:right-[calc(50%-700px)] xl:h-[96%] 2xl:right-[calc(50%-735px)]"
+      />
+
+      <p className="pointer-events-none absolute left-[calc(50%-420px)] top-16 z-20 hidden -rotate-6 font-serif text-2xl italic text-stone-800/75 xl:block">
+        Вход только
+      </p>
+      <p className="pointer-events-none absolute right-[calc(50%-420px)] top-16 z-20 hidden rotate-3 font-serif text-2xl italic text-stone-800/75 xl:block">
+        для Короля
+      </p>
+      <p className="pointer-events-none absolute bottom-24 left-[3.5%] z-20 hidden max-w-[210px] -rotate-3 text-center font-serif text-xl italic leading-tight text-stone-800/75 xl:block">
+        Мы строим — Вы отдыхаете!
+      </p>
+      <p className="pointer-events-none absolute bottom-24 right-[3.5%] z-20 hidden max-w-[210px] rotate-3 text-center font-serif text-xl italic leading-tight text-stone-800/75 xl:block">
+        Качество в каждой детали!
+      </p>
+
+      <div className="relative z-30 mx-auto flex min-h-[540px] w-full items-start justify-center px-4 pb-10 pt-40 sm:min-h-[570px] sm:px-6 sm:pt-44 lg:min-h-[590px] lg:pt-44 xl:min-h-[610px] xl:pt-48">
+        <div className="relative flex min-h-[330px] w-full min-w-0 max-w-[620px] items-center justify-center text-slate-900 sm:min-h-[320px] lg:max-w-[560px] xl:max-w-[620px]">
+          <div className="absolute inset-[3%] rounded-[24px] bg-white/95 shadow-[0_22px_50px_-20px_rgba(71,40,14,0.5)]" />
           <img
-            src={adminBuilderLeft}
+            src={adminLoginFrame}
             alt=""
-            className="h-full w-full object-contain object-bottom"
+            className="pointer-events-none absolute inset-0 z-10 h-full w-full object-fill"
           />
-          <figcaption className="absolute bottom-5 right-0 max-w-[190px] -rotate-3 text-center font-serif text-lg italic leading-tight text-amber-800/70 2xl:right-2">
-            Мы строим — Вы отдыхаете
-          </figcaption>
-        </figure>
 
-        <div className="relative z-10 mx-auto w-full max-w-[500px] pt-10 min-[1200px]:self-center">
-          <p className="mb-3 text-center text-[11px] font-bold uppercase tracking-[0.24em] text-amber-700/70">
-            Вход только для Короля
-          </p>
-          <div className="relative rounded-2xl border border-amber-500/60 bg-white px-5 pb-6 pt-9 text-slate-900 shadow-[0_24px_60px_-24px_rgba(120,53,15,0.42)] sm:px-7 sm:pb-7 sm:pt-10">
-            <div className="absolute left-1/2 top-0 flex h-[70px] w-[70px] -translate-x-1/2 -translate-y-[58%] items-center justify-center rounded-full border border-amber-400/45 bg-white shadow-[0_0_28px_rgba(245,158,11,0.24)]">
-              <Crown aria-hidden="true" className="h-12 w-12 fill-amber-400/20 text-amber-500" strokeWidth={1.8} />
-            </div>
+          <div className="relative z-20 w-full px-[11%] py-12 sm:px-[12%] sm:py-14">
+            <h1 className="text-center text-2xl font-black tracking-tight sm:text-[30px]">Вход владельца сайта</h1>
+            <p className="mt-2.5 text-center text-sm text-slate-500 sm:text-[15px]">Доступ только для владельца 👑</p>
 
-            <h1 className="text-center text-2xl font-black sm:text-[28px]">Вход владельца сайта</h1>
-            <div className="mx-auto mt-3 flex w-28 items-center gap-2" aria-hidden="true">
-              <span className="h-px flex-1 bg-gradient-to-r from-transparent to-amber-400" />
-              <span className="h-1.5 w-1.5 rotate-45 border border-amber-500" />
-              <span className="h-px flex-1 bg-gradient-to-l from-transparent to-amber-400" />
-            </div>
-            <p className="mt-3 text-center text-sm text-slate-500">Доступ только для владельца 👑</p>
-
-            {!configured ? <p className="mt-4 text-center text-sm text-destructive">Административный доступ не настроен.</p> : <form onSubmit={async (event) => { event.preventDefault(); setError(''); try { const ok = await startAdminSession(pin); if (ok) setAllowed(true); else setError('Неверный PIN.'); } catch { setError('Не удалось выполнить вход. Попробуйте ещё раз.'); } }} className="mt-6 space-y-3">
+            {!configured ? <p className="mt-5 text-center text-sm text-destructive">Административный доступ не настроен.</p> : <form onSubmit={async (event) => { event.preventDefault(); setError(''); try { const ok = await startAdminSession(pin); if (ok) setAllowed(true); else setError('Неверный PIN.'); } catch { setError('Не удалось выполнить вход. Попробуйте ещё раз.'); } }} className="mt-6 space-y-3.5">
               <div className="relative">
-                <input value={pin} onChange={(event) => setPin(event.target.value)} type="password" inputMode="text" autoCapitalize="none" autoCorrect="off" className="w-full rounded-xl border border-amber-300/70 bg-white px-3 py-2.5 pr-11 outline-none transition-[border-color,box-shadow] duration-200 focus:border-primary focus:ring-2 focus:ring-primary/15" placeholder="PIN"/>
-                <Crown aria-hidden="true" className="pointer-events-none absolute right-3 top-1/2 h-5 w-5 -translate-y-1/2 text-amber-500/75" strokeWidth={1.8} />
+                <input value={pin} onChange={(event) => setPin(event.target.value)} type="password" inputMode="text" autoCapitalize="none" autoCorrect="off" className="h-12 w-full rounded-xl border border-amber-300/70 bg-[#fffdf9] px-4 pr-12 outline-none shadow-inner shadow-amber-900/5 transition-[border-color,box-shadow] duration-200 focus:border-primary focus:ring-2 focus:ring-primary/15" placeholder="PIN"/>
+                <Crown aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-amber-500/80" strokeWidth={1.8} />
               </div>
-              <button className="group relative w-full overflow-hidden rounded-xl bg-primary py-2.5 text-sm font-bold text-white shadow-md shadow-orange-500/20 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-orange-500/30">
+              <button className="group relative h-12 w-full overflow-hidden rounded-xl bg-primary text-sm font-bold text-white shadow-md shadow-orange-500/25 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-orange-500/35 sm:text-base">
                 <span aria-hidden="true" className="absolute inset-y-0 -left-1/3 w-1/3 skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-500 group-hover:translate-x-[430%]" />
                 <span className="relative">👑 Войти как Король</span>
               </button>
@@ -76,17 +89,6 @@ export default function AdminGate({ children }) {
             </form>}
           </div>
         </div>
-
-        <figure className="relative hidden h-[430px] min-w-0 items-end justify-center min-[1200px]:flex 2xl:h-[470px]">
-          <img
-            src={adminBuilderRight}
-            alt=""
-            className="h-full w-full object-contain object-bottom"
-          />
-          <figcaption className="absolute bottom-5 left-0 max-w-[190px] rotate-3 text-center font-serif text-lg italic leading-tight text-amber-800/70 2xl:left-2">
-            Качество в каждой детали
-          </figcaption>
-        </figure>
       </div>
     </section>
   );
