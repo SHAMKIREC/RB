@@ -4,6 +4,7 @@ import { ArrowLeft, ChevronLeft, ChevronRight, ExternalLink, MapPin, Star, X } f
 import {
   getProject,
   getProjectCoverPhoto,
+  getPublicProjectDocumentUrl,
   getProjectPhotoGroups,
   getPublicProjectDocuments,
   getPublicProjectPhotos,
@@ -54,6 +55,20 @@ export default function ProjectDetail() {
   const galleryCount = galleryGroups.reduce((sum, group) => sum + group.photos.length, 0);
   const publicDocuments = project ? getPublicProjectDocuments(project) : [];
 
+  const openDocument = async (event, document) => {
+    if (document.src) return;
+    event.preventDefault();
+    const tab = window.open('about:blank', '_blank');
+    if (tab) tab.opener = null;
+    try {
+      const src = await getPublicProjectDocumentUrl(document);
+      if (tab) tab.location.replace(src);
+      else window.location.assign(src);
+    } catch {
+      tab?.close();
+    }
+  };
+
   useEffect(() => {
     const key = (event) => {
       if (openIndex === null) return;
@@ -83,8 +98,8 @@ export default function ProjectDetail() {
       <section>
         <h2 className="font-black">Описание проекта</h2>
         <p className="mt-3 whitespace-pre-line text-muted-foreground">{project.description || 'Описание не добавлено'}</p>
-        {galleryGroups.length > 0 && <><h2 className="mt-7 font-black">Фотографии объекта</h2>{galleryGroups.map((group) => { const shown = expanded ? group.photos : group.photos.slice(0, 8); return <section key={group.type} className="mt-4"><h3 className="text-sm font-bold text-foreground">{group.label}</h3><div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{shown.map((photo) => { const index = photos.indexOf(photo); return <button key={`${photo}-${index}`} onClick={() => setOpenIndex(index)} className="overflow-hidden rounded-xl bg-secondary/60 p-3 text-left"><img src={photo} alt={`${project.title}, ${group.label}`} className="aspect-[4/3] w-full object-contain object-center" /><span className="mt-2 block text-xs text-muted-foreground">{group.label}</span></button>; })}</div></section>; })}{galleryCount > 8 && <button onClick={() => setExpanded(!expanded)} className="mt-4 text-sm font-bold text-primary">{expanded ? 'Скрыть фотографии' : 'Показать все фотографии'}</button>}</>}
-        {publicDocuments.length > 0 && <section className="mt-7"><h2 className="font-black">Документы проекта</h2><div className="mt-3 space-y-2">{publicDocuments.map((document, index) => <a key={`${document.name}-${index}`} href={document.src} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm font-bold hover:bg-secondary"><span className="min-w-0 truncate">{document.name}</span><ExternalLink className="h-4 w-4 shrink-0 text-primary" /></a>)}</div></section>}
+        {galleryGroups.length > 0 && <><h2 className="mt-7 font-black">Фотографии объекта</h2>{galleryGroups.map((group) => { const shown = expanded ? group.photos : group.photos.slice(0, 8); return <section key={group.type} className="mt-4"><h3 className="text-sm font-bold text-foreground">{group.label}</h3><div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{shown.map((photo) => { const index = photos.indexOf(photo); return <button key={`${photo}-${index}`} onClick={() => setOpenIndex(index)} className="overflow-hidden rounded-xl bg-secondary/60 p-3 text-left"><img src={photo} alt={`${project.title}, ${group.label}`} loading="lazy" decoding="async" className="aspect-[4/3] w-full object-contain object-center" /><span className="mt-2 block text-xs text-muted-foreground">{group.label}</span></button>; })}</div></section>; })}{galleryCount > 8 && <button onClick={() => setExpanded(!expanded)} className="mt-4 text-sm font-bold text-primary">{expanded ? 'Скрыть фотографии' : 'Показать все фотографии'}</button>}</>}
+        {publicDocuments.length > 0 && <section className="mt-7"><h2 className="font-black">Документы проекта</h2><div className="mt-3 space-y-2">{publicDocuments.map((document, index) => <a key={`${document.name}-${index}`} href={document.src || '#'} onClick={(event) => openDocument(event, document)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-between gap-3 rounded-xl border border-border bg-card px-4 py-3 text-sm font-bold hover:bg-secondary"><span className="min-w-0 truncate">{document.name}</span><ExternalLink className="h-4 w-4 shrink-0 text-primary" /></a>)}</div></section>}
         <h2 className="mt-7 font-black">Выполненные работы</h2>
         <div className="mt-3 overflow-hidden rounded-2xl border border-border bg-card">{project.works?.filter((work) => work.quantity !== undefined).map((work) => <div key={work.workId || work.title} className="flex justify-between gap-3 border-b border-border px-4 py-3 text-sm"><span>{work.title}<small className="block text-muted-foreground">{work.quantity} {work.unit} × {money(work.unitPrice || work.totalPrice / Math.max(1, work.quantity))}</small></span><b>{money(work.totalPrice)}</b></div>)}</div>
       </section>

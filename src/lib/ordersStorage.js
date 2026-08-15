@@ -1,5 +1,5 @@
 import { requireSupabase } from './supabaseClient';
-import { errorMessage, removeFiles, signedUrls, STORAGE_BUCKETS, uploadOrderPhotos } from './mediaStorage';
+import { errorMessage, removeFiles, signedImageUrl, signedUrls, STORAGE_BUCKETS, uploadOrderPhotos } from './mediaStorage';
 
 const numberValue = (value) => Number(value || 0);
 const camelWork = (row) => ({ workId: row.work_id, categoryId: row.category_id, groupId: row.group_id, title: row.title, unit: row.unit, unitPrice: numberValue(row.unit_price), quantity: numberValue(row.quantity), totalPrice: numberValue(row.total_price), sortOrder: row.sort_order });
@@ -11,8 +11,8 @@ const withPhotoUrls = async (order, admin = false) => {
 };
 
 const withCoverUrl = async (order) => {
-  const [cover] = await signedUrls(STORAGE_BUCKETS.orders, order.photos?.slice(0, 1));
-  return { ...order, photos: cover?.src ? [cover.src] : [] };
+  const cover = await signedImageUrl(STORAGE_BUCKETS.orders, order.photos?.[0]);
+  return { ...order, photos: cover ? [cover] : [] };
 };
 
 export async function getOrders() {

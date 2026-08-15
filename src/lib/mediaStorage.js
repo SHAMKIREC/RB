@@ -7,6 +7,9 @@ export const STORAGE_BUCKETS = {
   documents: 'rb-project-documents',
 };
 
+/** @type {{ width: number, quality: number, resize: 'contain' }} */
+export const CARD_IMAGE_TRANSFORM = { width: 640, quality: 75, resize: 'contain' };
+
 const extension = (file) => {
   const fromName = file?.name?.split('.').pop()?.toLowerCase().replace(/[^a-z0-9]/g, '');
   if (fromName) return fromName;
@@ -152,7 +155,7 @@ export async function removeFiles(bucket, paths) {
 export async function signedUrls(bucket, paths, expiresIn = 3600) {
   const clean = (paths || []).filter(Boolean);
   if (!clean.length) return [];
-  const storagePaths = clean.filter((path) => !/^(https?:|blob:|data:)/i.test(path));
+  const storagePaths = [...new Set(clean.filter((path) => !/^(https?:|blob:|data:)/i.test(path)))];
   if (!storagePaths.length) return clean.map((path) => ({ path, src: path }));
   const { data, error } = await requireSupabase().storage.from(bucket).createSignedUrls(storagePaths, expiresIn);
   if (error) throw supabaseError(`Storage signed URL error (${bucket})`, error);
@@ -167,4 +170,11 @@ export async function signedUrl(bucket, path, expiresIn = 3600) {
   if (!path) return '';
   const [result] = await signedUrls(bucket, [path], expiresIn);
   return result?.src || '';
+}
+
+export async function signedImageUrl(bucket, path, transform = CARD_IMAGE_TRANSFORM, expiresIn = 3600) {
+  if (!path || /^(https?:|blob:|data:)/i.test(path)) return path || '';
+  const { data, error } = await requireSupabase().storage.from(bucket).createSignedUrl(path, expiresIn, { transform });
+  if (error || !data?.signedUrl) throw supabaseError(`Storage transformed signed URL error (${bucket})`, error || new Error(`Не удалось получить transformed signed URL для ${path}.`));
+  return data.signedUrl;
 }

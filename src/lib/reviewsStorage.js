@@ -1,6 +1,6 @@
 import { getAdminSession } from './adminSession';
 import { requireSupabase } from './supabaseClient';
-import { errorMessage, removeFiles, signedUrls, STORAGE_BUCKETS, uploadReviewPhotos } from './mediaStorage';
+import { errorMessage, removeFiles, signedImageUrl, signedUrls, STORAGE_BUCKETS, uploadReviewPhotos } from './mediaStorage';
 
 const mapReview = (row) => ({ id: row.id, clientName: row.client_name, location: row.location, serviceTitle: row.service_title, reviewText: row.review_text, rating: Number(row.rating || 5), photos: row.photos || [], orderNumber: row.order_number || '', contact: row.contact || '', consent: Boolean(row.consent), status: row.status || 'pending', isPublished: row.is_published ?? true, isDemo: Boolean(row.is_demo), createdAt: row.created_at, updatedAt: row.updated_at });
 const photoPath = (photo) => typeof photo === 'string' ? photo : photo?.path || photo?.src || '';
@@ -17,8 +17,8 @@ const hydratePreview = async (review) => {
   const first = review.photos?.[0];
   if (!first) return { ...review, photos: [] };
   const record = typeof first === 'string' ? { src: first, name: 'photo-1' } : first;
-  const [url] = await signedUrls(STORAGE_BUCKETS.reviews, [photoPath(record)]);
-  return { ...review, photos: url?.src ? [{ name: record.name, path: photoPath(record), src: url.src }] : [] };
+  const url = await signedImageUrl(STORAGE_BUCKETS.reviews, photoPath(record));
+  return { ...review, photos: url ? [{ name: record.name, path: photoPath(record), src: url }] : [] };
 };
 
 export async function getReviews() { const { data, error } = await requireSupabase().from('reviews').select('*').order('updated_at', { ascending: false }); if (error) throw error; return Promise.all((data || []).map((row) => hydrate(mapReview(row), true))); }
