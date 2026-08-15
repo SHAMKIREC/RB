@@ -2,8 +2,8 @@
   "redirects": [
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.rb-24.ru" }],
-      "destination": "https://rb-24.ru/:path*",
+      "has": [{ "type": "host", "value": "rb-24.ru" }],
+      "destination": "https://www.rb-24.ru/:path*",
       "permanent": true
     }
   ],
