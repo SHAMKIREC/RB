@@ -10,16 +10,22 @@ const withPhotoUrls = async (order, admin = false) => {
   return { ...order, photos: admin ? urls : urls.map((item) => item.src) };
 };
 
+const withCoverUrl = async (order) => {
+  const [cover] = await signedUrls(STORAGE_BUCKETS.orders, order.photos?.slice(0, 1));
+  return { ...order, photos: cover?.src ? [cover.src] : [] };
+};
+
 export async function getOrders() {
   const { data, error } = await requireSupabase().from('orders').select('*, order_works(*)').order('updated_at', { ascending: false });
   if (error) throw new Error(`Database read error (orders): ${errorMessage(error)}`);
   return Promise.all((data || []).map((row) => withPhotoUrls(camelOrder(row), true)));
 }
 
-export async function getPublishedOrders() {
-  const { data, error } = await requireSupabase().from('published_orders').select('*').order('updated_at', { ascending: false });
+export async function getPublishedOrders(from = 0, to = 11) {
+  const { data, error, count } = await requireSupabase().from('published_orders').select('id,number,title,location,description,preferred_deadline,contractor_payment,photos,created_at,updated_at,selected_works', { count: 'exact' }).order('updated_at', { ascending: false }).order('id', { ascending: false }).range(from, to);
   if (error) throw new Error(`Database read error (published orders): ${errorMessage(error)}`);
-  return Promise.all((data || []).map((row) => withPhotoUrls(camelOrder({ ...row, status: 'active', is_published: true }), false)));
+  const items = await Promise.all((data || []).map((row) => withCoverUrl(camelOrder({ ...row, status: 'active', is_published: true }))));
+  return { items, hasMore: count == null ? items.length === to - from + 1 : from + items.length < count };
 }
 
 export async function getOrder(id) {

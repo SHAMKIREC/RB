@@ -26,13 +26,21 @@ const hydrateProject = async (project, admin = false) => {
   return { ...project, photoGroups, photos: [...photoGroups.after, ...photoGroups.process, ...photoGroups.before], coverPhoto: coverRow ? (admin ? { path: coverRow.src, src: byPath.get(coverRow.src) || '' } : byPath.get(coverRow.src) || '') : '', documents };
 };
 
+const hydrateProjectPreview = async (project) => {
+  const mediaRows = project.mediaRows || [];
+  const coverRow = mediaRows.find((item) => item.is_cover) || mediaRows[0];
+  const [cover] = await signedUrls(STORAGE_BUCKETS.projects, coverRow?.src ? [coverRow.src] : []);
+  const coverPhoto = cover?.src || '';
+  return { ...project, mediaRows: [], documentRows: [], photoGroups: { before: [], process: [], after: [] }, photos: coverPhoto ? [coverPhoto] : [], coverPhoto, documents: { contract: [], act: [], additional: [] } };
+};
+
 export const getProjectPhotoGroups = (project) => project?.photoGroups || { before: [], process: [], after: [] };
 export const getPublicProjectPhotos = (project) => { const groups = getProjectPhotoGroups(project); return [...groups.before, ...groups.process, ...groups.after].map(photoSrc).filter(Boolean); };
 export const getProjectCoverPhoto = (project) => photoSrc(project?.coverPhoto) || getPublicProjectPhotos(project)[0] || '';
 export const getPublicProjectDocuments = (project) => ['contract', 'act', 'additional'].flatMap((type) => project?.documents?.[type] || []).filter((item) => item.isPublic);
 
 export async function getProjects() { const { data, error } = await requireSupabase().from('projects').select('*, project_works(*), project_media(*), project_documents(*)').order('updated_at', { ascending: false }); if (error) throw error; return Promise.all((data || []).map((row) => hydrateProject(mapProject(row), true))); }
-export async function getPublishedProjects() { const { data, error } = await requireSupabase().from('published_projects').select('*').order('updated_at', { ascending: false }); if (error) throw error; return Promise.all((data || []).map((row) => hydrateProject(mapProject({ ...row, is_published: true, project_media: row.media, project_documents: row.documents }), false))); }
+export async function getPublishedProjects(from = 0, to = 11) { const { data, error, count } = await requireSupabase().from('published_projects').select('id,client_name,location,title,description,deadline,final_total,total,created_at,updated_at,media', { count: 'exact' }).order('updated_at', { ascending: false }).order('id', { ascending: false }).range(from, to); if (error) throw error; const items = await Promise.all((data || []).map((row) => hydrateProjectPreview(mapProject({ ...row, is_published: true, project_media: row.media })))); return { items, hasMore: count == null ? items.length === to - from + 1 : from + items.length < count }; }
 export async function getProject(id) { const { data, error } = await requireSupabase().from('published_projects').select('*').eq('id', id).maybeSingle(); if (error) throw error; return data ? hydrateProject(mapProject({ ...data, is_published: true, project_media: data.media, project_documents: data.documents }), false) : null; }
 
 export async function saveProject(project) {

@@ -10,7 +10,7 @@ import {
   PROJECTS_CHANGED_EVENT,
   PROJECTS_STORAGE_KEY,
 } from '../lib/projectsStorage';
-import { getPublishedReviews } from '../lib/reviewsStorage';
+import { getPublishedReviewForProject } from '../lib/reviewsStorage';
 
 const money = (value) => `${Math.round(value || 0).toLocaleString('ru-RU')} ₽`;
 const groupLabels = { before: 'До ремонта', process: 'В процессе', after: 'После ремонта' };
@@ -29,8 +29,8 @@ export default function ProjectDetail() {
       try {
         const item = await getProject(projectId);
         setProject(item);
-        const reviews = item ? await getPublishedReviews() : [];
-        setReview(item ? reviews.find((entry) => entry.clientName === item.clientName && entry.serviceTitle === item.title) || null : null);
+        const matchedReview = item ? await getPublishedReviewForProject(item.clientName, item.title) : null;
+        setReview(matchedReview);
         setLoadError(false);
       } catch {
         setLoadError(true);

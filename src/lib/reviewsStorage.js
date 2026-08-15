@@ -13,8 +13,23 @@ const hydrate = async (review, admin = false) => {
   return { ...review, photos: records.map((item) => ({ name: item.name, path: photoPath(item), src: byPath.get(photoPath(item)) || '' })).filter((item) => item.src || (admin && item.path)) };
 };
 
+const hydratePreview = async (review) => {
+  const first = review.photos?.[0];
+  if (!first) return { ...review, photos: [] };
+  const record = typeof first === 'string' ? { src: first, name: 'photo-1' } : first;
+  const [url] = await signedUrls(STORAGE_BUCKETS.reviews, [photoPath(record)]);
+  return { ...review, photos: url?.src ? [{ name: record.name, path: photoPath(record), src: url.src }] : [] };
+};
+
 export async function getReviews() { const { data, error } = await requireSupabase().from('reviews').select('*').order('updated_at', { ascending: false }); if (error) throw error; return Promise.all((data || []).map((row) => hydrate(mapReview(row), true))); }
-export async function getPublishedReviews() { const { data, error } = await requireSupabase().from('published_reviews').select('*').order('updated_at', { ascending: false }); if (error) throw error; return Promise.all((data || []).map((row) => hydrate(mapReview({ ...row, status: 'published', is_published: true }), false))); }
+export async function getPublishedReviews(from = 0, to = 11) { const { data, error, count } = await requireSupabase().from('published_reviews').select('id,client_name,location,service_title,review_text,rating,photos,created_at,updated_at', { count: 'exact' }).order('updated_at', { ascending: false }).order('id', { ascending: false }).range(from, to); if (error) throw error; const items = await Promise.all((data || []).map((row) => hydratePreview(mapReview({ ...row, status: 'published', is_published: true })))); return { items, hasMore: count == null ? items.length === to - from + 1 : from + items.length < count }; }
+
+export async function getPublishedReviewForProject(clientName, serviceTitle) {
+  if (!clientName || !serviceTitle) return null;
+  const { data, error } = await requireSupabase().from('published_reviews').select('id,client_name,location,service_title,review_text,rating,created_at,updated_at').eq('client_name', clientName).eq('service_title', serviceTitle).order('updated_at', { ascending: false }).order('id', { ascending: false }).limit(1).maybeSingle();
+  if (error) throw error;
+  return data ? mapReview({ ...data, status: 'published', is_published: true }) : null;
+}
 
 export async function saveReview(review) {
   const client = requireSupabase(); const admin = Boolean(await getAdminSession());
