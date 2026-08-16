@@ -23,7 +23,7 @@ export default function ServiceSeo({ category }) {
       description,
       serviceType: category.name,
       areaServed: { '@type': 'City', name: 'Саратов' },
-      provider: { '@id': 'https://rb-24.ru/#business', name: 'РБ Решаем Быстро' },
+      provider: { '@id': 'https://www.rb-24.ru/#business', name: 'РБ Решаем Быстро' },
       url: absoluteUrl(canonicalPath),
       image: absoluteUrl(category.image),
     });
