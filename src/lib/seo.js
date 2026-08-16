@@ -1,4 +1,4 @@
-export const SITE_URL = 'https://rb-24.ru';
+export const SITE_URL = 'https://www.rb-24.ru';
 export const SITE_NAME = 'РБ Решаем Быстро';
 export const DEFAULT_OG_IMAGE = '/og/rb-preview-1200x630.jpg';
 
@@ -37,6 +37,7 @@ export const MAIN_SITE_SCHEMAS = [
     url: `${SITE_URL}/`,
     telephone: '+79063052828',
     image: absoluteUrl(DEFAULT_OG_IMAGE),
+    logo: absoluteUrl('/favicon.svg'),
     address: {
       '@type': 'PostalAddress',
       addressLocality: 'Саратов',
