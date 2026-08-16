@@ -18,6 +18,7 @@ const upsertMeta = (selector, attribute, value) => {
 export default function SeoHead({
   title,
   description,
+  socialDescription = description,
   canonicalPath = '',
   image = DEFAULT_OG_IMAGE,
   imageAlt = '',
@@ -51,7 +52,7 @@ export default function SeoHead({
 
     const social = socialPreview ? {
       'meta[property="og:title"]': ['property', title],
-      'meta[property="og:description"]': ['property', description],
+      'meta[property="og:description"]': ['property', socialDescription],
       'meta[property="og:image"]': ['property', imageUrl],
       'meta[property="og:image:alt"]': ['property', imageAlt || title],
       'meta[property="og:url"]': ['property', canonicalUrl],
@@ -60,7 +61,7 @@ export default function SeoHead({
       'meta[property="og:locale"]': ['property', 'ru_RU'],
       'meta[name="twitter:card"]': ['name', 'summary_large_image'],
       'meta[name="twitter:title"]': ['name', title],
-      'meta[name="twitter:description"]': ['name', description],
+      'meta[name="twitter:description"]': ['name', socialDescription],
       'meta[name="twitter:image"]': ['name', imageUrl],
       'meta[name="twitter:image:alt"]': ['name', imageAlt || title],
     } : {};
@@ -88,7 +89,7 @@ export default function SeoHead({
       script.text = JSON.stringify(schema);
       document.head.appendChild(script);
     });
-  }, [canonicalPath, description, image, imageAlt, noFollow, noIndex, schemasJson, socialPreview, title, type]);
+  }, [canonicalPath, description, image, imageAlt, noFollow, noIndex, schemasJson, socialDescription, socialPreview, title, type]);
 
   return null;
 }
