@@ -64,7 +64,18 @@ export default function Calculator() {
   const activeCategory = displayedCategories.find((category) => category.id === activeCategoryId) || null;
   const categoryRows = chunk(displayedCategories, 4);
   const updateQuantity = (id, value) => setQuantities((current) => ({ ...current, [id]: integerQuantity(value) }));
-  const clearDraft = () => { if (window.confirm('Очистить текущую смету?')) { setQuantities({}); setTurnkeyTotal(0); setMaterialSelections({}); localStorage.removeItem(DRAFT_KEY); } };
+  const clearDraft = () => {
+    if (!window.confirm('Очистить текущую смету?')) return;
+    skipDraftSave.current = true;
+    localStorage.removeItem(DRAFT_KEY);
+    setQuantities({});
+    setTurnkeyTotal(0);
+    setMaterialSelections({});
+    setQuery('');
+    setActiveCategoryId(null);
+    setMaterialWork(null);
+    setResetSignal((value) => value + 1);
+  };
 
   return <div className="calculator-page page-shell py-7 sm:py-10">
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-5"><p className="mb-1 text-xs font-mono font-bold uppercase tracking-widest text-primary">Расчёт стоимости</p><h1 className="mb-2 text-3xl font-black text-foreground sm:text-4xl">Калькулятор-смета</h1><p className="max-w-2xl text-sm text-muted-foreground">Выберите работы, укажите объём и соберите предварительную смету.</p>{inlineEditMode && <button type="button" onClick={disableInlineEditMode} className="mt-3 rounded-lg border border-primary/30 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/5">Выйти из режима редактирования</button>}</motion.div>
