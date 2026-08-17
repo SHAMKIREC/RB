@@ -75,10 +75,8 @@ export const errorMessage = (error, fallback = 'Неизвестная ошиб�
 export const supabaseError = (operation, error) => {
   const message = errorMessage(error);
   const lower = message.toLowerCase();
-  const type = lower.includes('row-level security') || lower.includes('rls') || error?.code === '42501'
-    ? 'RLS error'
-    : operation;
-  return new Error(`${type}: ${message}`);
+  const rls = lower.includes('row-level security') || lower.includes('rls') || error?.code === '42501';
+  return new Error(`${operation}: ${rls ? 'RLS error: ' : ''}${message}`);
 };
 
 const sourceFile = (value) => value instanceof File ? value : value?.file instanceof File ? value.file : null;
@@ -161,7 +159,10 @@ export async function signedUrls(bucket, paths, expiresIn = 3600) {
   if (error) throw supabaseError(`Storage signed URL error (${bucket})`, error);
   const byPath = new Map(storagePaths.map((path, index) => {
     const result = data?.[index];
-    return [path, result?.signedUrl || ''];
+    if (result?.error || !result?.signedUrl) {
+      throw supabaseError(`Signed URL error (${bucket})`, result?.error || new Error(`Не удалось получить signed URL для ${path}.`));
+    }
+    return [path, result.signedUrl];
   }));
   return clean.map((path) => ({ path, src: byPath.get(path) || path }));
 }

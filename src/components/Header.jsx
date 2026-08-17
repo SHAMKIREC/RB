@@ -52,9 +52,9 @@ export default function Header({ theme, onToggleTheme }) {
     <header style={{ background: "linear-gradient(to right, rgba(0,0,0,0.82), rgba(0,0,0,0.68), rgba(0,0,0,0.82))", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }} className="fixed inset-x-0 top-0 z-50">
       <div className="page-shell">
         <div className="flex h-16 items-center justify-between gap-2 sm:h-20 sm:gap-4">
-          <Link to="/" className="group flex shrink-0 items-center gap-2 sm:gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-xl logo-gradient shadow-lg shadow-orange-500/20 transition-transform group-hover:scale-105 sm:h-14 sm:w-14 sm:rounded-2xl"><span className="text-xl font-black text-white sm:text-2xl">РБ</span></div>
-            <div className="hidden sm:block"><div className="text-lg font-black text-white">РЕШАЕМ <span style={{ background: "linear-gradient(135deg, #FF6B35, #FF3300)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>БЫСТРО</span></div><div className="text-sm text-white/70">Строительные услуги · Саратов</div></div>
+          <Link to="/" aria-label="Решаем Быстро — на главную" className="group relative z-[70] -m-1 flex shrink-0 touch-manipulation select-none items-center gap-2 p-1 sm:gap-3">
+            <div className="pointer-events-none flex h-11 w-11 items-center justify-center rounded-xl logo-gradient shadow-lg shadow-orange-500/20 transition-transform group-hover:scale-105 sm:h-14 sm:w-14 sm:rounded-2xl"><span className="text-xl font-black text-white sm:text-2xl">РБ</span></div>
+            <div className="pointer-events-none hidden sm:block"><div className="text-lg font-black text-white">РЕШАЕМ <span style={{ background: "linear-gradient(135deg, #FF6B35, #FF3300)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>БЫСТРО</span></div><div className="text-sm text-white/70">Строительные услуги · Саратов</div></div>
           </Link>
 
           <nav className="hidden flex-1 items-center justify-center gap-1 xl:flex">

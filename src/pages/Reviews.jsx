@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { MapPin, Star } from "lucide-react";
 import { getPublishedReviews } from "../lib/reviewsStorage";
 
@@ -62,7 +61,7 @@ export default function Reviews() {
           <h1 className="mb-2 text-3xl font-black text-foreground sm:text-4xl">Отзывы клиентов</h1>
           <p className="max-w-2xl text-sm text-muted-foreground">Опубликованные отзывы о выполненных работах.</p>
         </div>
-        <Link to="/reviews/new" className="rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white">Оставить отзыв</Link>
+        <a href="https://vk.ru/club237262784" target="_blank" rel="noopener noreferrer" className="rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white">Оставить отзыв</a><p className="basis-full text-xs text-muted-foreground">Оставьте отзыв в нашей группе ВКонтакте. После согласования мы разместим его на сайте без указания имени.</p>
       </div>
       {loading ? (
         <div className="rounded-2xl border border-dashed border-border px-6 py-14 text-center text-muted-foreground">Загрузка...</div>
@@ -76,7 +75,7 @@ export default function Reviews() {
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h2 className="font-black text-foreground">{review.clientName}</h2>
-                    <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />{review.location}</p>
+                    {review.location && <p className="mt-1 flex items-center gap-1 text-xs text-muted-foreground"><MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />{review.location}</p>}
                   </div>
                   <span className="inline-flex items-center gap-1 rounded-lg border border-primary/20 bg-primary/5 px-2 py-1 text-sm font-bold text-primary">
                     <Star className="h-4 w-4 fill-current" />{review.rating}

@@ -45,6 +45,8 @@ export async function getProject(id) { const { data, error } = await requireSupa
 
 export async function saveProject(project) {
   const client = requireSupabase(); const id = project.id || crypto.randomUUID(); const isNew = !project.id;
+  const { data: oldProject, error: oldProjectError } = project.id ? await client.from('projects').select('*').eq('id', id).maybeSingle() : { data: null, error: null };
+  if (oldProjectError) throw new Error(`Database read error (projects): ${errorMessage(oldProjectError)}`);
   const { data: oldMedia, error: oldMediaError } = project.id ? await client.from('project_media').select('project_id,stage,src,is_cover,sort_order').eq('project_id', id) : { data: [], error: null };
   if (oldMediaError) throw new Error(`Не удалось прочитать фотографии проекта: ${errorMessage(oldMediaError)}`);
   const { data: oldDocuments, error: oldDocumentsError } = project.id ? await client.from('project_documents').select('project_id,document_type,name,mime_type,src,is_public,sort_order').eq('project_id', id) : { data: [], error: null };
@@ -92,6 +94,8 @@ export async function saveProject(project) {
     await removeFiles(STORAGE_BUCKETS.documents, newlyUploadedDocuments).catch(() => {});
     if (isNew) await client.from('projects').delete().eq('id', id);
     else {
+      const oldProjectData = Object.fromEntries(Object.entries(oldProject).filter(([key]) => !['id', 'created_at', 'updated_at'].includes(key)));
+      await client.from('projects').update(oldProjectData).eq('id', id);
       await client.from('project_media').delete().eq('project_id', id);
       if (oldMedia?.length) await client.from('project_media').insert(oldMedia);
       await client.from('project_documents').delete().eq('project_id', id);

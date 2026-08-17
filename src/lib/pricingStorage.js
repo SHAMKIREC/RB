@@ -1,4 +1,5 @@
 import { supabase, requireSupabase } from './supabaseClient';
+import { supabaseError } from './mediaStorage';
 
 const EVENT = 'rb-pricing-changed';
 const ERROR_EVENT = 'rb-pricing-error';
@@ -19,7 +20,7 @@ export async function loadPricingOverrides() {
   }
   const { data, error } = await supabase.from('pricing_overrides').select('scope,item_id,price');
   if (error) {
-    pricingError = error;
+    pricingError = supabaseError('Database read error (pricing_overrides)', error);
     emitError();
     throw pricingError;
   }
@@ -33,7 +34,8 @@ export const subscribeToPricingError = (callback) => { window.addEventListener(E
 export async function setPriceOverride(scope, id, price) {
   const nextPrice = Number(price); if (!Number.isFinite(nextPrice) || nextPrice < 0) return false;
   const { error } = await requireSupabase().from('pricing_overrides').upsert({ scope, item_id: id, price: nextPrice }, { onConflict: 'scope,item_id' });
-  if (error) throw error; cache = { ...cache, [scope]: { ...(cache[scope] || {}), [id]: nextPrice } }; emit(); return true;
+  if (error) throw supabaseError('Database update error (pricing_overrides)', error);
+  cache = { ...cache, [scope]: { ...(cache[scope] || {}), [id]: nextPrice } }; emit(); return true;
 }
 const priceFrom = (overrides, scope, id, fallback) => { const value = overrides?.[scope]?.[id]; return Number.isFinite(Number(value)) && Number(value) >= 0 ? Number(value) : fallback; };
 export const getCalculatorWorkPrice = (item, overrides = cache) => priceFrom(overrides, 'calculatorWorks', item.id, item.mount);

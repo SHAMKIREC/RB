@@ -62,6 +62,7 @@ function FooterLinks({ responsive = false }) {
           {item.label}
         </Link>
       ))}
+      <Link to="/privacy" className={responsive ? "block rounded-md py-0.5 text-[15px] leading-snug text-white/75 transition-colors duration-200 hover:text-primary" : "text-sm text-white/70 transition-all duration-200 hover:text-primary"}>Политика обработки персональных данных</Link>
     </nav>
   );
 }
