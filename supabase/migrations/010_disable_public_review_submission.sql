@@ -5,6 +5,7 @@ begin;
 revoke insert, update, delete on table public.reviews from anon;
 drop policy if exists "anon submits pending reviews" on public.reviews;
 
+revoke execute on function public.can_upload_pending_review_photo(text) from anon;
 revoke execute on function public.register_pending_review_photos(text, jsonb) from anon;
 revoke execute on function public.discard_pending_review(text) from anon;
 drop policy if exists "anon uploads pending review photos" on storage.objects;
