@@ -40,13 +40,14 @@ export async function saveReview(review) {
   const id = review.id || crypto.randomUUID();
   const { data: current, error: currentError } = review.id ? await client.from('reviews').select('*').eq('id', id).maybeSingle() : { data: null, error: null };
   if (currentError) throw new Error(`Database read error (reviews): ${errorMessage(currentError)}`);
-  const base = { id, client_name: 'Клиент RB-24', location: '', service_title: review.serviceTitle, review_text: review.reviewText, rating: Math.min(5, Math.max(1, Number(review.rating) || 5)), photos: [], order_number: '', contact: '', consent: Boolean(review.consent), publish_review: Boolean(review.publishReview), publish_name: Boolean(review.publishName), publish_location: Boolean(review.publishLocation), publish_photos: Boolean(review.publishPhotos), status: review.status || 'pending', is_published: Boolean(review.isPublished), is_demo: Boolean(review.isDemo) };
+  const isPublished = Boolean(review.isPublished);
+  const base = { id, client_name: 'Клиент RB-24', location: '', service_title: review.serviceTitle, review_text: review.reviewText, rating: Math.min(5, Math.max(1, Number(review.rating) || 5)), photos: [], order_number: '', contact: '', consent: true, publish_review: isPublished, publish_name: false, publish_location: false, publish_photos: false, status: isPublished ? 'published' : (review.status || 'pending'), is_published: isPublished, is_demo: false };
   const { data, error } = await client.from('reviews').upsert(base).select().single(); if (error) throw new Error(`Database insert error (reviews): ${errorMessage(error)}`);
   let paths = [];
   try {
-    paths = await uploadReviewPhotos(id, review.photos || []);
+    paths = await uploadReviewPhotos(id, (review.photos || []).slice(0, 5));
     const photos = paths.map((src, index) => ({ src, name: review.photos?.[index]?.name || `photo-${index + 1}` }));
-    const { data: updated, error: updateError } = await client.from('reviews').update({ photos }).eq('id', id).select().single();
+    const { data: updated, error: updateError } = await client.from('reviews').update({ photos, publish_photos: isPublished && photos.length > 0 }).eq('id', id).select().single();
     if (updateError) throw new Error(`Database insert error (review photo paths): ${errorMessage(updateError)}`);
     const oldPaths = (current?.photos || []).map((item) => typeof item === 'string' ? item : item?.src).filter(Boolean);
     await removeFiles(STORAGE_BUCKETS.reviews, oldPaths.filter((path) => !paths.includes(path)));
@@ -63,6 +64,19 @@ export async function saveReview(review) {
   }
 }
 export async function deleteReview(id) { const client = requireSupabase(); const { data } = await client.from('reviews').select('photos').eq('id', id).maybeSingle(); const { error } = await client.from('reviews').delete().eq('id', id); if (error) throw error; await removeFiles(STORAGE_BUCKETS.reviews, (data?.photos || []).map((item) => typeof item === 'string' ? item : item?.src)); }
-export async function setReviewStatus(id, status) { const { data, error } = await requireSupabase().from('reviews').update({ status, is_published: status === 'published' }).eq('id', id).select().single(); if (error) throw error; return mapReview(data); }
+export async function setReviewStatus(id, status) {
+  const client = requireSupabase();
+  const publishing = status === 'published';
+  const { data: current, error: readError } = await client.from('reviews').select('photos').eq('id', id).single();
+  if (readError) throw readError;
+  const hasPhotos = Array.isArray(current?.photos) && current.photos.length > 0;
+  const { data, error } = await client.from('reviews').update({
+    status, is_published: publishing, consent: true, publish_review: publishing,
+    publish_name: false, publish_location: false, publish_photos: publishing && hasPhotos,
+    client_name: 'Клиент RB-24', location: '', order_number: '', contact: '',
+  }).eq('id', id).select().single();
+  if (error) throw error;
+  return mapReview(data);
+}
 export const createDemoReviews = getReviews;
 export async function deleteDemoReviews() { const { error } = await requireSupabase().from('reviews').delete().eq('is_demo', true); if (error) throw error; return getReviews(); }
