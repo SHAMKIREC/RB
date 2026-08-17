@@ -128,7 +128,7 @@ function Content() {
                       ))}
                     </div>
                   )}
-                  <p className="mt-2 text-xs text-muted-foreground">{new Date(review.createdAt).toLocaleDateString("ru-RU")}</p>}
+                  <p className="mt-2 text-xs text-muted-foreground">{new Date(review.createdAt).toLocaleDateString("ru-RU")}</p>
                   <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs">
                     <button type="button" onClick={() => { if (window.confirm("Получено разрешение заказчика на размещение текста и фотографий, персональные данные удалены, смысл отзыва не изменён.")) act(() => setReviewStatus(review.id, "published")); }} className="text-primary">Опубликовать</button>
                     <button type="button" onClick={() => act(() => setReviewStatus(review.id, "rejected"))}>Отклонить</button>
