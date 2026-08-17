@@ -6,13 +6,19 @@ import InlinePriceEditor from "../admin/InlinePriceEditor";
 
 const integerQuantity = (value) => Math.max(0, Math.round(Number(value) || 0));
 
-export default function NewTurnkey({ onTotalChange }) {
+export default function NewTurnkey({ onTotalChange, resetSignal = 0 }) {
   const [selected, setSelected] = useState(null);
   const [qty, setQty] = useState("");
   const pricingOverrides = usePricingOverrides();
   const inlineEditMode = useInlineEditMode();
   const options = useMemo(() => TURNKEY_NEW.map((option) => ({ ...option, price: getTurnkeyPrice(option, pricingOverrides) })), [pricingOverrides]);
   const selOpt = options.find((option) => option.id === selected);
+
+  useEffect(() => {
+    if (resetSignal === 0) return;
+    setSelected(null);
+    setQty("");
+  }, [resetSignal]);
 
   useEffect(() => {
     if (!selOpt) { onTotalChange(0, null); return; }

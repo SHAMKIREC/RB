@@ -1,18 +1,9 @@
 import { useMemo, useState } from "react";
 import { Search, Trash2 } from "lucide-react";
 import { CALC_CATEGORIES } from "../../lib/calcData";
+import { getCalculatorWorkPrice } from "../../lib/pricingStorage";
+import { usePricingOverrides } from "../../hooks/usePricingState";
 
-const works = CALC_CATEGORIES.flatMap((category) =>
-  category.groups.flatMap((group) =>
-    group.items.map((item) => ({
-      ...item,
-      categoryId: category.id,
-      categoryName: category.name,
-      groupId: group.id,
-      groupName: group.name,
-    })),
-  ),
-);
 const money = (value) => `${Math.round(value || 0).toLocaleString("ru-RU")} ₽`;
 
 export default function WorkPicker({
@@ -20,12 +11,25 @@ export default function WorkPicker({
   onChange,
   label = "Выбранные работы",
 }) {
+  const pricingOverrides = usePricingOverrides();
   const [categoryId, setCategoryId] = useState("");
   const [groupId, setGroupId] = useState("");
   const [query, setQuery] = useState("");
   const groups =
     CALC_CATEGORIES.find((category) => category.id === categoryId)?.groups ||
     [];
+  const works = useMemo(() => CALC_CATEGORIES.flatMap((category) =>
+    category.groups.flatMap((group) =>
+      group.items.map((item) => ({
+        ...item,
+        mount: getCalculatorWorkPrice(item, pricingOverrides),
+        categoryId: category.id,
+        categoryName: category.name,
+        groupId: group.id,
+        groupName: group.name,
+      })),
+    ),
+  ), [pricingOverrides]);
   const results = useMemo(
     () =>
       works
@@ -36,7 +40,7 @@ export default function WorkPicker({
             (!query || work.name.toLowerCase().includes(query.toLowerCase())),
         )
         .slice(0, 10),
-    [categoryId, groupId, query],
+    [categoryId, groupId, query, works],
   );
   const add = (work) => {
     if (!value.some((item) => item.workId === work.id))

@@ -34,12 +34,13 @@ export async function getOrder(id) {
   return data ? withPhotoUrls(camelOrder({ ...data, status: 'active', is_published: true }), false) : null;
 }
 
-
 export async function saveOrder(order) {
   const client = requireSupabase();
   const id = order.id || crypto.randomUUID(); const isNew = !order.id;
-  const { data: current, error: currentError } = order.id ? await client.from('orders').select('photos').eq('id', id).maybeSingle() : { data: null, error: null };
+  const { data: current, error: currentError } = order.id ? await client.from('orders').select('*').eq('id', id).maybeSingle() : { data: null, error: null };
   if (currentError) throw new Error(`Не удалось прочитать фотографии заказа: ${errorMessage(currentError)}`);
+  const { data: oldWorks, error: oldWorksError } = order.id ? await client.from('order_works').select('order_id,work_id,category_id,group_id,title,unit,unit_price,quantity,total_price,sort_order').eq('order_id', id) : { data: [], error: null };
+  if (oldWorksError) throw new Error(`Database read error (order_works): ${errorMessage(oldWorksError)}`);
   const payload = { id, title: order.title, location: order.location || '', description: order.description || '', preferred_deadline: order.preferredDeadline || '', work_subtotal: numberValue(order.workSubtotal), materials_subtotal: numberValue(order.materialsSubtotal), surcharges: numberValue(order.surcharges), calculated_cost: numberValue(order.calculatedCost), calculated_total: numberValue(order.calculatedTotal), final_total: numberValue(order.finalTotal), total: numberValue(order.total), contractor_payment: numberValue(order.contractorPayment), client_price: numberValue(order.clientPrice), owner_expenses: numberValue(order.ownerExpenses), expected_profit: numberValue(order.expectedProfit), status: order.status || 'draft', is_published: Boolean(order.isPublished), is_manual_total: Boolean(order.isManualTotal), is_demo: Boolean(order.isDemo) };
   const saveQuery = isNew
     ? client.from('orders').insert(payload, { defaultToNull: false })
@@ -60,7 +61,12 @@ export async function saveOrder(order) {
   } catch (saveError) {
     await removeFiles(STORAGE_BUCKETS.orders, photos.filter((path) => !oldPhotos.includes(path))).catch(() => {});
     if (isNew) await client.from('orders').delete().eq('id', id);
-    else await client.from('orders').update({ photos: oldPhotos }).eq('id', id);
+    else {
+      const oldOrder = Object.fromEntries(Object.entries(current).filter(([key]) => !['id', 'created_at', 'updated_at'].includes(key)));
+      await client.from('orders').update(oldOrder).eq('id', id);
+      await client.from('order_works').delete().eq('order_id', id);
+      if (oldWorks?.length) await client.from('order_works').insert(oldWorks);
+    }
     throw saveError;
   }
 }

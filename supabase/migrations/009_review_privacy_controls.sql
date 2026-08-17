@@ -1,0 +1,14 @@
+begin;
+alter table public.reviews alter column client_name set default '', alter column client_name drop not null;
+alter table public.reviews alter column location set default '', alter column location drop not null;
+alter table public.reviews add column if not exists publish_review boolean not null default false;
+alter table public.reviews add column if not exists publish_name boolean not null default false;
+alter table public.reviews add column if not exists publish_location boolean not null default false;
+alter table public.reviews add column if not exists publish_photos boolean not null default false;
+update public.reviews set publish_review=true, publish_name=true, publish_location=true, publish_photos=true where status='published' and is_published;
+drop policy if exists "anon submits pending reviews" on public.reviews;
+create policy "anon submits pending reviews" on public.reviews for insert to anon with check (status='pending' and not is_published and not is_demo and consent and char_length(coalesce(btrim(client_name),''))<=120 and char_length(coalesce(btrim(location),''))<=240 and char_length(btrim(service_title)) between 1 and 240 and char_length(btrim(review_text)) between 1 and 5000 and jsonb_typeof(photos)='array' and jsonb_array_length(photos)<=5 and (not publish_name or (publish_review and char_length(btrim(coalesce(client_name,'')))>0)) and (not publish_location or (publish_review and char_length(btrim(coalesce(location,'')))>0)) and (not publish_photos or publish_review));
+create or replace view public.published_reviews with (security_invoker=true) as select id, case when publish_name then coalesce(nullif(client_name,''),'Клиент RB-24') else 'Клиент RB-24' end client_name, case when publish_location then nullif(location,'') else null end location, service_title, review_text, rating, case when publish_photos then photos else '[]'::jsonb end photos, created_at, updated_at from public.reviews where is_published and status='published' and publish_review;
+create or replace view public.published_reviews_list with (security_invoker=true) as select id, case when r.publish_name then coalesce(nullif(r.client_name,''),'Клиент RB-24') else 'Клиент RB-24' end client_name, case when r.publish_location then nullif(r.location,'') else null end location, service_title, review_text, rating, case when r.publish_photos then case jsonb_typeof(r.photos->0) when 'string' then r.photos->>0 when 'object' then (r.photos->0)->>'src' else null end else null end cover_path, created_at, updated_at from public.reviews r where r.is_published and r.status='published' and r.publish_review;
+grant insert (id,client_name,location,service_title,review_text,rating,photos,consent,publish_review,publish_name,publish_location,publish_photos) on public.reviews to anon;
+commit;

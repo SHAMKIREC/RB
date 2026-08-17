@@ -17,13 +17,12 @@ import ProjectDetail from './pages/ProjectDetail';
 import AdminOrders from './pages/AdminOrders';
 import AdminProjects from './pages/AdminProjects';
 import AdminReviews from './pages/AdminReviews';
-import NewReview from './pages/NewReview';
 import Documentation from './pages/Documentation';
 import About from './pages/About';
 import NrvDigital from './pages/NrvDigital';
 import ScrollToTop from './components/ScrollToTop';
 import PageSeo from './components/PageSeo';
-import YandexMetrika from './components/YandexMetrika';
+import Privacy from './pages/Privacy';
 
 const LegacyCategoryRedirect = () => {
   const { slug } = useParams();
@@ -64,7 +63,8 @@ const AuthenticatedApp = () => {
         <Route path="/nrv-digital" element={<NrvDigital />} />
         <Route path="/calculator" element={<Calculator />} />
         <Route path="/reviews" element={<Reviews />} />
-        <Route path="/reviews/new" element={<NewReview />} />
+        <Route path="/reviews/new" element={<Navigate to="/reviews" replace />} />
+        <Route path="/privacy" element={<Privacy />} />
         <Route path="/orders" element={<Orders />} />
         <Route path="/orders/:orderId" element={<OrderDetail />} />
         <Route path="/projects" element={<Projects />} />
@@ -88,7 +88,6 @@ function App() {
         <Router>
           <ScrollToTop />
           <PageSeo />
-          <YandexMetrika />
           <AuthenticatedApp />
         </Router>
         <Toaster />
