@@ -13,9 +13,38 @@ export default function InstallAppPrompt() {
   const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
-    const standalone = isRunningAsApp();
-    setIsInstalled(standalone);
-    setIsIos(/iphone|ipad|ipod/i.test(navigator.userAgent) && !standalone);
+    let cancelled = false;
+
+    const syncInstallPrompt = () => {
+      setInstallPrompt(window.__rbInstallPrompt || null);
+    };
+
+    syncInstallPrompt();
+    window.addEventListener('rb-install-available', syncInstallPrompt);
+
+    const checkInstallation = async () => {
+      const standalone = isRunningAsApp();
+      let relatedAppInstalled = false;
+
+      if ('getInstalledRelatedApps' in navigator) {
+        try {
+          const relatedApps = await navigator.getInstalledRelatedApps();
+          relatedAppInstalled = relatedApps.some(
+            (app) => app.platform === 'webapp',
+          );
+        } catch (error) {
+          console.warn('Не удалось проверить установленное приложение:', error);
+        }
+      }
+
+      if (!cancelled) {
+        const installed = standalone || relatedAppInstalled;
+        setIsInstalled(installed);
+        setIsIos(/iphone|ipad|ipod/i.test(navigator.userAgent) && !installed);
+      }
+    };
+
+    checkInstallation();
 
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch((error) => {
@@ -23,40 +52,39 @@ export default function InstallAppPrompt() {
       });
     }
 
-    const handleInstallPrompt = (event) => {
-      event.preventDefault();
-      setInstallPrompt(event);
-    };
-
     const handleInstalled = () => {
       setIsInstalled(true);
       setInstallPrompt(null);
       setShowInstructions(false);
+      window.__rbInstallPrompt = null;
     };
 
-    window.addEventListener('beforeinstallprompt', handleInstallPrompt);
     window.addEventListener('appinstalled', handleInstalled);
 
     return () => {
-      window.removeEventListener('beforeinstallprompt', handleInstallPrompt);
+      cancelled = true;
+      window.removeEventListener('rb-install-available', syncInstallPrompt);
       window.removeEventListener('appinstalled', handleInstalled);
     };
   }, []);
 
   const handleInstall = async () => {
-    if (!installPrompt) {
+    const promptEvent = installPrompt || window.__rbInstallPrompt;
+
+    if (!promptEvent) {
       setShowInstructions(true);
       return;
     }
 
-    await installPrompt.prompt();
-    const choice = await installPrompt.userChoice;
+    await promptEvent.prompt();
+    const choice = await promptEvent.userChoice;
 
     if (choice.outcome === 'accepted') {
       setIsInstalled(true);
     }
 
     setInstallPrompt(null);
+    window.__rbInstallPrompt = null;
   };
 
   if (isInstalled || isDismissed) return null;
