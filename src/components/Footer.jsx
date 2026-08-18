@@ -104,23 +104,23 @@ export default function Footer() {
     >
       <div className="hidden xl:block">
         <div className="page-shell py-9">
-          <div className="grid grid-cols-3 items-start gap-12">
-            <div><Brand /><CompanyDetails /></div>
-            <div><h3 className="text-base font-semibold uppercase tracking-wider">Навигация</h3><FooterLinks /></div>
-            <div><h3 className="text-base font-semibold uppercase tracking-wider">Контакты</h3><ContactLinks /></div>
+          <div><Brand /><CompanyDetails /></div>
+          <div className="mt-8 grid grid-cols-[0.9fr_1fr_1.35fr] items-start gap-12 border-t border-white/10 pt-7">
+            <section><h3 className="text-base font-semibold uppercase tracking-wider">Навигация</h3><FooterLinks /></section>
+            <section><h3 className="text-base font-semibold uppercase tracking-wider">Контакты</h3><ContactLinks /></section>
+            <AppInstallSection compact />
           </div>
-          <div className="mx-auto mt-8 max-w-5xl"><AppInstallSection /></div>
           <p className="mt-8 border-t border-white/10 pt-6 text-center text-sm text-white/50">{COMPANY_INFO.copyright}</p>
         </div>
       </div>
 
       <div className="page-shell pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-7 xl:hidden">
         <div><Brand /><CompanyDetails /></div>
-        <div className="mt-8 grid gap-8 border-t border-white/10 pt-6 min-[600px]:grid-cols-2 min-[600px]:gap-10">
+        <div className="mt-8 grid gap-8 border-t border-white/10 pt-6 min-[760px]:grid-cols-[0.85fr_1fr_1.35fr] min-[760px]:gap-8">
           <section><h2 className="text-lg font-bold uppercase tracking-wider text-white">Навигация</h2><FooterLinks responsive /></section>
           <section><h2 className="text-lg font-bold uppercase tracking-wider text-white">Контакты</h2><ContactLinks responsive /></section>
+          <AppInstallSection compact />
         </div>
-        <div className="mt-8 border-t border-white/10 pt-6"><AppInstallSection /></div>
         <p className="mt-8 border-t border-white/10 pt-4 text-center text-xs leading-relaxed text-white/50">{COMPANY_INFO.copyright}</p>
       </div>
     </footer>

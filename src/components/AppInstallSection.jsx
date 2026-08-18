@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { CheckCircle2, Download, Laptop, Monitor, Share2, Smartphone } from "lucide-react";
 
 const isStandalone = () =>
   window.matchMedia("(display-mode: standalone)").matches ||
   window.navigator.standalone === true;
 
-export default function AppInstallSection() {
+export default function AppInstallSection({ compact = false }) {
+  const titleId = useId();
   const [message, setMessage] = useState(null);
   const [canInstall, setCanInstall] = useState(Boolean(window.__rbInstallPrompt));
 
@@ -113,28 +114,35 @@ export default function AppInstallSection() {
 
   return (
     <section
-      className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 shadow-inner shadow-black/10 sm:p-5"
-      aria-labelledby="install-app-title"
+      className={
+        compact
+          ? "min-w-0"
+          : "rounded-2xl border border-white/10 bg-white/[0.06] p-4 shadow-inner shadow-black/10 sm:p-5"
+      }
+      aria-labelledby={titleId}
     >
-      <div className="flex items-start gap-3">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-white shadow-lg shadow-orange-500/20">
+      <div className={compact ? "" : "flex items-start gap-3"}>
+        <span className={compact ? "hidden" : "flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-white shadow-lg shadow-orange-500/20"}>
           <Smartphone className="h-6 w-6" aria-hidden="true" />
         </span>
         <div>
-          <h2 id="install-app-title" className="text-base font-black text-white sm:text-lg">
-            Установить приложение
+          <h2
+            id={titleId}
+            className={compact ? "text-lg font-bold uppercase tracking-wider text-white" : "text-base font-black text-white sm:text-lg"}
+          >
+            {compact ? "Скачать приложение" : "Установить приложение"}
           </h2>
-          <p className="mt-1 text-xs leading-relaxed text-white/60 sm:text-sm">
+          <p className={compact ? "mt-2 text-xs leading-relaxed text-white/55" : "mt-1 text-xs leading-relaxed text-white/60 sm:text-sm"}>
             Быстрый запуск «РБ Решаем Быстро» с телефона или компьютера.
           </p>
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+      <div className={compact ? "mt-3 grid grid-cols-2 gap-2" : "mt-4 grid grid-cols-2 gap-2.5 lg:grid-cols-4"}>
         <button
           type="button"
           onClick={installOnAndroid}
-          className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-[#ff3300] px-3 py-3 text-sm font-bold text-white shadow-lg shadow-orange-950/20 transition hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-white/80 focus:ring-offset-2 focus:ring-offset-zinc-900"
+          className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-[#ff6b35] to-[#ff3300] px-2.5 py-2.5 text-xs font-bold text-white shadow-lg shadow-orange-950/20 transition hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-white/80 focus:ring-offset-2 focus:ring-offset-zinc-900 sm:text-sm"
         >
           <Download className="h-5 w-5 shrink-0" aria-hidden="true" />
           Android
@@ -142,7 +150,7 @@ export default function AppInstallSection() {
         <button
           type="button"
           onClick={showIphoneInstructions}
-          className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-[#ff3300] px-3 py-3 text-sm font-bold text-white shadow-lg shadow-orange-950/20 transition hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-white/80 focus:ring-offset-2 focus:ring-offset-zinc-900"
+          className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-[#ff6b35] to-[#ff3300] px-2.5 py-2.5 text-xs font-bold text-white shadow-lg shadow-orange-950/20 transition hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-white/80 focus:ring-offset-2 focus:ring-offset-zinc-900 sm:text-sm"
         >
           <Share2 className="h-5 w-5 shrink-0" aria-hidden="true" />
           iPhone
@@ -150,7 +158,7 @@ export default function AppInstallSection() {
         <button
           type="button"
           onClick={() => installOnComputer("Windows")}
-          className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-[#ff3300] px-3 py-3 text-sm font-bold text-white shadow-lg shadow-orange-950/20 transition hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-white/80 focus:ring-offset-2 focus:ring-offset-zinc-900"
+          className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-[#ff6b35] to-[#ff3300] px-2.5 py-2.5 text-xs font-bold text-white shadow-lg shadow-orange-950/20 transition hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-white/80 focus:ring-offset-2 focus:ring-offset-zinc-900 sm:text-sm"
         >
           <Monitor className="h-5 w-5 shrink-0" aria-hidden="true" />
           Windows
@@ -158,7 +166,7 @@ export default function AppInstallSection() {
         <button
           type="button"
           onClick={() => installOnComputer("macOS")}
-          className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-[#ff3300] px-3 py-3 text-sm font-bold text-white shadow-lg shadow-orange-950/20 transition hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-white/80 focus:ring-offset-2 focus:ring-offset-zinc-900"
+          className="flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-gradient-to-r from-[#ff6b35] to-[#ff3300] px-2.5 py-2.5 text-xs font-bold text-white shadow-lg shadow-orange-950/20 transition hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-white/80 focus:ring-offset-2 focus:ring-offset-zinc-900 sm:text-sm"
         >
           <Laptop className="h-5 w-5 shrink-0" aria-hidden="true" />
           macOS
