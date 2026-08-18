@@ -109,18 +109,18 @@ export default function Footer() {
             <div><h3 className="text-base font-semibold uppercase tracking-wider">Навигация</h3><FooterLinks /></div>
             <div><h3 className="text-base font-semibold uppercase tracking-wider">Контакты</h3><ContactLinks /></div>
           </div>
-          <div className="mx-auto mt-8 max-w-2xl"><AppInstallSection /></div>
+          <div className="mx-auto mt-8 max-w-5xl"><AppInstallSection /></div>
           <p className="mt-8 border-t border-white/10 pt-6 text-center text-sm text-white/50">{COMPANY_INFO.copyright}</p>
         </div>
       </div>
 
       <div className="page-shell pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-7 xl:hidden">
         <div><Brand /><CompanyDetails /></div>
-        <div className="mt-6"><AppInstallSection /></div>
         <div className="mt-8 grid gap-8 border-t border-white/10 pt-6 min-[600px]:grid-cols-2 min-[600px]:gap-10">
           <section><h2 className="text-lg font-bold uppercase tracking-wider text-white">Навигация</h2><FooterLinks responsive /></section>
           <section><h2 className="text-lg font-bold uppercase tracking-wider text-white">Контакты</h2><ContactLinks responsive /></section>
         </div>
+        <div className="mt-8 border-t border-white/10 pt-6"><AppInstallSection /></div>
         <p className="mt-8 border-t border-white/10 pt-4 text-center text-xs leading-relaxed text-white/50">{COMPANY_INFO.copyright}</p>
       </div>
     </footer>

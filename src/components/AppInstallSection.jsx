@@ -130,11 +130,11 @@ export default function AppInstallSection() {
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-2.5">
+      <div className="mt-4 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
         <button
           type="button"
           onClick={installOnAndroid}
-          className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-[#ff3300] px-3 py-3 text-sm font-bold text-white shadow-lg shadow-orange-950/20 transition hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-zinc-900"
+          className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-[#ff3300] px-3 py-3 text-sm font-bold text-white shadow-lg shadow-orange-950/20 transition hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-white/80 focus:ring-offset-2 focus:ring-offset-zinc-900"
         >
           <Download className="h-5 w-5 shrink-0" aria-hidden="true" />
           Android
@@ -142,7 +142,7 @@ export default function AppInstallSection() {
         <button
           type="button"
           onClick={showIphoneInstructions}
-          className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-3 text-sm font-bold text-white transition hover:border-white/35 hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/70 focus:ring-offset-2 focus:ring-offset-zinc-900"
+          className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-[#ff3300] px-3 py-3 text-sm font-bold text-white shadow-lg shadow-orange-950/20 transition hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-white/80 focus:ring-offset-2 focus:ring-offset-zinc-900"
         >
           <Share2 className="h-5 w-5 shrink-0" aria-hidden="true" />
           iPhone
@@ -150,7 +150,7 @@ export default function AppInstallSection() {
         <button
           type="button"
           onClick={() => installOnComputer("Windows")}
-          className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-3 text-sm font-bold text-white transition hover:border-white/35 hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/70 focus:ring-offset-2 focus:ring-offset-zinc-900"
+          className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-[#ff3300] px-3 py-3 text-sm font-bold text-white shadow-lg shadow-orange-950/20 transition hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-white/80 focus:ring-offset-2 focus:ring-offset-zinc-900"
         >
           <Monitor className="h-5 w-5 shrink-0" aria-hidden="true" />
           Windows
@@ -158,7 +158,7 @@ export default function AppInstallSection() {
         <button
           type="button"
           onClick={() => installOnComputer("macOS")}
-          className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-3 text-sm font-bold text-white transition hover:border-white/35 hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/70 focus:ring-offset-2 focus:ring-offset-zinc-900"
+          className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-[#ff6b35] to-[#ff3300] px-3 py-3 text-sm font-bold text-white shadow-lg shadow-orange-950/20 transition hover:brightness-105 focus:outline-none focus:ring-2 focus:ring-white/80 focus:ring-offset-2 focus:ring-offset-zinc-900"
         >
           <Laptop className="h-5 w-5 shrink-0" aria-hidden="true" />
           macOS
