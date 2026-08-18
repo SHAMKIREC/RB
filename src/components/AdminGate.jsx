@@ -31,7 +31,7 @@ export default function AdminGate({ children }) {
   if (loading) return <div className="page-shell py-12" />;
   if (allowed) return <><AdminNavigation onExit={async () => { try { await endAdminSession(); setAllowed(false); } catch { setError('Не удалось завершить сессию. Попробуйте ещё раз.'); } }} />{children}</>;
   return (
-    <section data-admin-login className="relative isolate min-h-[calc(100dvh-4rem)] overflow-hidden bg-[#d9c1a3] pb-[env(safe-area-inset-bottom)] sm:min-h-[calc(100dvh-5rem)] lg:min-h-[600px] xl:min-h-[620px]">
+    <section data-admin-login className="relative isolate min-h-[calc(100svh-4rem)] overflow-hidden bg-[#d9c1a3] pb-[env(safe-area-inset-bottom)] sm:min-h-[calc(100svh-5rem)] lg:min-h-[600px] xl:min-h-[620px]">
       <style>{`@media (min-width: 1280px) { [data-admin-login] > p { display: block !important; color: #111827 !important; background: rgba(255,255,255,.82) !important; border-color: rgba(120,70,20,.45) !important; } [data-admin-login] > p:nth-of-type(-n+2) { top: 1rem; } [data-admin-login] > p:nth-of-type(3), [data-admin-login] > p:nth-of-type(4) { bottom: 1rem; } }`}</style>
       <img
         src={adminLoginBackground}
@@ -51,21 +51,10 @@ export default function AdminGate({ children }) {
         className="pointer-events-none absolute -right-[24px] bottom-0 z-10 block h-[51%] w-auto max-w-none object-contain object-bottom drop-shadow-[0_14px_20px_rgba(47,25,11,0.28)] min-[480px]:-right-[20px] min-[480px]:h-[58%] sm:-right-[16px] sm:h-[64%] md:-right-[18px] md:h-[70%] lg:-right-[32px] lg:h-[80%] xl:right-[calc(50%-700px)] xl:h-[96%] 2xl:right-[calc(50%-735px)]"
       />
 
-      <div
-        className="pointer-events-none absolute left-1/2 top-1 z-20 h-[112px] w-[210px] -translate-x-1/2 overflow-hidden sm:top-2 sm:h-[132px] sm:w-[250px] lg:h-[148px] lg:w-[280px] xl:hidden"
-        aria-hidden="true"
-      >
-        <img
-          src={adminLoginBackground}
-          alt=""
-          className="absolute left-1/2 top-0 h-auto w-[940px] max-w-none -translate-x-1/2 sm:w-[1120px] lg:w-[1260px]"
-        />
-      </div>
-
-      <p className="pointer-events-none absolute left-3 top-3 z-20 block -rotate-3 rounded-full border border-white/45 bg-gradient-to-r from-orange-600/95 to-red-600/95 px-2 py-1 font-serif text-[10px] font-bold italic text-white shadow-[0_8px_22px_rgba(126,45,12,0.34)] sm:left-6 sm:top-5 sm:px-3 sm:text-xs lg:left-[8%] lg:text-sm xl:left-[calc(50%-420px)] xl:top-16 xl:-rotate-6 xl:px-5 xl:py-1.5 xl:text-xl">
+      <p className="pointer-events-none absolute left-3 top-14 z-20 block -rotate-3 rounded-full border border-white/45 bg-gradient-to-r from-orange-600/95 to-red-600/95 px-2 py-1 font-serif text-[10px] font-bold italic text-white shadow-[0_8px_22px_rgba(126,45,12,0.34)] sm:left-6 sm:top-16 sm:px-3 sm:text-xs lg:left-[8%] lg:top-20 lg:text-sm xl:left-[calc(50%-420px)] xl:top-16 xl:-rotate-6 xl:px-5 xl:py-1.5 xl:text-xl">
         Вход только
       </p>
-      <p className="pointer-events-none absolute right-3 top-3 z-20 block rotate-3 rounded-full border border-white/45 bg-gradient-to-r from-red-600/95 to-orange-600/95 px-2 py-1 font-serif text-[10px] font-bold italic text-white shadow-[0_8px_22px_rgba(126,45,12,0.34)] sm:right-6 sm:top-5 sm:px-3 sm:text-xs lg:right-[8%] lg:text-sm xl:right-[calc(50%-420px)] xl:top-16 xl:px-5 xl:py-1.5 xl:text-xl">
+      <p className="pointer-events-none absolute right-3 top-14 z-20 block rotate-3 rounded-full border border-white/45 bg-gradient-to-r from-red-600/95 to-orange-600/95 px-2 py-1 font-serif text-[10px] font-bold italic text-white shadow-[0_8px_22px_rgba(126,45,12,0.34)] sm:right-6 sm:top-16 sm:px-3 sm:text-xs lg:right-[8%] lg:top-20 lg:text-sm xl:right-[calc(50%-420px)] xl:top-16 xl:px-5 xl:py-1.5 xl:text-xl">
         для Короля
       </p>
       <p className="pointer-events-none absolute bottom-20 left-2 z-20 block max-w-[122px] -rotate-3 rounded-xl border border-white/40 bg-gradient-to-br from-orange-600/95 to-red-700/95 px-2 py-1.5 text-center font-serif text-[10px] font-bold italic leading-tight text-white shadow-[0_10px_26px_rgba(126,45,12,0.38)] sm:bottom-24 sm:left-4 sm:max-w-[155px] sm:px-3 sm:py-2 sm:text-xs lg:max-w-[190px] lg:text-sm xl:bottom-16 xl:left-[3.5%] xl:max-w-[230px] xl:rounded-2xl xl:px-4 xl:py-2.5 xl:text-lg">
@@ -75,7 +64,7 @@ export default function AdminGate({ children }) {
         Качество в каждой детали!
       </p>
 
-      <div className="relative z-30 mx-auto flex min-h-[calc(100dvh-4rem)] w-full items-start justify-center px-3 pb-8 pt-32 min-[480px]:px-6 min-[480px]:pt-36 sm:min-h-[calc(100dvh-5rem)] sm:px-8 sm:pt-40 md:pt-40 lg:min-h-[600px] lg:pt-40 xl:min-h-[620px] xl:pt-44">
+      <div className="relative z-30 mx-auto flex min-h-[calc(100svh-4rem)] w-full items-start justify-center px-3 pb-8 pt-32 min-[480px]:px-6 min-[480px]:pt-36 sm:min-h-[calc(100svh-5rem)] sm:px-8 sm:pt-40 md:pt-40 lg:min-h-[600px] lg:pt-40 xl:min-h-[620px] xl:pt-44">
         <div className="relative flex min-h-[250px] w-full min-w-0 max-w-[350px] items-center justify-center text-slate-900 min-[480px]:min-h-[270px] min-[480px]:max-w-[410px] sm:min-h-[285px] sm:max-w-[470px] md:max-w-[500px] lg:min-h-[300px] lg:max-w-[540px] xl:min-h-[320px] xl:max-w-[620px]">
           <div className="absolute inset-x-[5.75%] inset-y-[9%] overflow-hidden rounded-[18px] bg-[#fffdf9] shadow-[0_22px_50px_-20px_rgba(71,40,14,0.55)] sm:rounded-[22px]" />
           <img
