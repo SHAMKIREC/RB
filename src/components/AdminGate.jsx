@@ -32,7 +32,7 @@ export default function AdminGate({ children }) {
   if (allowed) return <><AdminNavigation onExit={async () => { try { await endAdminSession(); setAllowed(false); } catch { setError('Не удалось завершить сессию. Попробуйте ещё раз.'); } }} />{children}</>;
   return (
     <section data-admin-login className="relative isolate min-h-[calc(100dvh-4rem)] overflow-hidden bg-[#d9c1a3] pb-[env(safe-area-inset-bottom)] sm:min-h-[calc(100dvh-5rem)] lg:min-h-[600px] xl:min-h-[620px]">
-      <style>{`[data-admin-login] > p { display: block !important; color: #111827 !important; background: rgba(255,255,255,.82) !important; border-color: rgba(120,70,20,.45) !important; } [data-admin-login] > p:nth-of-type(-n+2) { top: 1rem; } [data-admin-login] > p:nth-of-type(3), [data-admin-login] > p:nth-of-type(4) { bottom: 1rem; } @media (max-width: 479px) { [data-admin-login] > p { font-size: 9px !important; padding: .35rem .5rem !important; } }`}</style>
+      <style>{`@media (min-width: 1280px) { [data-admin-login] > p { display: block !important; color: #111827 !important; background: rgba(255,255,255,.82) !important; border-color: rgba(120,70,20,.45) !important; } [data-admin-login] > p:nth-of-type(-n+2) { top: 1rem; } [data-admin-login] > p:nth-of-type(3), [data-admin-login] > p:nth-of-type(4) { bottom: 1rem; } }`}</style>
       <img
         src={adminLoginBackground}
         alt=""
@@ -43,29 +43,33 @@ export default function AdminGate({ children }) {
       <img
         src={adminBuilderLeft}
         alt=""
-        className="pointer-events-none absolute -left-[112px] bottom-0 z-10 block h-[52%] w-auto max-w-none object-contain object-bottom drop-shadow-[0_14px_20px_rgba(47,25,11,0.28)] min-[480px]:-left-[100px] min-[480px]:h-[60%] sm:-left-[85px] sm:h-[68%] md:-left-[70px] md:h-[78%] lg:h-[88%] xl:left-[calc(50%-700px)] xl:h-[96%] 2xl:left-[calc(50%-735px)]"
+        className="pointer-events-none absolute -left-[58px] bottom-0 z-10 block h-[46%] w-auto max-w-none object-contain object-bottom drop-shadow-[0_14px_20px_rgba(47,25,11,0.28)] min-[480px]:-left-[48px] min-[480px]:h-[52%] sm:-left-[38px] sm:h-[58%] md:-left-[42px] md:h-[64%] lg:-left-[52px] lg:h-[74%] xl:left-[calc(50%-700px)] xl:h-[96%] 2xl:left-[calc(50%-735px)]"
       />
       <img
         src={adminBuilderRight}
         alt=""
-        className="pointer-events-none absolute -right-[112px] bottom-0 z-10 block h-[52%] w-auto max-w-none object-contain object-bottom drop-shadow-[0_14px_20px_rgba(47,25,11,0.28)] min-[480px]:-right-[100px] min-[480px]:h-[60%] sm:-right-[85px] sm:h-[68%] md:-right-[70px] md:h-[78%] lg:h-[88%] xl:right-[calc(50%-700px)] xl:h-[96%] 2xl:right-[calc(50%-735px)]"
+        className="pointer-events-none absolute -right-[58px] bottom-0 z-10 block h-[46%] w-auto max-w-none object-contain object-bottom drop-shadow-[0_14px_20px_rgba(47,25,11,0.28)] min-[480px]:-right-[48px] min-[480px]:h-[52%] sm:-right-[38px] sm:h-[58%] md:-right-[42px] md:h-[64%] lg:-right-[52px] lg:h-[74%] xl:right-[calc(50%-700px)] xl:h-[96%] 2xl:right-[calc(50%-735px)]"
       />
 
-      <p className="pointer-events-none absolute left-[8%] top-7 z-20 hidden -rotate-3 rounded-full border border-white/45 bg-gradient-to-r from-orange-600/95 to-red-600/95 px-4 py-1.5 font-serif text-sm font-bold italic text-white shadow-[0_8px_22px_rgba(126,45,12,0.34)] md:block lg:left-[calc(50%-420px)] lg:top-16 lg:-rotate-6 lg:px-5 lg:text-lg xl:text-xl">
+      <div className="pointer-events-none absolute left-1/2 top-3 z-30 -translate-x-1/2 text-amber-500 drop-shadow-[0_4px_8px_rgba(120,70,20,0.35)] sm:top-5 xl:hidden" aria-hidden="true">
+        <Crown className="h-10 w-10 fill-amber-300/70 sm:h-12 sm:w-12" strokeWidth={1.7} />
+      </div>
+
+      <p className="pointer-events-none absolute left-[8%] top-7 z-20 hidden -rotate-3 rounded-full border border-white/45 bg-gradient-to-r from-orange-600/95 to-red-600/95 px-4 py-1.5 font-serif text-sm font-bold italic text-white shadow-[0_8px_22px_rgba(126,45,12,0.34)] xl:left-[calc(50%-420px)] xl:top-16 xl:block xl:-rotate-6 xl:px-5 xl:text-xl">
         Вход только
       </p>
-      <p className="pointer-events-none absolute right-[8%] top-7 z-20 hidden rotate-3 rounded-full border border-white/45 bg-gradient-to-r from-red-600/95 to-orange-600/95 px-4 py-1.5 font-serif text-sm font-bold italic text-white shadow-[0_8px_22px_rgba(126,45,12,0.34)] md:block lg:right-[calc(50%-420px)] lg:top-16 lg:px-5 lg:text-lg xl:text-xl">
+      <p className="pointer-events-none absolute right-[8%] top-7 z-20 hidden rotate-3 rounded-full border border-white/45 bg-gradient-to-r from-red-600/95 to-orange-600/95 px-4 py-1.5 font-serif text-sm font-bold italic text-white shadow-[0_8px_22px_rgba(126,45,12,0.34)] xl:right-[calc(50%-420px)] xl:top-16 xl:block xl:px-5 xl:text-xl">
         для Короля
       </p>
-      <p className="pointer-events-none absolute bottom-12 left-[2.5%] z-20 hidden max-w-[210px] -rotate-3 rounded-2xl border border-white/40 bg-gradient-to-br from-orange-600/95 to-red-700/95 px-4 py-2.5 text-center font-serif text-base font-bold italic leading-tight text-white shadow-[0_10px_26px_rgba(126,45,12,0.38)] lg:block xl:bottom-16 xl:left-[3.5%] xl:max-w-[230px] xl:text-lg">
+      <p className="pointer-events-none absolute bottom-12 left-[2.5%] z-20 hidden max-w-[210px] -rotate-3 rounded-2xl border border-white/40 bg-gradient-to-br from-orange-600/95 to-red-700/95 px-4 py-2.5 text-center font-serif text-base font-bold italic leading-tight text-white shadow-[0_10px_26px_rgba(126,45,12,0.38)] xl:bottom-16 xl:left-[3.5%] xl:block xl:max-w-[230px] xl:text-lg">
         Мы строим — Вы отдыхаете!
       </p>
-      <p className="pointer-events-none absolute bottom-12 right-[2.5%] z-20 hidden max-w-[210px] rotate-3 rounded-2xl border border-white/40 bg-gradient-to-bl from-orange-600/95 to-red-700/95 px-4 py-2.5 text-center font-serif text-base font-bold italic leading-tight text-white shadow-[0_10px_26px_rgba(126,45,12,0.38)] lg:block xl:bottom-16 xl:right-[3.5%] xl:max-w-[230px] xl:text-lg">
+      <p className="pointer-events-none absolute bottom-12 right-[2.5%] z-20 hidden max-w-[210px] rotate-3 rounded-2xl border border-white/40 bg-gradient-to-bl from-orange-600/95 to-red-700/95 px-4 py-2.5 text-center font-serif text-base font-bold italic leading-tight text-white shadow-[0_10px_26px_rgba(126,45,12,0.38)] xl:bottom-16 xl:right-[3.5%] xl:block xl:max-w-[230px] xl:text-lg">
         Качество в каждой детали!
       </p>
 
-      <div className="relative z-30 mx-auto flex min-h-[calc(100dvh-4rem)] w-full items-start justify-center px-2 pb-8 pt-16 min-[480px]:px-6 min-[480px]:pt-20 sm:min-h-[calc(100dvh-5rem)] sm:px-8 md:pt-28 lg:min-h-[600px] lg:pt-40 xl:min-h-[620px] xl:pt-44">
-        <div className="relative flex min-h-[330px] w-full min-w-0 max-w-[430px] items-center justify-center text-slate-900 min-[480px]:min-h-[350px] min-[480px]:max-w-[500px] sm:min-h-[330px] sm:max-w-[520px] lg:min-h-[320px] lg:max-w-[560px] xl:max-w-[620px]">
+      <div className="relative z-30 mx-auto flex min-h-[calc(100dvh-4rem)] w-full items-start justify-center px-3 pb-8 pt-16 min-[480px]:px-6 min-[480px]:pt-20 sm:min-h-[calc(100dvh-5rem)] sm:px-8 md:pt-24 lg:min-h-[600px] lg:pt-28 xl:min-h-[620px] xl:pt-44">
+        <div className="relative flex min-h-[250px] w-full min-w-0 max-w-[350px] items-center justify-center text-slate-900 min-[480px]:min-h-[270px] min-[480px]:max-w-[410px] sm:min-h-[285px] sm:max-w-[470px] md:max-w-[500px] lg:min-h-[300px] lg:max-w-[540px] xl:min-h-[320px] xl:max-w-[620px]">
           <div className="absolute inset-x-[5.75%] inset-y-[9%] overflow-hidden rounded-[18px] bg-[#fffdf9] shadow-[0_22px_50px_-20px_rgba(71,40,14,0.55)] sm:rounded-[22px]" />
           <img
             src={adminLoginFrame}
@@ -73,16 +77,16 @@ export default function AdminGate({ children }) {
             className="pointer-events-none absolute inset-0 z-10 h-full w-full object-fill"
           />
 
-          <div className="relative z-20 w-full px-[13%] py-11 min-[480px]:py-12 sm:px-[12%]">
-            <h1 className="text-center text-[22px] font-black leading-tight tracking-tight sm:text-[28px] lg:text-[30px]">Вход владельца сайта</h1>
-            <p className="mt-2 text-center text-[13px] text-slate-600 sm:mt-2.5 sm:text-[15px]">Доступ только для владельца 👑</p>
+          <div className="relative z-20 w-full px-[12%] py-7 min-[480px]:py-8 sm:px-[12%] sm:py-9 lg:py-10 xl:py-12">
+            <h1 className="text-center text-[19px] font-black leading-tight tracking-tight min-[480px]:text-[22px] sm:text-[25px] lg:text-[28px] xl:text-[30px]">Вход владельца сайта</h1>
+            <p className="mt-1.5 text-center text-[12px] text-slate-600 sm:mt-2 sm:text-[14px] xl:mt-2.5 xl:text-[15px]">Доступ только для владельца 👑</p>
 
-            {!configured ? <p className="mt-5 text-center text-sm text-destructive">Административный доступ не настроен.</p> : <form onSubmit={async (event) => { event.preventDefault(); setError(''); try { const ok = await startAdminSession(pin); if (ok) setAllowed(true); else setError('Неверный PIN.'); } catch { setError('Не удалось выполнить вход. Попробуйте ещё раз.'); } }} className="mt-5 space-y-3 sm:mt-6 sm:space-y-3.5">
+            {!configured ? <p className="mt-4 text-center text-sm text-destructive xl:mt-5">Административный доступ не настроен.</p> : <form onSubmit={async (event) => { event.preventDefault(); setError(''); try { const ok = await startAdminSession(pin); if (ok) setAllowed(true); else setError('Неверный PIN.'); } catch { setError('Не удалось выполнить вход. Попробуйте ещё раз.'); } }} className="mt-4 space-y-2 min-[480px]:space-y-2.5 sm:mt-5 sm:space-y-3 xl:mt-6 xl:space-y-3.5">
               <div className="relative">
-                <input value={pin} onChange={(event) => setPin(event.target.value)} type="password" inputMode="text" autoCapitalize="none" autoCorrect="off" className="h-11 w-full rounded-xl border border-amber-300/70 bg-white px-4 pr-12 outline-none shadow-inner shadow-amber-900/5 transition-[border-color,box-shadow] duration-200 focus:border-primary focus:ring-2 focus:ring-primary/15 sm:h-12" placeholder="PIN"/>
+                <input value={pin} onChange={(event) => setPin(event.target.value)} type="password" inputMode="text" autoCapitalize="none" autoCorrect="off" className="h-10 w-full rounded-xl border border-amber-300/70 bg-white px-4 pr-12 outline-none shadow-inner shadow-amber-900/5 transition-[border-color,box-shadow] duration-200 focus:border-primary focus:ring-2 focus:ring-primary/15 sm:h-11 xl:h-12" placeholder="PIN"/>
                 <Crown aria-hidden="true" className="pointer-events-none absolute right-4 top-1/2 h-5 w-5 -translate-y-1/2 text-amber-500/80" strokeWidth={1.8} />
               </div>
-              <button className="group relative h-11 w-full overflow-hidden rounded-xl bg-primary text-sm font-bold text-white shadow-md shadow-orange-500/25 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-orange-500/35 sm:h-12 sm:text-base">
+              <button className="group relative h-10 w-full overflow-hidden rounded-xl bg-primary text-sm font-bold text-white shadow-md shadow-orange-500/25 transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-orange-500/35 sm:h-11 sm:text-base xl:h-12">
                 <span aria-hidden="true" className="absolute inset-y-0 -left-1/3 w-1/3 skew-x-[-20deg] bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-500 group-hover:translate-x-[430%]" />
                 <span className="relative">👑 Войти как Король</span>
               </button>
