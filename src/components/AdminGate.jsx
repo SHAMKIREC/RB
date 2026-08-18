@@ -43,17 +43,13 @@ export default function AdminGate({ children }) {
       <img
         src={adminBuilderLeft}
         alt=""
-        className="pointer-events-none absolute -left-[58px] bottom-0 z-10 block h-[46%] w-auto max-w-none object-contain object-bottom drop-shadow-[0_14px_20px_rgba(47,25,11,0.28)] min-[480px]:-left-[48px] min-[480px]:h-[52%] sm:-left-[38px] sm:h-[58%] md:-left-[42px] md:h-[64%] lg:-left-[52px] lg:h-[74%] xl:left-[calc(50%-700px)] xl:h-[96%] 2xl:left-[calc(50%-735px)]"
+        className="pointer-events-none absolute -left-[38px] bottom-0 z-10 block h-[50%] w-auto max-w-none object-contain object-bottom drop-shadow-[0_14px_20px_rgba(47,25,11,0.28)] min-[480px]:-left-[32px] min-[480px]:h-[56%] sm:-left-[24px] sm:h-[62%] md:-left-[28px] md:h-[68%] lg:-left-[40px] lg:h-[78%] xl:left-[calc(50%-700px)] xl:h-[96%] 2xl:left-[calc(50%-735px)]"
       />
       <img
         src={adminBuilderRight}
         alt=""
-        className="pointer-events-none absolute -right-[58px] bottom-0 z-10 block h-[46%] w-auto max-w-none object-contain object-bottom drop-shadow-[0_14px_20px_rgba(47,25,11,0.28)] min-[480px]:-right-[48px] min-[480px]:h-[52%] sm:-right-[38px] sm:h-[58%] md:-right-[42px] md:h-[64%] lg:-right-[52px] lg:h-[74%] xl:right-[calc(50%-700px)] xl:h-[96%] 2xl:right-[calc(50%-735px)]"
+        className="pointer-events-none absolute -right-[38px] bottom-0 z-10 block h-[50%] w-auto max-w-none object-contain object-bottom drop-shadow-[0_14px_20px_rgba(47,25,11,0.28)] min-[480px]:-right-[32px] min-[480px]:h-[56%] sm:-right-[24px] sm:h-[62%] md:-right-[28px] md:h-[68%] lg:-right-[40px] lg:h-[78%] xl:right-[calc(50%-700px)] xl:h-[96%] 2xl:right-[calc(50%-735px)]"
       />
-
-      <div className="pointer-events-none absolute left-1/2 top-3 z-30 -translate-x-1/2 text-amber-500 drop-shadow-[0_4px_8px_rgba(120,70,20,0.35)] sm:top-5 xl:hidden" aria-hidden="true">
-        <Crown className="h-10 w-10 fill-amber-300/70 sm:h-12 sm:w-12" strokeWidth={1.7} />
-      </div>
 
       <p className="pointer-events-none absolute left-[8%] top-7 z-20 hidden -rotate-3 rounded-full border border-white/45 bg-gradient-to-r from-orange-600/95 to-red-600/95 px-4 py-1.5 font-serif text-sm font-bold italic text-white shadow-[0_8px_22px_rgba(126,45,12,0.34)] xl:left-[calc(50%-420px)] xl:top-16 xl:block xl:-rotate-6 xl:px-5 xl:text-xl">
         Вход только
@@ -68,7 +64,7 @@ export default function AdminGate({ children }) {
         Качество в каждой детали!
       </p>
 
-      <div className="relative z-30 mx-auto flex min-h-[calc(100dvh-4rem)] w-full items-start justify-center px-3 pb-8 pt-16 min-[480px]:px-6 min-[480px]:pt-20 sm:min-h-[calc(100dvh-5rem)] sm:px-8 md:pt-24 lg:min-h-[600px] lg:pt-28 xl:min-h-[620px] xl:pt-44">
+      <div className="relative z-30 mx-auto flex min-h-[calc(100dvh-4rem)] w-full items-start justify-center px-3 pb-8 pt-20 min-[480px]:px-6 min-[480px]:pt-24 sm:min-h-[calc(100dvh-5rem)] sm:px-8 md:pt-28 lg:min-h-[600px] lg:pt-32 xl:min-h-[620px] xl:pt-44">
         <div className="relative flex min-h-[250px] w-full min-w-0 max-w-[350px] items-center justify-center text-slate-900 min-[480px]:min-h-[270px] min-[480px]:max-w-[410px] sm:min-h-[285px] sm:max-w-[470px] md:max-w-[500px] lg:min-h-[300px] lg:max-w-[540px] xl:min-h-[320px] xl:max-w-[620px]">
           <div className="absolute inset-x-[5.75%] inset-y-[9%] overflow-hidden rounded-[18px] bg-[#fffdf9] shadow-[0_22px_50px_-20px_rgba(71,40,14,0.55)] sm:rounded-[22px]" />
           <img
