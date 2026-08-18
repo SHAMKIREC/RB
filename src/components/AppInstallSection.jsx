@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { CheckCircle2, Download, Share2, Smartphone } from "lucide-react";
+import { CheckCircle2, Download, Laptop, Monitor, Share2, Smartphone } from "lucide-react";
 
 const isStandalone = () =>
   window.matchMedia("(display-mode: standalone)").matches ||
@@ -74,6 +74,43 @@ export default function AppInstallSection() {
     });
   };
 
+  const installOnComputer = async (platform) => {
+    if (isStandalone()) {
+      setMessage({ type: "success", text: "Приложение уже установлено и сейчас открыто." });
+      return;
+    }
+
+    const promptEvent = window.__rbInstallPrompt;
+
+    if (promptEvent) {
+      await promptEvent.prompt();
+      const choice = await promptEvent.userChoice;
+      window.__rbInstallPrompt = null;
+      setCanInstall(false);
+
+      setMessage(
+        choice.outcome === "accepted"
+          ? {
+              type: "success",
+              text: `Приложение установлено для ${platform}. Откройте его через меню приложений и разверните окно.`,
+            }
+          : {
+              type: "info",
+              text: "Установка отменена. Нажмите кнопку ещё раз, когда захотите установить приложение.",
+            },
+      );
+      return;
+    }
+
+    setMessage({
+      type: "info",
+      text:
+        platform === "macOS"
+          ? "На Mac откройте сайт в Safari и выберите «Файл → Добавить в Dock». В Chrome используйте значок установки в адресной строке."
+          : "На Windows откройте сайт в Chrome или Edge и нажмите значок установки справа в адресной строке.",
+    });
+  };
+
   return (
     <section
       className="rounded-2xl border border-white/10 bg-white/[0.06] p-4 shadow-inner shadow-black/10 sm:p-5"
@@ -88,7 +125,7 @@ export default function AppInstallSection() {
             Установить приложение
           </h2>
           <p className="mt-1 text-xs leading-relaxed text-white/60 sm:text-sm">
-            Быстрый запуск «РБ Решаем Быстро» с экрана телефона.
+            Быстрый запуск «РБ Решаем Быстро» с телефона или компьютера.
           </p>
         </div>
       </div>
@@ -109,6 +146,22 @@ export default function AppInstallSection() {
         >
           <Share2 className="h-5 w-5 shrink-0" aria-hidden="true" />
           iPhone
+        </button>
+        <button
+          type="button"
+          onClick={() => installOnComputer("Windows")}
+          className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-3 text-sm font-bold text-white transition hover:border-white/35 hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/70 focus:ring-offset-2 focus:ring-offset-zinc-900"
+        >
+          <Monitor className="h-5 w-5 shrink-0" aria-hidden="true" />
+          Windows
+        </button>
+        <button
+          type="button"
+          onClick={() => installOnComputer("macOS")}
+          className="flex min-h-12 items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-3 py-3 text-sm font-bold text-white transition hover:border-white/35 hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/70 focus:ring-offset-2 focus:ring-offset-zinc-900"
+        >
+          <Laptop className="h-5 w-5 shrink-0" aria-hidden="true" />
+          macOS
         </button>
       </div>
 
@@ -132,7 +185,7 @@ export default function AppInstallSection() {
       )}
 
       <p className="mt-2 text-center text-[11px] text-white/45">
-        {canInstall ? "Android: готово к установке" : "Бесплатно · Без магазина приложений"}
+        {canInstall ? "Готово к установке на этом устройстве" : "Бесплатно · Без магазина приложений"}
       </p>
     </section>
   );
