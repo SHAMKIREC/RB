@@ -46,6 +46,16 @@ export default function InstallAppPrompt() {
 
     checkInstallation();
 
+    const recheckInstallation = () => {
+      if (document.visibilityState === 'visible') {
+        checkInstallation();
+      }
+    };
+
+    window.addEventListener('focus', recheckInstallation);
+    window.addEventListener('pageshow', recheckInstallation);
+    document.addEventListener('visibilitychange', recheckInstallation);
+
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch((error) => {
         console.error('Не удалось зарегистрировать service worker:', error);
@@ -65,6 +75,9 @@ export default function InstallAppPrompt() {
       cancelled = true;
       window.removeEventListener('rb-install-available', syncInstallPrompt);
       window.removeEventListener('appinstalled', handleInstalled);
+      window.removeEventListener('focus', recheckInstallation);
+      window.removeEventListener('pageshow', recheckInstallation);
+      document.removeEventListener('visibilitychange', recheckInstallation);
     };
   }, []);
 

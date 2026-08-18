@@ -3,6 +3,7 @@ import { MapPin, Phone } from "lucide-react";
 import { MAX_URL, PHONE, PHONE_DISPLAY, TELEGRAM, VK_MSG, WHATSAPP } from "../lib/calcData";
 import { MaxIcon, TelegramIcon, VKIcon, WhatsAppIcon } from "./SocialLinks";
 import { FOOTER_NAVIGATION } from "../data/navigation";
+import AppInstallSection from "./AppInstallSection";
 
 const COMPANY_INFO = {
   location: "г. Саратов, работаем 24/7",
@@ -108,12 +109,14 @@ export default function Footer() {
             <div><h3 className="text-base font-semibold uppercase tracking-wider">Навигация</h3><FooterLinks /></div>
             <div><h3 className="text-base font-semibold uppercase tracking-wider">Контакты</h3><ContactLinks /></div>
           </div>
+          <div className="mx-auto mt-8 max-w-2xl"><AppInstallSection /></div>
           <p className="mt-8 border-t border-white/10 pt-6 text-center text-sm text-white/50">{COMPANY_INFO.copyright}</p>
         </div>
       </div>
 
       <div className="page-shell pb-[calc(5.5rem+env(safe-area-inset-bottom))] pt-7 xl:hidden">
         <div><Brand /><CompanyDetails /></div>
+        <div className="mt-6"><AppInstallSection /></div>
         <div className="mt-8 grid gap-8 border-t border-white/10 pt-6 min-[600px]:grid-cols-2 min-[600px]:gap-10">
           <section><h2 className="text-lg font-bold uppercase tracking-wider text-white">Навигация</h2><FooterLinks responsive /></section>
           <section><h2 className="text-lg font-bold uppercase tracking-wider text-white">Контакты</h2><ContactLinks responsive /></section>
