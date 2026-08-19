@@ -5,6 +5,7 @@ export const STORAGE_BUCKETS = {
   projects: 'rb-project-media',
   reviews: 'rb-review-photos',
   documents: 'rb-project-documents',
+  services: 'rb-service-gallery',
 };
 
 /** @type {{ width: number, quality: number, resize: 'contain' }} */
@@ -125,6 +126,9 @@ export const uploadProjectPhotos = (projectId, stage, values) => uploadPending(v
 
 export const uploadReviewPhotos = (reviewId, values) => uploadPending(values, STORAGE_BUCKETS.reviews,
   (file) => `${reviewId}/${crypto.randomUUID()}.${extension(file)}`);
+
+export const uploadServicePhotos = (serviceKey, values) => uploadPending(values, STORAGE_BUCKETS.services,
+  (file) => `${serviceKey}/${crypto.randomUUID()}.${extension(file)}`);
 
 export const uploadProjectDocuments = async (projectId, type, values) => {
   const results = []; const uploaded = [];
