@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Crown, LogOut } from 'lucide-react';
+import { Link, NavLink } from 'react-router-dom';
+import { Camera, Crown, DatabaseBackup, ExternalLink, FolderKanban, LogOut, MessageSquareText, ReceiptText, ShieldCheck } from 'lucide-react';
 import adminBuilderLeft from '@/assets/images/admin/admin-builder-left.png';
 import adminBuilderRight from '@/assets/images/admin/admin-builder-right.png';
 import adminLoginBackground from '@/assets/images/admin/admin-login-background.png';
@@ -10,7 +10,41 @@ import { isSupabaseConfigured } from '../lib/supabaseClient';
 import { enableInlineEditMode } from '../lib/pricingStorage';
 
 export function AdminNavigation({ onExit }) {
-  return <div className="border-b border-border bg-card/95"><div className="page-shell flex flex-wrap items-center gap-x-3 gap-y-2 py-2 text-xs font-bold sm:gap-3"><span className="text-muted-foreground">Администрирование:</span><Link to="/admin/orders" className="hover:text-primary">Заказы</Link><Link to="/admin/projects" className="hover:text-primary">Проекты</Link><Link to="/admin/reviews" className="hover:text-primary">Отзывы</Link><Link to="/admin/service-photos" className="hover:text-primary">Фото услуг</Link><Link to="/admin/backup" className="hover:text-primary">Резерв</Link><Link to="/" onClick={enableInlineEditMode} className="basis-full hover:text-primary sm:basis-auto">Открыть сайт</Link><button onClick={onExit} className="ml-auto inline-flex items-center gap-1 text-destructive"><LogOut className="h-3.5 w-3.5"/>Выйти</button></div></div>;
+  const items = [
+    { to: '/admin/orders', label: 'Заказы', icon: ReceiptText },
+    { to: '/admin/projects', label: 'Проекты', icon: FolderKanban },
+    { to: '/admin/reviews', label: 'Отзывы', icon: MessageSquareText },
+    { to: '/admin/service-photos', label: 'Фото услуг', icon: Camera },
+    { to: '/admin/backup', label: 'Резерв', icon: DatabaseBackup },
+  ];
+  const itemClass = ({ isActive }) => `group relative inline-flex h-11 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-xl border px-3 text-xs font-black transition-all duration-300 sm:h-12 sm:px-4 ${isActive ? 'border-orange-400/70 bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-[0_9px_22px_-10px_rgba(249,82,22,.9)]' : 'border-white/10 bg-white/[.06] text-white/75 hover:-translate-y-0.5 hover:border-orange-400/45 hover:bg-white/[.11] hover:text-white'}`;
+  return <div className="sticky top-0 z-50 border-b border-black/20 bg-[#242321]/95 text-white shadow-[0_12px_30px_-22px_rgba(0,0,0,.8)] backdrop-blur-xl">
+    <div className="page-shell py-2.5 sm:py-3">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex h-11 shrink-0 items-center gap-2 rounded-xl border border-orange-400/25 bg-gradient-to-br from-orange-500/20 to-red-500/10 px-2.5 sm:h-12 sm:px-3">
+          <span className="relative grid h-7 w-7 place-items-center rounded-lg bg-gradient-to-br from-orange-500 to-red-500 shadow-[0_6px_16px_-7px_rgba(255,80,20,.9)]"><ShieldCheck className="h-4 w-4"/><span className="absolute -right-0.5 -top-0.5 h-2 w-2 animate-pulse rounded-full border border-[#242321] bg-green-400" /></span>
+          <span className="hidden leading-tight min-[390px]:block"><span className="block text-[10px] uppercase tracking-[.16em] text-white/50">Панель</span><span className="block text-xs font-black">Владельца</span></span>
+        </div>
+
+        <nav aria-label="Разделы админки" className="flex min-w-0 flex-1 gap-2 overflow-x-auto scroll-smooth pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {items.map(({ to, label, icon: Icon }) => <NavLink key={to} to={to} className={itemClass}>
+            <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+            <Icon className="relative h-4 w-4"/><span className="relative whitespace-nowrap">{label}</span>
+          </NavLink>)}
+        </nav>
+
+        <div className="flex shrink-0 gap-2">
+          <Link to="/" onClick={enableInlineEditMode} aria-label="Открыть сайт" title="Открыть сайт" className="group inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[.06] text-white/75 transition-all duration-300 hover:-translate-y-0.5 hover:border-orange-400/45 hover:bg-white/[.11] hover:text-orange-300 sm:h-12 sm:w-auto sm:gap-2 sm:px-3">
+            <ExternalLink className="h-4 w-4 transition-transform duration-300 group-hover:rotate-6"/><span className="hidden text-xs font-black lg:inline">На сайт</span>
+          </Link>
+          <button type="button" onClick={onExit} aria-label="Выйти из админки" title="Выйти" className="group inline-flex h-11 w-11 items-center justify-center rounded-xl border border-red-400/20 bg-red-500/10 text-red-200 transition-all duration-300 hover:-translate-y-0.5 hover:border-red-400/50 hover:bg-red-500/20 hover:text-white sm:h-12 sm:w-auto sm:gap-2 sm:px-3">
+            <LogOut className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5"/><span className="hidden text-xs font-black xl:inline">Выйти</span>
+          </button>
+        </div>
+      </div>
+      <p className="mt-1.5 truncate px-1 text-[10px] font-medium text-white/35 sm:hidden">Проведите по разделам влево или вправо</p>
+    </div>
+  </div>;
 }
 
 export default function AdminGate({ children }) {
