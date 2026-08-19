@@ -29,6 +29,7 @@ export default function Calculator() {
   const [materialWork, setMaterialWork] = useState(null);
   const [resetSignal, setResetSignal] = useState(0);
   const skipDraftSave = useRef(false);
+  const skipAutomaticReset = useRef(false);
   const pricingOverrides = usePricingOverrides();
   const inlineEditMode = useInlineEditMode();
 
@@ -38,6 +39,10 @@ export default function Calculator() {
   }, [quantities, turnkeyTotal, materialSelections]);
   useEffect(() => {
     if (turnkeyTotal === 0 && Object.keys(quantities).length === 0 && Object.keys(materialSelections).length === 0) {
+      if (skipAutomaticReset.current) {
+        skipAutomaticReset.current = false;
+        return;
+      }
       setQuery('');
       setActiveCategoryId(null);
       setMaterialWork(null);
@@ -64,9 +69,12 @@ export default function Calculator() {
   const activeCategory = displayedCategories.find((category) => category.id === activeCategoryId) || null;
   const categoryRows = chunk(displayedCategories, 4);
   const updateQuantity = (id, value) => setQuantities((current) => ({ ...current, [id]: integerQuantity(value) }));
-  const clearDraft = () => {
+  const clearDraft = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (!window.confirm('Очистить текущую смету?')) return;
     skipDraftSave.current = true;
+    skipAutomaticReset.current = true;
     localStorage.removeItem(DRAFT_KEY);
     setQuantities({});
     setTurnkeyTotal(0);
