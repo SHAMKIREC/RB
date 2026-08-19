@@ -1,4 +1,4 @@
-import { Phone, AlertTriangle } from "lucide-react";
+import { Phone, AlertTriangle, CheckCircle2, ClipboardList } from "lucide-react";
 import { PHONE, PHONE_DISPLAY, WHATSAPP, TELEGRAM, VK_MSG, MAX_URL } from "../../lib/calcData";
 import { WhatsAppIcon, TelegramIcon, MaxIcon, VKIcon } from "../SocialLinks";
 
@@ -40,7 +40,7 @@ export default function NewFloatingBill({ workTotal, matTotal, coeffTotal, break
           </div>
         )}
         <div className="mt-3 text-xs opacity-50">
-          {withMaterials ? "✅ Смета включает работы и материалы" : "⚠️ Без учёта материалов"}
+          <span className="inline-flex items-center gap-1.5">{withMaterials ? <CheckCircle2 className="h-3.5 w-3.5 text-green-400" /> : <AlertTriangle className="h-3.5 w-3.5 text-orange-400" />}{withMaterials ? "Смета включает работы и материалы" : "Без учёта материалов"}</span>
         </div>
       </div>
 
@@ -57,7 +57,7 @@ export default function NewFloatingBill({ workTotal, matTotal, coeffTotal, break
           </div>
         ) : (
           <div className="text-center py-5 text-muted-foreground">
-            <div className="text-3xl mb-2">📋</div>
+            <ClipboardList className="mx-auto mb-2 h-8 w-8 text-primary" />
             <div className="text-sm font-medium">Выберите работы</div>
             <div className="text-xs">для составления сметы</div>
           </div>
