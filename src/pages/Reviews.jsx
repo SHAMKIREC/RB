@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { MapPin, Star } from "lucide-react";
+import { MapPin, Star, MessageSquareText, ShieldCheck, Quote, ExternalLink } from "lucide-react";
+import { motion } from "framer-motion";
 import { getPublishedReviews } from "../lib/reviewsStorage";
 
 const photoSrc = (photo) => (typeof photo === "string" ? photo : photo?.src || "");
@@ -68,15 +69,9 @@ export default function Reviews() {
   };
 
   return (
-    <div className="page-shell py-7 sm:py-10">
-      <div className="mb-5 flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="mb-1 text-xs font-mono font-bold uppercase tracking-widest text-primary">ОТЗЫВЫ</p>
-          <h1 className="mb-2 text-3xl font-black text-foreground sm:text-4xl">Отзывы клиентов</h1>
-          <p className="max-w-2xl text-sm text-muted-foreground">Опубликованные отзывы о выполненных работах.</p>
-        </div>
-        <a href="https://vk.ru/club237262784" target="_blank" rel="noopener noreferrer" className="rounded-xl bg-primary px-4 py-2.5 text-sm font-bold text-white">Оставить отзыв</a><p className="basis-full text-xs text-muted-foreground">Оставьте отзыв в нашей группе ВКонтакте. После согласования мы разместим его на сайте без указания имени.</p>
-      </div>
+    <div className="reviews-page pb-10 sm:pb-14">
+      <section className="relative mb-7 overflow-hidden bg-[#242321] text-white sm:mb-10"><div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_15%,rgba(255,80,20,.30),transparent_34%),radial-gradient(circle_at_5%_90%,rgba(255,120,40,.12),transparent_35%)]" /><div className="page-shell relative py-9 sm:py-14"><motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl"><div className="mb-4 inline-flex items-center gap-2 rounded-full border border-orange-400/35 bg-orange-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[.18em] text-orange-300"><MessageSquareText className="h-4 w-4" /> Отзывы</div><h1 className="text-4xl font-black leading-none sm:text-6xl">Говорят наши <span className="text-primary">клиенты</span></h1><p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-lg">Реальные впечатления о выполненном ремонте и строительных работах.</p><div className="mt-7 flex flex-col gap-3 sm:flex-row"><a href="https://vk.ru/club237262784" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-2xl bg-primary px-6 py-4 font-black text-white shadow-lg shadow-orange-600/25 transition hover:-translate-y-0.5">Оставить отзыв <ExternalLink className="h-4 w-4" /></a><span className="inline-flex items-center justify-center gap-2 rounded-2xl border border-white/15 bg-white/[.07] px-5 py-3 text-sm font-bold text-white/75"><ShieldCheck className="h-5 w-5 text-primary" /> Публикуем после проверки</span></div></motion.div></div></section>
+      <div className="page-shell">
       {loading ? (
         <div className="rounded-2xl border border-dashed border-border px-6 py-14 text-center text-muted-foreground">Загрузка...</div>
       ) : loadError ? (
@@ -85,7 +80,8 @@ export default function Reviews() {
         <>
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {reviews.map((review) => (
-              <article key={review.id} className="rb-card flex flex-col rounded-2xl p-5">
+              <motion.article initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} key={review.id} className="rb-card relative flex flex-col overflow-hidden rounded-3xl border-2 border-primary/35 bg-card p-5 shadow-sm transition hover:-translate-y-1 hover:border-primary/60 hover:shadow-xl sm:p-6">
+                <Quote className="absolute right-5 top-5 h-12 w-12 text-primary/[.08]" />
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <h2 className="font-black text-foreground">{review.clientName}</h2>
@@ -95,8 +91,8 @@ export default function Reviews() {
                     <Star className="h-4 w-4 fill-current" />{review.rating}
                   </span>
                 </div>
-                <span className="mt-4 w-fit rounded-lg bg-secondary px-2.5 py-1 text-[11px] font-bold text-secondary-foreground">{review.serviceTitle}</span>
-                <p className="mt-4 line-clamp-5 text-sm leading-relaxed text-muted-foreground">{review.reviewText}</p>
+                <span className="mt-4 w-fit rounded-full border border-primary/15 bg-primary/[.07] px-3 py-1.5 text-[11px] font-bold text-primary">{review.serviceTitle}</span>
+                <p className="mt-4 line-clamp-5 text-sm leading-relaxed text-foreground/75">{review.reviewText}</p>
                 {Array.isArray(review.photos) && review.photos.length > 0 && (
                   <div className="mt-4 grid grid-cols-3 gap-2">
                     {review.photos.map((photo, index) => (
@@ -105,7 +101,7 @@ export default function Reviews() {
                   </div>
                 )}
                 <p className="mt-auto pt-5 text-xs text-muted-foreground">{new Date(review.createdAt).toLocaleDateString("ru-RU")}</p>
-              </article>
+              </motion.article>
             ))}
           </div>
           {loadMoreError && <p className="mt-4 text-center text-sm text-muted-foreground">Не удалось загрузить данные. Попробуйте ещё раз.</p>}
@@ -114,6 +110,7 @@ export default function Reviews() {
       ) : (
         <div className="rounded-2xl border border-dashed border-border px-6 py-14 text-center text-muted-foreground">Отзывов пока нет.</div>
       )}
+      </div>
     </div>
   );
 }
