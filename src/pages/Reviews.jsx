@@ -22,18 +22,32 @@ export default function Reviews() {
 
   useEffect(() => {
     let active = true;
-    getPublishedReviews(0, PAGE_SIZE - 1).then(({ items, hasMore: more }) => {
+    let hasLoaded = false;
+    const refresh = () => getPublishedReviews(0, PAGE_SIZE - 1).then(({ items, hasMore: more }) => {
       if (!active) return;
+      hasLoaded = true;
       setReviews(items);
       setNextOffset(items.length);
       setHasMore(more);
       setLoadError(false);
     }).catch(() => {
-      if (active) setLoadError(true);
+      if (active && !hasLoaded) setLoadError(true);
     }).finally(() => {
       if (active) setLoading(false);
     });
-    return () => { active = false; };
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === 'visible') refresh();
+    };
+    refresh();
+    const timer = window.setInterval(refreshWhenVisible, 45 * 60 * 1000);
+    window.addEventListener('focus', refreshWhenVisible);
+    document.addEventListener('visibilitychange', refreshWhenVisible);
+    return () => {
+      active = false;
+      window.clearInterval(timer);
+      window.removeEventListener('focus', refreshWhenVisible);
+      document.removeEventListener('visibilitychange', refreshWhenVisible);
+    };
   }, []);
 
   const loadMore = async () => {
