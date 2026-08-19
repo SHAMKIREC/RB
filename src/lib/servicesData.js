@@ -25,6 +25,14 @@ import canopiesImage from '../assets/images/services/14_navesy_i_kozyrki.webp';
 import stairsImage from '../assets/images/services/15_lestnitsy.webp';
 import gazebosImage from '../assets/images/services/16_stroitelstvo_besedok.webp';
 import bathhousesImage from '../assets/images/services/17_stroitelstvo_ban.webp';
+import {
+  generatedFloorRoughImage,
+  generatedFloorFinishImage,
+  generatedFloorPlinthImage,
+  generatedWallPlasterImage,
+  generatedWallPaintImage,
+  generatedWallWallpaperImage,
+} from './generatedServiceImages';
 
 export const PHONE_NUMBER = 'tel:+79063052828';
 export const PHONE_DISPLAY = '+7 906 305-28-28';
@@ -99,14 +107,14 @@ const categoryImages = {
   bathhouses: bathhousesImage,
 };
 const subcategoryImages = {
-  floors_finish: floorCoveringsImage,
-  floors_base: floorPreparationImage,
-  floors_plinth: catalogFloorImage,
+  floors_finish: generatedFloorFinishImage,
+  floors_base: generatedFloorRoughImage,
+  floors_plinth: generatedFloorPlinthImage,
   walls_prep: wallPreparationImage,
   walls_finish: wallFinishingImage,
-  walls_plaster: wallPreparationImage,
-  walls_paint: wallFinishingImage,
-  walls_wallpaper: wallImage,
+  walls_plaster: generatedWallPlasterImage,
+  walls_paint: generatedWallPaintImage,
+  walls_wallpaper: generatedWallWallpaperImage,
   tiles_work: plumberImage,
   electric_work: electricianImage,
   plumbing_install: plumbingInstallationImage,
@@ -121,17 +129,6 @@ const subcategoryImages = {
   balcony_work: balconyImage,
   turnkey_work: turnkeyImage,
   metal_work: metalImage,
-};
-const categoryGalleries = {
-  demolition: [demolitionWallsImage, demolitionFloorImage, demolitionFinishingImage],
-};
-const subcategoryGalleries = {
-  floors_base: [floorPreparationImage, floorImage],
-  floors_finish: [floorCoveringsImage, catalogFloorImage],
-  floors_plinth: [catalogFloorImage, floorCoveringsImage],
-  walls_plaster: [wallPreparationImage, wallImage],
-  walls_paint: [wallFinishingImage, wallImage],
-  walls_wallpaper: [wallImage, wallFinishingImage],
 };
 const categoryMetadata = {
   floors: { alt: 'Укладка напольных покрытий и ремонт пола в Саратове', title: 'Ремонт полов в Саратове — укладка ламината, паркета и линолеума', metaDescription: 'Укладка ламината, паркета, линолеума, стяжка и выравнивание пола в Саратове. Расчёт стоимости и выезд мастера.' },
@@ -202,7 +199,7 @@ export const formatCategoryPrice = (category, price) => {
 export const SERVICE_CATEGORIES = catalog.map(([id,name,image,priceFrom,description]) => ({ id, name, slug:id, image: categoryImages[id] || image, imageAlt: categoryMetadata[id].alt, ...createCategoryPrice(id, priceFrom), description, seo: categoryMetadata[id], showOnHome: !HOME_HIDDEN_CATEGORY_IDS.has(id) }));
 export const PRICE_LIST = Object.fromEntries(catalog.flatMap(([, , , , , sections]) => sections.map(([id,name,,items]) => [id,{ name, items:items.map((item,index)=>createServiceItem(id,item,index)) }])));
 export const CATEGORY_PRICE_MAP = Object.fromEntries(catalog.map(([id,,,,,sections]) => [id,sections.map(([sectionId])=>sectionId)]));
-export const SERVICES_CATALOG = catalog.map(([id,name,image,priceFrom,,sections]) => ({ id,name,icon:'•',image:categoryImages[id] || image,imageAlt:categoryMetadata[id].alt,...createCategoryPrice(id, priceFrom),seo:categoryMetadata[id],direct:sections.length===1,items:sections.length===1?sections[0][3].map((item,index)=>createServiceItem(sections[0][0],item,index)):undefined,gallery:categoryGalleries[id] || [],subcategories:sections.length>1?sections.map(([sectionId,sectionName,sectionImage,items])=>({id:sectionId,name:sectionName,image:subcategoryImages[sectionId] || sectionImage,imageAlt:categoryMetadata[id].alt,gallery:subcategoryGalleries[sectionId] || [],items:items.map((item,index)=>createServiceItem(sectionId,item,index))})):undefined }));
+export const SERVICES_CATALOG = catalog.map(([id,name,image,priceFrom,,sections]) => ({ id,name,icon:'•',image:categoryImages[id] || image,imageAlt:categoryMetadata[id].alt,...createCategoryPrice(id, priceFrom),seo:categoryMetadata[id],direct:sections.length===1,items:sections.length===1?sections[0][3].map((item,index)=>createServiceItem(sections[0][0],item,index)):undefined,subcategories:sections.length>1?sections.map(([sectionId,sectionName,sectionImage,items])=>({id:sectionId,name:sectionName,image:subcategoryImages[sectionId] || sectionImage,imageAlt:categoryMetadata[id].alt,items:items.map((item,index)=>createServiceItem(sectionId,item,index))})):undefined }));
 export const TURNKEY_OPTIONS = [
   { id:'cosmetic', name:'Косметический', price:4500, unit:'м²' },
   { id:'capital', name:'Капитальный', price:7000, unit:'м²' },
