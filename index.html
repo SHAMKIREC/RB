@@ -7,7 +7,21 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta id="rb-viewport" name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function () {
+        var standalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        var longSide = Math.max(window.screen.width || 0, window.screen.height || 0);
+        var shortSide = Math.min(window.screen.width || 0, window.screen.height || 0);
+        var phoneShape = shortSide > 0 && longSide / shortSide >= 1.7;
+        var desktopSizedPhone = window.innerWidth >= 700 && navigator.maxTouchPoints > 0;
+
+        if (standalone && phoneShape && desktopSizedPhone) {
+          document.getElementById('rb-viewport').setAttribute('content', 'width=390, initial-scale=1.0, maximum-scale=1.0');
+          document.documentElement.dataset.rbPhoneApp = 'true';
+        }
+      })();
+    </script>
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#ff4b19" />
     <meta name="mobile-web-app-capable" content="yes" />
