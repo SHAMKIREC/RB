@@ -61,30 +61,33 @@ export default function OwnerFloatingPanel({ onExit }) {
     const current = drag.current;
     if (!current || current.pointerId !== event.pointerId) return;
     drag.current = null;
-    if (current.moved) {
-      const next = keepOnScreen({ x: current.x + event.clientX - current.startX, y: current.y + event.clientY - current.startY });
-      setPosition(next);
-      try { localStorage.setItem('rb-owner-panel-position', JSON.stringify(next)); } catch { /* position persistence is optional */ }
-    } else setOpen(true);
+    const next = keepOnScreen({ x: current.x + event.clientX - current.startX, y: current.y + event.clientY - current.startY });
+    setPosition(next);
+    try { localStorage.setItem('rb-owner-panel-position', JSON.stringify(next)); } catch { /* position persistence is optional */ }
   };
 
   const toggleEditing = () => editMode ? disableInlineEditMode() : enableInlineEditMode();
 
   return <>
-    <button
-      type="button"
-      aria-label="Открыть панель владельца. Кнопку можно передвигать"
-      onPointerDown={pointerDown}
-      onPointerMove={pointerMove}
-      onPointerUp={pointerUp}
-      onPointerCancel={() => { drag.current = null; }}
+    <div
       style={{ left: position.x, top: position.y, touchAction: 'none' }}
-      className="group fixed z-[75] flex h-[52px] w-[174px] select-none items-center rounded-2xl border border-orange-400/45 bg-[#252321]/95 px-2.5 text-left text-white shadow-[0_14px_34px_-12px_rgba(0,0,0,.75)] backdrop-blur-xl transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_38px_-10px_rgba(249,82,22,.55)]"
+      className="group fixed z-[75] flex h-[52px] w-[174px] select-none items-stretch overflow-hidden rounded-2xl border border-orange-400/45 bg-[#252321]/95 text-left text-white shadow-[0_14px_34px_-12px_rgba(0,0,0,.75)] backdrop-blur-xl transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_38px_-10px_rgba(249,82,22,.55)]"
     >
-      <span className="relative grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg shadow-orange-500/20"><ShieldCheck className="h-5 w-5"/><span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 animate-pulse rounded-full border-2 border-[#252321] bg-green-400" /></span>
-      <span className="ml-2 min-w-0 flex-1"><span className="block text-[9px] uppercase tracking-[.15em] text-white/45">Панель</span><span className="block truncate text-xs font-black">Владельца</span></span>
-      <GripVertical className="h-5 w-5 shrink-0 text-white/35 transition-colors group-hover:text-orange-300" />
-    </button>
+      <button type="button" onClick={() => setOpen(true)} aria-label="Открыть панель владельца" className="flex min-w-0 flex-1 items-center px-2.5 text-left active:bg-white/[.06]">
+        <span className="relative grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg shadow-orange-500/20"><ShieldCheck className="h-5 w-5"/><span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 animate-pulse rounded-full border-2 border-[#252321] bg-green-400" /></span>
+        <span className="ml-2 min-w-0 flex-1"><span className="block text-[9px] uppercase tracking-[.15em] text-white/45">Панель</span><span className="block truncate text-xs font-black">Владельца</span></span>
+      </button>
+      <button
+        type="button"
+        aria-label="Передвинуть кнопку панели владельца"
+        title="Передвинуть"
+        onPointerDown={pointerDown}
+        onPointerMove={pointerMove}
+        onPointerUp={pointerUp}
+        onPointerCancel={() => { drag.current = null; }}
+        className="grid w-11 shrink-0 touch-none place-items-center border-l border-white/10 text-white/35 transition-colors hover:bg-white/[.06] hover:text-orange-300 active:bg-orange-500/15"
+      ><GripVertical className="h-5 w-5" /></button>
+    </div>
 
     {open && <div className="fixed inset-0 z-[90] flex items-end justify-center bg-black/55 p-3 backdrop-blur-sm sm:items-center" onClick={() => setOpen(false)}>
       <section role="dialog" aria-modal="true" aria-labelledby="owner-panel-title" className="w-full max-w-md origin-bottom animate-in overflow-hidden rounded-[28px] border border-white/10 bg-[#252321] text-white shadow-2xl duration-200 sm:origin-center" onClick={(event) => event.stopPropagation()}>
