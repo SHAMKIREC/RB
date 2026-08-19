@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, RotateCcw, ChevronRight, X, Hammer, HardHat, Layers3, BrickWall, Paintbrush, Grid3X3, PanelsTopLeft, Home, Zap, DoorOpen, Building2, Construction } from 'lucide-react';
+import { Search, RotateCcw, ChevronRight, X, Calculator as CalculatorIcon, CheckCircle2, Sparkles, Construction } from 'lucide-react';
 import { CALC_CATEGORIES } from '../lib/calcData';
 import { MATERIALS, getMaterialsForWork } from '../lib/materialsData';
 import { buildEstimateText, safeNumber } from '../lib/calculatorUtils';
@@ -22,18 +22,30 @@ const normalizeQuantities = (quantities) => Object.fromEntries(
 const iconSvg = (paths) => function CustomCategoryIcon({ className }) {
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">{paths}</svg>;
 };
-const PlumbingIcon = iconSvg(<><path d="M5 20v-5a4 4 0 0 1 4-4h8"/><path d="M13 7h6v4h-6"/><path d="M16 7V5h-4"/><path d="M19 11v2"/><path d="M18 16c0 1.1.9 2 2 2s2-.9 2-2c0-.8-1.3-2.5-2-3.3-.7.8-2 2.5-2 3.3Z"/></>);
+const DemolitionIcon = iconSvg(<><path d="m14 5 5 5"/><path d="m12 7 5 5"/><path d="M4 20 15 9"/><path d="m3 4 4 1-2 4"/><path d="m18 16 3 3"/></>);
+const RoughworksIcon = iconSvg(<><path d="M4 19V9l8-5 8 5v10"/><path d="M8 19v-6h8v6"/><path d="M3 19h18"/><path d="M7 9h10"/></>);
+const FloorIcon = iconSvg(<><path d="m3 8 9-4 9 4-9 4Z"/><path d="m3 12 9 4 9-4"/><path d="m3 16 9 4 9-4"/></>);
+const PlasterIcon = iconSvg(<><path d="M4 18h16"/><path d="M6 14h12l-2 4H8Z"/><path d="M12 14V7"/><path d="M8 7h8"/><path d="M9 4h6"/></>);
+const PaintingIcon = iconSvg(<><path d="M5 4h10v5H5Z"/><path d="M15 6h3a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2h-6v3"/><path d="M10 15h4v6h-4Z"/></>);
+const TilingIcon = iconSvg(<><path d="M4 4h7v7H4z"/><path d="M13 4h7v7h-7z"/><path d="M4 13h7v7H4z"/><path d="M13 13h7v7h-7z"/></>);
+const DrywallIcon = iconSvg(<><path d="M5 3h14v18H5z"/><path d="M12 3v18"/><path d="M8 7h1"/><path d="M15 7h1"/><path d="M8 17h1"/><path d="M15 17h1"/></>);
+const CeilingIcon = iconSvg(<><path d="M3 6h18"/><path d="M5 6v5h14V6"/><path d="M8 11v4"/><path d="M16 11v4"/><path d="M6 19h12"/><path d="M8 15h8v4H8z"/></>);
+const ElectricIcon = iconSvg(<path d="m13 2-8 12h7l-1 8 8-12h-7Z"/>);
+const PlumbingIcon = iconSvg(<><path d="M4 17v-3a4 4 0 0 1 4-4h10"/><path d="M13 6h7v4h-7"/><path d="M17 6V4h-5"/><path d="M18 10v3"/><path d="M16.5 18c0 1.4 1.1 2.5 2.5 2.5s2.5-1.1 2.5-2.5c0-1-1.6-3-2.5-4-.9 1-2.5 3-2.5 4Z"/></>);
+const DoorIcon = iconSvg(<><path d="M5 21V3h12v18"/><path d="M8 21V6h6v15"/><path d="M12 13h.01"/><path d="M3 21h16"/></>);
+const BalconyIcon = iconSvg(<><path d="M6 11V4h12v7"/><path d="M4 11h16v9H4Z"/><path d="M8 11v9"/><path d="M12 11v9"/><path d="M16 11v9"/></>);
 const WeldingIcon = iconSvg(<><path d="M6 7h12l-1.5 12h-9Z"/><path d="M9 11h6v4H9z"/><path d="m4 4-1-1"/><path d="M12 3V1"/><path d="m20 4 1-1"/></>);
 const CanopyIcon = iconSvg(<><path d="M3 10 7 5h10l4 5"/><path d="M5 10h14"/><path d="M7 10v10"/><path d="M17 10v10"/></>);
 const StairsIcon = iconSvg(<path d="M4 19h4v-4h4v-4h4V7h4"/>);
 const GazeboIcon = iconSvg(<><path d="m3 10 9-6 9 6"/><path d="M5 10h14"/><path d="M7 10v10"/><path d="M17 10v10"/><path d="M4 20h16"/></>);
 const BathhouseIcon = iconSvg(<><path d="M4 11 12 5l8 6v9H4Z"/><path d="M9 20v-6h6v6"/><path d="M16 7V3h2v6"/><path d="M19 3c1-1 1-2 0-3"/><path d="M21 5c1-1 1-2 0-3"/></>);
+const FenceIcon = iconSvg(<><path d="M5 3 8 6v15H5Z"/><path d="m16 6 3-3v18h-3Z"/><path d="M8 9h8"/><path d="M8 16h8"/></>);
 
 const CATEGORY_ICONS = {
-  demolition: Hammer, roughworks: HardHat, floor: Layers3, plaster: BrickWall,
-  painting: Paintbrush, tiling: Grid3X3, gkl: PanelsTopLeft, ceiling: Home,
-  electric: Zap, plumbing: PlumbingIcon, doors: DoorOpen, balcony: Building2,
-  welding: WeldingIcon, fences: Construction, canopies: CanopyIcon, stairs: StairsIcon,
+  demolition: DemolitionIcon, roughworks: RoughworksIcon, floor: FloorIcon, plaster: PlasterIcon,
+  painting: PaintingIcon, tiling: TilingIcon, gkl: DrywallIcon, ceiling: CeilingIcon,
+  electric: ElectricIcon, plumbing: PlumbingIcon, doors: DoorIcon, balcony: BalconyIcon,
+  welding: WeldingIcon, fences: FenceIcon, canopies: CanopyIcon, stairs: StairsIcon,
   gazebo: GazeboIcon, bathhouse: BathhouseIcon,
 };
 
@@ -107,8 +119,9 @@ export default function Calculator() {
     setResetSignal((value) => value + 1);
   };
 
-  return <div className="calculator-page page-shell py-7 sm:py-10">
-    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-5"><p className="mb-1 text-xs font-mono font-bold uppercase tracking-widest text-primary">Расчёт стоимости</p><h1 className="mb-2 text-3xl font-black text-foreground sm:text-4xl">Калькулятор-смета</h1><p className="max-w-2xl text-sm text-muted-foreground">Выберите работы, укажите объём и соберите предварительную смету.</p>{inlineEditMode && <button type="button" onClick={disableInlineEditMode} className="mt-3 rounded-lg border border-primary/30 px-3 py-1.5 text-xs font-bold text-primary hover:bg-primary/5">Выйти из режима редактирования</button>}</motion.div>
+  return <div className="calculator-page pb-10 sm:pb-14">
+    <section className="relative mb-7 overflow-hidden bg-[#242321] text-white sm:mb-10"><div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_15%,rgba(255,80,20,.30),transparent_34%),radial-gradient(circle_at_5%_90%,rgba(255,120,40,.12),transparent_35%)]" /><div className="page-shell relative py-9 sm:py-14"><motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl"><div className="mb-4 inline-flex items-center gap-2 rounded-full border border-orange-400/35 bg-orange-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[.18em] text-orange-300"><CalculatorIcon className="h-4 w-4" /> Расчёт стоимости</div><h1 className="text-4xl font-black leading-none sm:text-6xl">Калькулятор-<span className="text-primary">смета</span></h1><p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-lg">Выберите нужные работы, укажите объём — предварительная стоимость соберётся автоматически.</p><div className="mt-6 flex flex-wrap gap-2 text-xs font-bold text-white/75 sm:text-sm"><span className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[.07] px-3 py-2"><CheckCircle2 className="h-4 w-4 text-primary" /> Понятные цены</span><span className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[.07] px-3 py-2"><Sparkles className="h-4 w-4 text-primary" /> Расчёт сразу</span></div>{inlineEditMode && <button type="button" onClick={disableInlineEditMode} className="mt-4 rounded-xl border border-orange-400/40 bg-orange-500/10 px-4 py-2 text-xs font-bold text-orange-200">Выйти из режима редактирования</button>}</motion.div></div></section>
+    <div className="page-shell">
     <div className="grid lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_21rem] gap-5 lg:gap-6 items-start"><section className="min-w-0 space-y-3">
       <NewTurnkey resetSignal={resetSignal} onTotalChange={(value) => setTurnkeyTotal(safeNumber(value))} />
       <div className="rounded-2xl border border-slate-200/90 bg-white/90 p-3 shadow-[0_8px_22px_-18px_rgba(15,23,42,.45)]"><div className="flex flex-col sm:flex-row gap-2"><label className="relative flex-1"><Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Поиск по работам" className="w-full pl-9 pr-3 py-2 rounded-lg border border-slate-200 bg-[#fffdfa] text-sm shadow-inner shadow-slate-100/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary" /></label><button type="button" onClick={clearDraft} className="inline-flex items-center justify-center gap-2 px-3 py-2 border border-slate-200 rounded-lg text-xs font-bold hover:bg-secondary"><RotateCcw className="w-3.5 h-3.5" />Очистить</button></div></div>
@@ -116,5 +129,6 @@ export default function Calculator() {
       {!activeCategory && <div className="border border-dashed border-border rounded-2xl px-4 py-5 text-center text-sm text-muted-foreground">Выберите категорию работ.</div>}
     </section><div className="min-w-0"><EstimateSidebar works={worksWithTurnkey} materials={materialLines} worksSubtotal={worksSubtotal} materialsSubtotal={materialsSubtotal} estimateText={estimateText} onRemoveWork={(id) => id === 'turnkey' ? setTurnkeyTotal(0) : updateQuantity(id, 0)} onRemoveMaterial={(workId) => setMaterialSelections((current) => { const next = { ...current }; delete next[workId]; return next; })} /></div></div>
     <MaterialModal work={materialWork} materials={materialWork ? getMaterialsForWork(materialWork.id).map((material) => ({ ...material, pricePerPackage: getMaterialPrice(material, pricingOverrides) })) : []} onClose={() => setMaterialWork(null)} onAdd={(material, quantity) => { const unitPrice = getMaterialPrice(material, pricingOverrides); const selectedQuantity = Math.max(1, Math.round(safeNumber(quantity) || 1)); setMaterialSelections((current) => ({ ...current, [materialWork.id]: { materialId: material.id, quantity: selectedQuantity, unitPrice, total: unitPrice * selectedQuantity } })); setMaterialWork(null); }} />
+    </div>
   </div>;
 }
