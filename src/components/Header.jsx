@@ -101,7 +101,13 @@ export default function Header({ theme, onToggleTheme }) {
             })}
           </nav>
 
-          <div className="border-t border-white/10 px-4 py-3 text-center sm:px-5"><a href={`tel:${PHONE}`} className="inline-flex items-center gap-2 text-xs font-black text-orange-300"><Phone className="h-4 w-4" />Нужна помощь? Позвонить SOS 24/7</a></div>
+          <div className="border-t border-white/10 p-4 sm:p-5">
+            <a href={`tel:${PHONE}`} className="group relative flex items-center gap-3 overflow-hidden rounded-2xl border border-orange-400/35 bg-gradient-to-r from-orange-500/20 via-red-500/10 to-orange-500/20 p-3.5 shadow-[0_10px_30px_-18px_rgba(255,80,0,.8)] transition hover:border-orange-400/65 hover:bg-orange-500/25 active:scale-[.98]">
+              <span className="sos-pulse grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/25"><Phone className="h-5 w-5" /></span>
+              <span className="min-w-0 flex-1 text-left"><span className="block text-sm font-black text-white">Авария даже в 3 часа ночи?</span><span className="mt-1 block text-[10px] leading-relaxed text-white/55">Прорвало кран или потекла труба — звоните, срочно выедем на помощь 24/7.</span></span>
+              <span className="shrink-0 rounded-lg bg-orange-500 px-2.5 py-2 text-[10px] font-black text-white shadow-md shadow-orange-500/20">SOS</span>
+            </a>
+          </div>
         </section>
       </div>}
     </header>
