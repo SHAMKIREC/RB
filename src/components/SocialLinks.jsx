@@ -23,7 +23,7 @@ export function WhatsAppIcon({ size = 20, bare = false }) {
 
 export function MaxIcon({ size = 20, bare = false }) {
   if (bare) {
-    return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.2 18.2c-2.8-2.8-2.8-7.4 0-10.2s7.4-2.8 10.2 0c2.8 2.8 2.8 7.4 0 10.2-2.2 2.2-5.5 2.7-8.2 1.4L4 20.7l1.1-4.1c-1.1-2.7-.6-5.9 1.1-8.6" stroke="white" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round"/><path d="M9.2 9.4c1.6-1.4 4.1-1.3 5.5.3 1.4 1.6 1.3 4.1-.3 5.5-1.6 1.4-4.1 1.3-5.5-.3-1.4-1.6-1.3-4.1.3-5.5Z" fill="white"/></svg>;
+    return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" aria-hidden="true"><path fillRule="evenodd" clipRule="evenodd" d="M12 3.25c-5.1 0-9.25 3.83-9.25 8.55 0 1.7.55 3.29 1.49 4.61l-.91 3.38a.75.75 0 0 0 .92.92l3.63-.98c1.24.41 2.63.63 4.12.63 5.1 0 9.25-3.83 9.25-8.56S17.1 3.25 12 3.25Zm0 4.05c-2.72 0-4.92 2.02-4.92 4.5s2.2 4.5 4.92 4.5 4.92-2.02 4.92-4.5S14.72 7.3 12 7.3Z" fill="white"/></svg>;
   }
   return (
     <img
