@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, RotateCcw, ChevronRight, X, Hammer, HardHat, Layers3, BrickWall, Paintbrush, Grid3X3, PanelsTopLeft, Home, Zap, Droplets, DoorOpen, Building2, Flame, Construction, Umbrella, ArrowUpRight, Trees, Bath } from 'lucide-react';
+import { Search, RotateCcw, ChevronRight, X, Hammer, HardHat, Layers3, BrickWall, Paintbrush, Grid3X3, PanelsTopLeft, Home, Zap, DoorOpen, Building2, Construction } from 'lucide-react';
 import { CALC_CATEGORIES } from '../lib/calcData';
 import { MATERIALS, getMaterialsForWork } from '../lib/materialsData';
 import { buildEstimateText, safeNumber } from '../lib/calculatorUtils';
@@ -19,12 +19,22 @@ const normalizeQuantities = (quantities) => Object.fromEntries(
   Object.entries(quantities || {}).map(([id, value]) => [id, integerQuantity(value)]),
 );
 
+const iconSvg = (paths) => function CustomCategoryIcon({ className }) {
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">{paths}</svg>;
+};
+const PlumbingIcon = iconSvg(<><path d="M5 20v-5a4 4 0 0 1 4-4h8"/><path d="M13 7h6v4h-6"/><path d="M16 7V5h-4"/><path d="M19 11v2"/><path d="M18 16c0 1.1.9 2 2 2s2-.9 2-2c0-.8-1.3-2.5-2-3.3-.7.8-2 2.5-2 3.3Z"/></>);
+const WeldingIcon = iconSvg(<><path d="M6 7h12l-1.5 12h-9Z"/><path d="M9 11h6v4H9z"/><path d="m4 4-1-1"/><path d="M12 3V1"/><path d="m20 4 1-1"/></>);
+const CanopyIcon = iconSvg(<><path d="M3 10 7 5h10l4 5"/><path d="M5 10h14"/><path d="M7 10v10"/><path d="M17 10v10"/></>);
+const StairsIcon = iconSvg(<path d="M4 19h4v-4h4v-4h4V7h4"/>);
+const GazeboIcon = iconSvg(<><path d="m3 10 9-6 9 6"/><path d="M5 10h14"/><path d="M7 10v10"/><path d="M17 10v10"/><path d="M4 20h16"/></>);
+const BathhouseIcon = iconSvg(<><path d="M4 11 12 5l8 6v9H4Z"/><path d="M9 20v-6h6v6"/><path d="M16 7V3h2v6"/><path d="M19 3c1-1 1-2 0-3"/><path d="M21 5c1-1 1-2 0-3"/></>);
+
 const CATEGORY_ICONS = {
   demolition: Hammer, roughworks: HardHat, floor: Layers3, plaster: BrickWall,
   painting: Paintbrush, tiling: Grid3X3, gkl: PanelsTopLeft, ceiling: Home,
-  electric: Zap, plumbing: Droplets, doors: DoorOpen, balcony: Building2,
-  welding: Flame, fences: Construction, canopies: Umbrella, stairs: ArrowUpRight,
-  gazebo: Trees, bathhouse: Bath,
+  electric: Zap, plumbing: PlumbingIcon, doors: DoorOpen, balcony: Building2,
+  welding: WeldingIcon, fences: Construction, canopies: CanopyIcon, stairs: StairsIcon,
+  gazebo: GazeboIcon, bathhouse: BathhouseIcon,
 };
 
 function CategoryIcon({ category, className = "h-4 w-4" }) {
