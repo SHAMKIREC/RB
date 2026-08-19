@@ -6,7 +6,7 @@ import Footer from "./Footer";
 import { useTheme } from "../hooks/useTheme";
 import { endAdminSession, isAdminSessionActive, subscribeToAdminSession } from "../lib/adminSession";
 import { disableInlineEditMode } from "../lib/pricingStorage";
-import { AdminNavigation } from "./AdminGate";
+import OwnerFloatingPanel from "./OwnerFloatingPanel";
 
 export default function Layout() {
   const { theme, toggle } = useTheme();
@@ -30,7 +30,7 @@ export default function Layout() {
     <div className="min-h-screen bg-background light-grid">
       <Header theme={theme} onToggleTheme={toggle} />
       <main className={`${isAdminRoute ? 'pb-0' : 'pb-[calc(5.75rem+env(safe-area-inset-bottom))]'} pt-16 sm:pt-20 xl:pb-0`}>
-        {showAdminNavigation && <AdminNavigation onExit={exitAdminSession} />}
+        {showAdminNavigation && <OwnerFloatingPanel onExit={exitAdminSession} />}
         <Outlet />
       </main>
       <Footer />
