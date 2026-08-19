@@ -28,7 +28,7 @@ const WHEN_NEEDED = {
 };
 
 export default function Documentation() {
-  return <div className="page-shell py-7 sm:py-10">
+  return <div className="documentation-page page-shell py-7 sm:py-10">
     <div className="mb-8"><p className="mb-1 text-xs font-mono font-bold uppercase tracking-widest text-primary">Строительная документация</p><h1 className="mb-2 text-3xl font-black text-foreground sm:text-4xl">Строительная документация</h1><p className="max-w-2xl text-sm text-muted-foreground">Подготовка ППР, технологических карт, смет и другой документации.</p></div>
     <section>
       <h2 className="mb-5 text-2xl font-black text-foreground sm:text-3xl">Наши услуги</h2>
