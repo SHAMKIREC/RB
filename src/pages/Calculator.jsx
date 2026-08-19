@@ -20,8 +20,8 @@ const normalizeQuantities = (quantities) => Object.fromEntries(
 );
 
 const CATEGORY_ICONS = {
-  demolition: Hammer, rough: HardHat, floors: Layers3, walls: BrickWall,
-  painting: Paintbrush, tile: Grid3X3, drywall: PanelsTopLeft, ceiling: Home,
+  demolition: Hammer, roughworks: HardHat, floor: Layers3, plaster: BrickWall,
+  painting: Paintbrush, tiling: Grid3X3, gkl: PanelsTopLeft, ceiling: Home,
   electric: Zap, plumbing: Droplets, doors: DoorOpen, balcony: Building2,
   welding: Flame, fences: Construction, canopies: Umbrella, stairs: ArrowUpRight,
   gazebo: Trees, bathhouse: Bath,
