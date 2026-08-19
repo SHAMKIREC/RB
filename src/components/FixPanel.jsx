@@ -11,7 +11,7 @@ const panelItems = [
 ];
 
 export default function FixPanel() {
-  return <nav aria-label="Быстрая связь" className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-2 pb-[max(.45rem,env(safe-area-inset-bottom))] xl:hidden">
+  return <nav aria-label="Быстрая связь" className="pointer-events-none fixed inset-x-0 bottom-0 z-50 px-2 pb-[max(.45rem,env(safe-area-inset-bottom))] md:hidden">
     <div className="pointer-events-auto mx-auto grid w-full max-w-xl grid-cols-5 gap-1.5 rounded-[1.65rem] border border-primary/25 bg-card/90 p-2 shadow-[0_-8px_35px_-16px_rgba(15,23,42,.7),0_8px_30px_-16px_rgba(255,80,0,.45)] backdrop-blur-2xl dark:bg-card/92 sm:gap-2 sm:p-2.5">
       {panelItems.map(({ label, href, Icon, surface, glow }) => {
         const iconSize = label === "ВКонтакте" ? 42 : 38;
