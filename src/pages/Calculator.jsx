@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, RotateCcw, ChevronRight, X } from 'lucide-react';
+import { Search, RotateCcw, ChevronRight, X, Hammer, HardHat, Layers3, BrickWall, Paintbrush, Grid3X3, PanelsTopLeft, Home, Zap, Droplets, DoorOpen, Building2, Flame, Construction, Umbrella, ArrowUpRight, Trees, Bath } from 'lucide-react';
 import { CALC_CATEGORIES } from '../lib/calcData';
 import { MATERIALS, getMaterialsForWork } from '../lib/materialsData';
 import { buildEstimateText, safeNumber } from '../lib/calculatorUtils';
@@ -18,6 +18,19 @@ const integerQuantity = (value) => Math.max(0, Math.round(safeNumber(value)));
 const normalizeQuantities = (quantities) => Object.fromEntries(
   Object.entries(quantities || {}).map(([id, value]) => [id, integerQuantity(value)]),
 );
+
+const CATEGORY_ICONS = {
+  demolition: Hammer, rough: HardHat, floors: Layers3, walls: BrickWall,
+  painting: Paintbrush, tile: Grid3X3, drywall: PanelsTopLeft, ceiling: Home,
+  electric: Zap, plumbing: Droplets, doors: DoorOpen, balcony: Building2,
+  welding: Flame, fences: Construction, canopies: Umbrella, stairs: ArrowUpRight,
+  gazebo: Trees, bathhouse: Bath,
+};
+
+function CategoryIcon({ category, className = "h-4 w-4" }) {
+  const Icon = CATEGORY_ICONS[category.id] || Construction;
+  return <Icon className={className} strokeWidth={2.2} />;
+}
 
 export default function Calculator() {
   const [draft] = useState(readDraft);
@@ -50,7 +63,7 @@ export default function Calculator() {
     }
   }, [quantities, turnkeyTotal, materialSelections]);
 
-  const pricedCategories = useMemo(() => CALC_CATEGORIES.map((category) => ({ ...category, groups: category.groups.map((group) => ({ ...group, items: group.items.map((item) => ({ ...item, mount: getCalculatorWorkPrice(item, pricingOverrides) })) })) })), [pricingOverrides]);
+  const pricedCategories = useMemo(() => CALC_CATEGORIES.map((category) => ({ ...category, icon: <CategoryIcon category={category} />, groups: category.groups.map((group) => ({ ...group, items: group.items.map((item) => ({ ...item, mount: getCalculatorWorkPrice(item, pricingOverrides) })) })) })), [pricingOverrides]);
   const works = useMemo(() => pricedCategories.flatMap((category) => category.groups.flatMap((group) => group.items.map((item) => ({ ...item, category: category.name }))).filter((item) => integerQuantity(quantities[item.id]) > 0).map((item) => ({ ...item, quantity: integerQuantity(quantities[item.id]), price: item.mount, total: item.mount * integerQuantity(quantities[item.id]) }))), [pricedCategories, quantities]);
   const worksWithTurnkey = turnkeyTotal > 0 ? [...works, { id: 'turnkey', name: 'Ремонт под ключ', unit: '', quantity: 1, price: turnkeyTotal, total: turnkeyTotal }] : works;
   const worksSubtotal = worksWithTurnkey.reduce((sum, item) => sum + item.total, 0);
