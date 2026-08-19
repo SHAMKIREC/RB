@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { ChevronUp, Menu, Moon, Phone, Sun } from "lucide-react";
+import { Calculator, ChevronUp, ClipboardList, FileText, FolderKanban, Info, Menu, MessageSquareText, Moon, Phone, Sparkles, Sun, Wrench, X } from "lucide-react";
 import { PHONE, WHATSAPP, TELEGRAM, VK_MSG, MAX_URL } from "../lib/calcData";
 import { TelegramIcon, WhatsAppIcon, MaxIcon, VKIcon } from "./SocialLinks";
 
@@ -13,9 +13,13 @@ const navItems = [
 ];
 
 const mobileNavItems = [
-  ...navItems,
-  { path: "/documentation", label: "Документация" },
-  { path: "/about", label: "О нас" },
+  { path: "/services", label: "Услуги", description: "Все виды работ", icon: Wrench },
+  { path: "/calculator", label: "Калькулятор", description: "Рассчитать смету", icon: Calculator },
+  { path: "/orders", label: "Заказы", description: "Активные объекты", icon: ClipboardList },
+  { path: "/projects", label: "Проекты", description: "Выполненные работы", icon: FolderKanban },
+  { path: "/reviews", label: "Отзывы", description: "Мнения клиентов", icon: MessageSquareText },
+  { path: "/documentation", label: "Документы", description: "Сметы и проекты", icon: FileText },
+  { path: "/about", label: "О компании", description: "Решаем Быстро", icon: Info },
 ];
 
 export default function Header({ theme, onToggleTheme }) {
@@ -49,7 +53,7 @@ export default function Header({ theme, onToggleTheme }) {
   }, [menuOpen]);
 
   return (
-    <header style={{ background: "linear-gradient(to right, rgba(0,0,0,0.82), rgba(0,0,0,0.68), rgba(0,0,0,0.82))", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }} className="fixed inset-x-0 top-0 z-50">
+    <header style={{ background: "linear-gradient(to right, rgba(0,0,0,0.82), rgba(0,0,0,0.68), rgba(0,0,0,0.82))", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.08)", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" }} className={`fixed inset-x-0 top-0 ${menuOpen ? 'z-[85]' : 'z-50'}`}>
       <div className="page-shell">
         <div className="flex h-16 items-center justify-between gap-2 sm:h-20 sm:gap-4">
           <Link to="/" aria-label="Решаем Быстро — на главную" className="group relative z-[70] -m-1 flex shrink-0 touch-manipulation select-none items-center gap-2 p-1 sm:gap-3">
@@ -75,12 +79,30 @@ export default function Header({ theme, onToggleTheme }) {
         </div>
       </div>
 
-      {menuRendered && <div id="mobile-site-menu" className={`absolute inset-x-0 top-full z-[60] max-h-[calc(100dvh-4rem)] overflow-y-auto bg-black/55 backdrop-blur-sm transition-opacity duration-200 sm:max-h-[calc(100dvh-5rem)] xl:hidden ${menuOpen ? "opacity-100" : "pointer-events-none opacity-0"}`} onClick={closeMenu}>
-        <div className={`bg-background px-5 py-3 shadow-2xl transition-all duration-200 ease-out dark:bg-card ${menuOpen ? "translate-y-0 opacity-100" : "-translate-y-2 opacity-0"}`} onClick={(event) => event.stopPropagation()}>
-          <nav aria-label="Основная навигация" className="space-y-1">
-            {mobileNavItems.map((item) => <Link key={item.path} to={item.path} onClick={closeMenu} className={`flex min-h-10 items-center rounded-xl px-4 text-base font-bold transition-all duration-200 ${isActive(item.path) ? "bg-primary/15 text-primary" : "text-foreground hover:translate-x-1 hover:bg-primary/10 hover:text-primary active:translate-x-1 active:bg-primary active:text-white"}`}>{item.label}</Link>)}
+      {menuRendered && <div id="mobile-site-menu" className={`absolute inset-x-0 top-full z-[60] h-[calc(100dvh-4rem)] overflow-y-auto bg-black/60 p-3 backdrop-blur-md transition-opacity duration-250 sm:h-[calc(100dvh-5rem)] sm:p-4 xl:hidden ${menuOpen ? "opacity-100" : "pointer-events-none opacity-0"}`} onClick={closeMenu}>
+        <section className={`mx-auto w-full max-w-xl origin-top overflow-hidden rounded-[28px] border border-white/10 bg-[#242321] text-white shadow-[0_24px_70px_-20px_rgba(0,0,0,.9)] transition-all duration-250 ease-out ${menuOpen ? "translate-y-0 scale-100 opacity-100" : "-translate-y-3 scale-[.98] opacity-0"}`} onClick={(event) => event.stopPropagation()}>
+          <div className="relative overflow-hidden border-b border-white/10 bg-gradient-to-br from-orange-500/25 via-[#302925] to-red-500/15 p-4 sm:p-5">
+            <div className="absolute -right-10 -top-14 h-32 w-32 rounded-full bg-orange-500/25 blur-3xl" />
+            <div className="relative flex items-center gap-3">
+              <span className="grid h-11 w-11 shrink-0 place-items-center rounded-2xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg shadow-orange-500/25"><Sparkles className="h-5 w-5" /></span>
+              <div className="min-w-0"><p className="text-[9px] font-bold uppercase tracking-[.2em] text-orange-300">Решаем Быстро</p><h2 className="truncate text-lg font-black sm:text-xl">Меню сайта</h2></div>
+              <button type="button" onClick={closeMenu} aria-label="Закрыть меню" className="ml-auto grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-white/10 bg-white/[.06] text-white/70 transition hover:bg-white/10 hover:text-white"><X className="h-5 w-5" /></button>
+            </div>
+          </div>
+
+          <nav aria-label="Основная навигация" className="grid grid-cols-2 gap-2.5 p-4 sm:p-5">
+            {mobileNavItems.map((item, index) => {
+              const Icon = item.icon;
+              const active = isActive(item.path);
+              return <Link key={item.path} to={item.path} onClick={closeMenu} className={`group flex min-h-[78px] items-center gap-2.5 rounded-2xl border p-3 transition-all duration-200 active:scale-[.98] ${active ? "border-orange-400/60 bg-gradient-to-br from-orange-500 to-red-500 text-white shadow-lg shadow-orange-500/15" : "border-white/10 bg-white/[.055] text-white hover:-translate-y-0.5 hover:border-orange-400/45 hover:bg-orange-500/10"} ${index === mobileNavItems.length - 1 ? 'col-span-2' : ''}`}>
+                <span className={`grid h-10 w-10 shrink-0 place-items-center rounded-xl transition-colors ${active ? 'bg-white/20 text-white' : 'bg-white/[.07] text-white/65 group-hover:bg-orange-500 group-hover:text-white'}`}><Icon className="h-5 w-5" /></span>
+                <span className="min-w-0"><span className="block truncate text-sm font-black">{item.label}</span><span className={`mt-0.5 block truncate text-[9px] ${active ? 'text-white/75' : 'text-white/40'}`}>{item.description}</span></span>
+              </Link>;
+            })}
           </nav>
-        </div>
+
+          <div className="border-t border-white/10 px-4 py-3 text-center sm:px-5"><a href={`tel:${PHONE}`} className="inline-flex items-center gap-2 text-xs font-black text-orange-300"><Phone className="h-4 w-4" />Нужна помощь? Позвонить SOS 24/7</a></div>
+        </section>
       </div>}
     </header>
   );
