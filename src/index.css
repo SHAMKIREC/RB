@@ -183,6 +183,14 @@
   .sos-pulse, .sos-card-heartbeat { animation: none; }
 }
 
+/* Documentation follows the same compact card rhythm as reviews. */
+.documentation-page .rb-card {
+  border-radius: 1rem;
+}
+.documentation-page .rb-card:hover {
+  border-color: hsl(var(--primary));
+}
+
 /* Subtle grid for light mode */
 .light-grid {
   background-image:
