@@ -106,7 +106,7 @@ function CategoryGrid({ categories, onSelect }) {
   const inlineEditMode = useInlineEditMode();
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
       {categories.map((cat, i) => (
         <motion.div
           key={cat.id}
@@ -116,7 +116,7 @@ function CategoryGrid({ categories, onSelect }) {
           className="group relative overflow-hidden rounded-2xl border-2 border-primary/70 bg-card shadow-sm hover:shadow-xl hover:border-primary transition-all text-left"
         >
           <button type="button" onClick={() => onSelect(cat)} className="block w-full text-left">
-            <div className="aspect-[4/3] overflow-hidden">
+            <div className="aspect-[16/10] overflow-hidden">
               <img src={cat.image} alt={cat.imageAlt} loading="lazy" decoding="async" width="800" height="600" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/5 to-transparent" />
               <div className="absolute top-2 right-2 px-2.5 py-1 bg-white/90 dark:bg-black/70 backdrop-blur-sm rounded-lg">
