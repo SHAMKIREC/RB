@@ -10,8 +10,6 @@ const navItems = [
   { path: "/orders", label: "Активные заказы" },
   { path: "/projects", label: "Проекты" },
   { path: "/reviews", label: "Отзывы" },
-  { path: "/documentation", label: "Документы" },
-  { path: "/about", label: "О компании" },
 ];
 
 const mobileNavItems = [
@@ -66,7 +64,7 @@ export default function Header({ theme, onToggleTheme }) {
         <div className="flex h-16 items-center justify-between gap-2 sm:h-20 sm:gap-4">
           <Link to="/" aria-label="Решаем Быстро — на главную" className="group relative z-[70] -m-1 flex shrink-0 touch-manipulation select-none items-center gap-2 p-1 sm:gap-3">
             <div className="pointer-events-none flex h-11 w-11 items-center justify-center rounded-xl logo-gradient shadow-lg shadow-orange-500/20 transition-transform group-hover:scale-105 sm:h-14 sm:w-14 sm:rounded-2xl"><span className="text-xl font-black text-white sm:text-2xl">РБ</span></div>
-            <div className="pointer-events-none hidden sm:block min-[900px]:hidden xl:block"><div className="text-lg font-black text-white">РЕШАЕМ <span style={{ background: "linear-gradient(135deg, #FF6B35, #FF3300)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>БЫСТРО</span></div><div className="text-sm text-white/70">Строительные услуги · Саратов</div></div>
+            <div className="pointer-events-none hidden sm:block"><div className="text-lg font-black text-white">РЕШАЕМ <span style={{ background: "linear-gradient(135deg, #FF6B35, #FF3300)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>БЫСТРО</span></div><div className="text-sm text-white/70">Строительные услуги · Саратов</div></div>
           </Link>
 
           <nav className="hidden flex-1 items-center justify-center gap-0.5 min-[900px]:flex xl:gap-1">
