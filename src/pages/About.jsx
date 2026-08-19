@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
-import { ArrowRight, BadgeCheck, Calculator, Check, Clock3, FileText, Hammer, MapPin, Phone, Send, ShieldCheck, Sparkles } from "lucide-react";
+import { ArrowRight, BadgeCheck, Calculator, Check, Clock3, FileText, Hammer, MapPin, Phone, ShieldCheck, Sparkles } from "lucide-react";
 import { Link } from "react-router-dom";
+import { TelegramIcon, WhatsAppIcon } from "../components/SocialLinks";
 import { CITY, PHONE, PHONE_DISPLAY } from "../lib/calcData";
 
 const CONTACTS = [
-  { label: "WhatsApp", href: "https://wa.me/79878377006", icon: Send },
-  { label: "Telegram", href: "https://t.me/+79063052828", icon: Send },
+  { label: "WhatsApp", href: "https://wa.me/79878377006", icon: WhatsAppIcon, color: "bg-[#25D366]" },
+  { label: "Telegram", href: "https://t.me/+79063052828", icon: TelegramIcon, color: "bg-[#229ED9]" },
 ];
 
 const DIRECTIONS = [
@@ -51,7 +52,7 @@ export default function About() {
         </section>
 
         <section className="mt-10 overflow-hidden rounded-3xl bg-gradient-to-br from-[#ff6824] to-[#ff321e] p-6 text-white shadow-xl shadow-orange-500/15 sm:p-10">
-          <div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-end"><div><div className="flex items-center gap-2 text-sm font-bold text-white/80"><MapPin className="h-5 w-5" /> {CITY}, работаем 24/7</div><h2 className="mt-4 text-3xl font-black sm:text-5xl">Обсудим вашу задачу?</h2><p className="mt-3 max-w-xl text-white/80">Позвоните или напишите — уточним детали и подскажем, с чего начать.</p></div><div className="flex flex-wrap gap-3">{CONTACTS.map(({ label, href, icon: Icon }) => <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-xl bg-white px-4 py-3 font-black text-[#262321]"><Icon className="h-4 w-4 text-primary" />{label}</a>)}<a href={`tel:${PHONE}`} className="inline-flex items-center gap-2 rounded-xl border border-white/40 bg-black/15 px-4 py-3 font-black"><Phone className="h-4 w-4" />{PHONE_DISPLAY}</a></div></div>
+          <div className="flex flex-col justify-between gap-7 lg:flex-row lg:items-end"><div><div className="flex items-center gap-2 text-sm font-bold text-white/80"><MapPin className="h-5 w-5" /> {CITY}, работаем 24/7</div><h2 className="mt-4 text-3xl font-black sm:text-5xl">Обсудим вашу задачу?</h2><p className="mt-3 max-w-xl text-white/80">Позвоните или напишите — уточним детали и подскажем, с чего начать.</p></div><div className="flex flex-wrap gap-3">{CONTACTS.map(({ label, href, icon: Icon, color }) => <a key={label} href={href} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-2 rounded-xl px-4 py-3 font-black text-white shadow-lg transition hover:-translate-y-0.5 ${color}`}><Icon size={20} />{label}</a>)}<a href={`tel:${PHONE}`} className="inline-flex items-center gap-2 rounded-xl border border-white/40 bg-black/15 px-4 py-3 font-black"><Phone className="h-4 w-4" />{PHONE_DISPLAY}</a></div></div>
         </section>
       </div>
     </div>
