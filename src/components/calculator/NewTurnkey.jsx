@@ -3,6 +3,7 @@ import { TURNKEY_NEW } from "../../lib/calcData";
 import { getTurnkeyPrice, setPriceOverride } from "../../lib/pricingStorage";
 import { useInlineEditMode, usePricingOverrides } from "../../hooks/usePricingState";
 import InlinePriceEditor from "../admin/InlinePriceEditor";
+import { House } from "lucide-react";
 
 const integerQuantity = (value) => Math.max(0, Math.round(Number(value) || 0));
 
@@ -40,7 +41,7 @@ export default function NewTurnkey({ onTotalChange, resetSignal = 0 }) {
     <div className="turnkey-calculator-card rb-card overflow-hidden rounded-2xl bg-gradient-to-br from-orange-50 to-amber-50">
       <div className="turnkey-calculator-header px-4 py-3 border-b border-border bg-gradient-to-r from-orange-50 to-amber-50">
         <div className="flex items-center gap-2">
-          <span className="text-lg">🏠</span>
+          <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary/10 text-primary"><House className="h-4 w-4" /></span>
           <h3 className="text-sm font-bold text-foreground">Ремонт под ключ</h3>
         </div>
         <p className="text-xs text-muted-foreground">Комплексный ремонт помещения</p>
