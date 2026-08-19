@@ -1,12 +1,14 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { formatCategoryPrice, SERVICE_CATEGORIES } from "../lib/servicesData";
-import { getServiceCategoryPrice } from "../lib/pricingStorage";
-import { usePricingOverrides } from "../hooks/usePricingState";
+import { getServiceCategoryPrice, setPriceOverride } from "../lib/pricingStorage";
+import { useInlineEditMode, usePricingOverrides } from "../hooks/usePricingState";
 import { ArrowRight } from "lucide-react";
+import InlinePriceEditor from "./admin/InlinePriceEditor";
 
 export default function ServicesGrid() {
   const overrides = usePricingOverrides();
+  const editMode = useInlineEditMode();
   const homeServices = SERVICE_CATEGORIES.filter((service) => service.showOnHome !== false);
 
   return (
@@ -35,6 +37,7 @@ export default function ServicesGrid() {
         {homeServices.map((service, index) => (
           <motion.div
             key={service.id}
+            className="relative"
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-40px" }}
@@ -56,9 +59,9 @@ export default function ServicesGrid() {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/35 to-transparent" />
-                <div className="absolute top-2 right-2 px-2.5 py-1 bg-white/90 dark:bg-black/70 backdrop-blur-sm rounded-lg">
+                {!editMode && <div className="absolute top-2 right-2 px-2.5 py-1 bg-white/90 dark:bg-black/70 backdrop-blur-sm rounded-lg">
                   <span className="text-xs font-mono font-bold text-primary">{formatCategoryPrice(service, getServiceCategoryPrice(service, overrides))}</span>
-                </div>
+                </div>}
               </div>
               {/* Text */}
               <div className="p-4 flex items-center justify-between">
@@ -70,6 +73,10 @@ export default function ServicesGrid() {
                 </div>
               </div>
             </Link>
+            {editMode && <div className="absolute right-2 top-2 z-20 min-w-[132px] rounded-xl border border-primary/35 bg-white/95 p-2 text-right shadow-xl backdrop-blur dark:bg-slate-950/95">
+              <p className="font-mono text-xs font-black text-primary">{formatCategoryPrice(service, getServiceCategoryPrice(service, overrides))}</p>
+              <InlinePriceEditor value={getServiceCategoryPrice(service, overrides)} onSave={(value) => setPriceOverride(service.pricingScope || 'serviceCategories', service.pricingId || service.id, value)} />
+            </div>}
           </motion.div>
         ))}
       </div>
