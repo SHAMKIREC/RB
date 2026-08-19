@@ -58,20 +58,19 @@ function WorkGallery({ galleryKey, title }) {
     window.addEventListener(SERVICE_GALLERY_CHANGED_EVENT, onChanged);
     return () => { active = false; window.removeEventListener(SERVICE_GALLERY_CHANGED_EVENT, onChanged); };
   }, [galleryKey]);
-  if (!images.length) return null;
   return (
     <section className="mt-7">
       <div className="mb-3">
         <p className="text-xs font-mono font-bold uppercase tracking-widest text-primary">Наши работы</p>
         <h2 className="text-xl sm:text-2xl font-black text-foreground">Реальные примеры: {title}</h2>
       </div>
-      <div className={`grid gap-3 ${images.length > 2 ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-2'}`}>
+      {images.length ? <div className={`grid gap-3 ${images.length > 2 ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-2'}`}>
         {images.map((image, index) => (
           <figure key={image.id || image.path || index} className={`overflow-hidden rounded-2xl border border-border bg-card shadow-sm ${images.length === 3 && index === 0 ? 'col-span-2 lg:col-span-1' : ''}`}>
             <img src={image.src} alt={`${title}: пример выполненной работы ${index + 1}`} loading="lazy" decoding="async" width="900" height="650" className="aspect-[4/3] h-full w-full object-cover" />
           </figure>
         ))}
-      </div>
+      </div> : <div className="rounded-2xl border-2 border-dashed border-primary/25 bg-white/75 px-5 py-8 text-center text-sm font-semibold text-muted-foreground dark:bg-card/70">Владелец скоро добавит фотографии выполненных работ.</div>}
     </section>
   );
 }
@@ -151,6 +150,12 @@ export default function Services() {
     setSelectedCategory(cat);
     setSelectedSubcategory(null);
     setSearchParams({ category: cat.id });
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+  };
+
+  const handleSubcategorySelect = (subcategory) => {
+    setSelectedSubcategory(subcategory);
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   };
 
   const handleBack = () => {
@@ -160,6 +165,7 @@ export default function Services() {
       setSelectedCategory(null);
       setSearchParams({});
     }
+    window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   };
 
   const breadcrumb = [
@@ -221,7 +227,7 @@ export default function Services() {
               <WorkGallery galleryKey={selectedCategory.id} title={selectedCategory.name} />
             </>
           ) : (
-            <SubcategoryGrid subcategories={selectedCategory.subcategories} onSelect={setSelectedSubcategory} />
+            <SubcategoryGrid subcategories={selectedCategory.subcategories} onSelect={handleSubcategorySelect} />
           )}
         </>
       )}
