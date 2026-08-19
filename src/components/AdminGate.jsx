@@ -20,20 +20,20 @@ export function AdminNavigation({ onExit }) {
   const itemClass = ({ isActive }) => `group relative inline-flex h-11 shrink-0 items-center justify-center gap-2 overflow-hidden rounded-xl border px-3 text-xs font-black transition-all duration-300 sm:h-12 sm:px-4 ${isActive ? 'border-orange-400/70 bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-[0_9px_22px_-10px_rgba(249,82,22,.9)]' : 'border-white/10 bg-white/[.06] text-white/75 hover:-translate-y-0.5 hover:border-orange-400/45 hover:bg-white/[.11] hover:text-white'}`;
   return <div className="sticky top-0 z-50 border-b border-black/20 bg-[#242321]/95 text-white shadow-[0_12px_30px_-22px_rgba(0,0,0,.8)] backdrop-blur-xl">
     <div className="page-shell py-2.5 sm:py-3">
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap sm:gap-3">
         <div className="flex h-11 shrink-0 items-center gap-2 rounded-xl border border-orange-400/25 bg-gradient-to-br from-orange-500/20 to-red-500/10 px-2.5 sm:h-12 sm:px-3">
           <span className="relative grid h-7 w-7 place-items-center rounded-lg bg-gradient-to-br from-orange-500 to-red-500 shadow-[0_6px_16px_-7px_rgba(255,80,20,.9)]"><ShieldCheck className="h-4 w-4"/><span className="absolute -right-0.5 -top-0.5 h-2 w-2 animate-pulse rounded-full border border-[#242321] bg-green-400" /></span>
           <span className="hidden leading-tight min-[390px]:block"><span className="block text-[10px] uppercase tracking-[.16em] text-white/50">Панель</span><span className="block text-xs font-black">Владельца</span></span>
         </div>
 
-        <nav aria-label="Разделы админки" className="flex min-w-0 flex-1 gap-2 overflow-x-auto scroll-smooth pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <nav aria-label="Разделы админки" className="order-3 flex min-w-0 basis-full gap-2 overflow-x-auto scroll-smooth pb-0.5 pt-0.5 [scroll-padding-inline:4px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:order-none sm:flex-1 sm:basis-auto sm:pt-0">
           {items.map(({ to, label, icon: Icon }) => <NavLink key={to} to={to} className={itemClass}>
             <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
             <Icon className="relative h-4 w-4"/><span className="relative whitespace-nowrap">{label}</span>
           </NavLink>)}
         </nav>
 
-        <div className="flex shrink-0 gap-2">
+        <div className="ml-auto flex shrink-0 gap-2 sm:ml-0">
           <Link to="/" onClick={enableInlineEditMode} aria-label="Открыть сайт" title="Открыть сайт" className="group inline-flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[.06] text-white/75 transition-all duration-300 hover:-translate-y-0.5 hover:border-orange-400/45 hover:bg-white/[.11] hover:text-orange-300 sm:h-12 sm:w-auto sm:gap-2 sm:px-3">
             <ExternalLink className="h-4 w-4 transition-transform duration-300 group-hover:rotate-6"/><span className="hidden text-xs font-black lg:inline">На сайт</span>
           </Link>
@@ -42,7 +42,6 @@ export function AdminNavigation({ onExit }) {
           </button>
         </div>
       </div>
-      <p className="mt-1.5 truncate px-1 text-[10px] font-medium text-white/35 sm:hidden">Проведите по разделам влево или вправо</p>
     </div>
   </div>;
 }
