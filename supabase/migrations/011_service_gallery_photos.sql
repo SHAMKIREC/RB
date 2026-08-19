@@ -14,7 +14,7 @@ alter table public.service_gallery_photos enable row level security;
 
 drop policy if exists "public reads service gallery photos" on public.service_gallery_photos;
 create policy "public reads service gallery photos"
-on public.service_gallery_photos for select to anon, authenticated
+on public.service_gallery_photos for select to anon
 using (true);
 
 drop policy if exists "admins manage service gallery photos" on public.service_gallery_photos;
