@@ -17,6 +17,7 @@ import ProjectDetail from './pages/ProjectDetail';
 import AdminOrders from './pages/AdminOrders';
 import AdminProjects from './pages/AdminProjects';
 import AdminReviews from './pages/AdminReviews';
+import AdminServicePhotos from './pages/AdminServicePhotos';
 import Documentation from './pages/Documentation';
 import About from './pages/About';
 import NrvDigital from './pages/NrvDigital';
@@ -72,6 +73,7 @@ const AuthenticatedApp = () => {
         <Route path="/admin/orders" element={<AdminOrders />} />
         <Route path="/admin/projects" element={<AdminProjects />} />
         <Route path="/admin/reviews" element={<AdminReviews />} />
+        <Route path="/admin/service-photos" element={<AdminServicePhotos />} />
         <Route path="/category/:slug" element={<LegacyCategoryRedirect />} />
         <Route path="*" element={<PageNotFound />} />
       </Route>
