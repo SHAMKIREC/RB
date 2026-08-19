@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, Package } from "lucide-react";
 import { getMaterialsForWork } from "../../lib/materialsData";
 import { setPriceOverride } from "../../lib/pricingStorage";
 import { useInlineEditMode } from "../../hooks/usePricingState";
@@ -77,7 +77,7 @@ function CalcItem({ item, mode, qty, withMaterials, onChange, onMaterialRequest 
       {/* Materials detail breakdown */}
       {isActive && withMaterials && item.materials.length > 0 && (
         <div className="mt-2 pt-2 border-t border-blue-200/40 dark:border-blue-800/20">
-          <p className="text-[10px] font-bold text-blue-600 dark:text-blue-400 mb-1.5 uppercase tracking-wider">📦 Материалы (с наценкой 20%)</p>
+          <p className="mb-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400"><Package className="h-3.5 w-3.5" />Материалы (с наценкой 20%)</p>
           <div className="space-y-1">
             {item.materials.map((m, i) => {
               const mCost = Math.round(m.consumption * (qty || 0) * m.price * 1.2);
