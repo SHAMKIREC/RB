@@ -16,6 +16,12 @@ function PriceTable({ items }) {
   return (
     <div className="border border-border rounded-2xl overflow-hidden">
       <table className="w-full">
+        <thead className="bg-primary/10">
+          <tr>
+            <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-wide text-foreground">Работа</th>
+            <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-wide text-foreground">Цена</th>
+          </tr>
+        </thead>
         <tbody>
           {items.map((item, i) => {
             const price = getServiceItemPrice(item, overrides);
@@ -32,6 +38,25 @@ function PriceTable({ items }) {
         </tbody>
       </table>
     </div>
+  );
+}
+
+function WorkGallery({ images, title }) {
+  if (!images?.length) return null;
+  return (
+    <section className="mt-7">
+      <div className="mb-3">
+        <p className="text-xs font-mono font-bold uppercase tracking-widest text-primary">Наши работы</p>
+        <h2 className="text-xl sm:text-2xl font-black text-foreground">Реальные примеры: {title}</h2>
+      </div>
+      <div className={`grid gap-3 ${images.length > 2 ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-2'}`}>
+        {images.map((image, index) => (
+          <figure key={`${image}-${index}`} className={`overflow-hidden rounded-2xl border border-border bg-card shadow-sm ${images.length === 3 && index === 0 ? 'col-span-2 lg:col-span-1' : ''}`}>
+            <img src={image} alt={`${title}: пример выполненной работы ${index + 1}`} loading="lazy" decoding="async" width="900" height="650" className="aspect-[4/3] h-full w-full object-cover" />
+          </figure>
+        ))}
+      </div>
+    </section>
   );
 }
 
@@ -175,7 +200,10 @@ export default function Services() {
       {selectedCategory && !selectedSubcategory && (
         <>
           {selectedCategory.direct ? (
-            <PriceTable items={selectedCategory.items} />
+            <>
+              <PriceTable items={selectedCategory.items} />
+              <WorkGallery images={selectedCategory.gallery} title={selectedCategory.name} />
+            </>
           ) : (
             <SubcategoryGrid subcategories={selectedCategory.subcategories} onSelect={setSelectedSubcategory} />
           )}
@@ -183,7 +211,10 @@ export default function Services() {
       )}
 
       {selectedSubcategory && (
-        <PriceTable items={selectedSubcategory.items} />
+        <>
+          <PriceTable items={selectedSubcategory.items} />
+          <WorkGallery images={selectedSubcategory.gallery} title={selectedSubcategory.name} />
+        </>
       )}
     </div>
   );
