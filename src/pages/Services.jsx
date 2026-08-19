@@ -8,28 +8,29 @@ import ServiceSeo from "../components/ServiceSeo";
 import { getServiceCategoryPrice, getServiceItemPrice, setPriceOverride } from "../lib/pricingStorage";
 import { useInlineEditMode, usePricingOverrides } from "../hooks/usePricingState";
 import InlinePriceEditor from "../components/admin/InlinePriceEditor";
+import { getServiceGallery, SERVICE_GALLERY_CHANGED_EVENT } from "../lib/serviceGalleryStorage";
 
 function PriceTable({ items }) {
   const overrides = usePricingOverrides();
   const inlineEditMode = useInlineEditMode();
 
   return (
-    <div className="border border-border rounded-2xl overflow-hidden">
-      <table className="w-full">
-        <thead className="bg-primary/10">
+    <div className="rounded-2xl border-2 border-primary/30 bg-[#fff0df] p-2 shadow-[0_16px_38px_-28px_rgba(154,52,18,.65)] dark:bg-[#33251f] sm:p-3">
+      <table className="w-full border-separate border-spacing-y-2">
+        <thead>
           <tr>
-            <th className="px-4 py-3 text-left text-xs font-black uppercase tracking-wide text-foreground">Работа</th>
-            <th className="px-4 py-3 text-right text-xs font-black uppercase tracking-wide text-foreground">Цена</th>
+            <th className="rounded-l-xl bg-primary px-4 py-3 text-left text-xs font-black uppercase tracking-wide text-white">Работа</th>
+            <th className="rounded-r-xl bg-primary px-4 py-3 text-right text-xs font-black uppercase tracking-wide text-white">Цена</th>
           </tr>
         </thead>
         <tbody>
           {items.map((item, i) => {
             const price = getServiceItemPrice(item, overrides);
-            return <tr key={item.id} className={`border-b border-border/50 last:border-b-0 ${i % 2 === 0 ? "bg-card" : "bg-secondary/20"}`}>
-              <td className="px-4 py-3 text-sm text-foreground">{item.name}</td>
-              <td className="px-4 py-3 text-right whitespace-nowrap">
+            return <tr key={item.id}>
+              <td className={`rounded-l-xl border-y border-l border-primary/15 px-4 py-3 text-sm font-semibold text-foreground ${i % 2 === 0 ? 'bg-white dark:bg-card' : 'bg-[#fffaf5] dark:bg-secondary/40'}`}>{item.name}</td>
+              <td className={`rounded-r-xl border-y border-r border-primary/15 px-4 py-3 text-right whitespace-nowrap ${i % 2 === 0 ? 'bg-white dark:bg-card' : 'bg-[#fffaf5] dark:bg-secondary/40'}`}>
                 <div className="inline-flex flex-col items-end">
-                  <span className="text-sm font-mono font-bold text-primary">{price.toLocaleString("ru-RU")} ₽{item.unit ? ` / ${item.unit}` : ""}</span>
+                  <span className="text-sm font-mono font-black text-[#d9470b] dark:text-primary sm:text-base">{price.toLocaleString("ru-RU")} ₽{item.unit ? ` / ${item.unit}` : ""}</span>
                   {inlineEditMode && <InlinePriceEditor value={price} onSave={(value) => setPriceOverride(item.pricingScope || 'serviceItems', item.pricingId || item.id, value)} />}
                 </div>
               </td>
@@ -41,8 +42,23 @@ function PriceTable({ items }) {
   );
 }
 
-function WorkGallery({ images, title }) {
-  if (!images?.length) return null;
+function WorkGallery({ galleryKey, title }) {
+  const [images, setImages] = useState([]);
+  useEffect(() => {
+    let active = true;
+    const load = () => getServiceGallery(galleryKey).then((photos) => {
+      if (active) setImages(photos);
+    }).catch(() => {
+      if (active) setImages([]);
+    });
+    const onChanged = (event) => {
+      if (!event.detail?.serviceKey || event.detail.serviceKey === galleryKey) load();
+    };
+    load();
+    window.addEventListener(SERVICE_GALLERY_CHANGED_EVENT, onChanged);
+    return () => { active = false; window.removeEventListener(SERVICE_GALLERY_CHANGED_EVENT, onChanged); };
+  }, [galleryKey]);
+  if (!images.length) return null;
   return (
     <section className="mt-7">
       <div className="mb-3">
@@ -51,8 +67,8 @@ function WorkGallery({ images, title }) {
       </div>
       <div className={`grid gap-3 ${images.length > 2 ? 'grid-cols-2 lg:grid-cols-3' : 'grid-cols-2'}`}>
         {images.map((image, index) => (
-          <figure key={`${image}-${index}`} className={`overflow-hidden rounded-2xl border border-border bg-card shadow-sm ${images.length === 3 && index === 0 ? 'col-span-2 lg:col-span-1' : ''}`}>
-            <img src={image} alt={`${title}: пример выполненной работы ${index + 1}`} loading="lazy" decoding="async" width="900" height="650" className="aspect-[4/3] h-full w-full object-cover" />
+          <figure key={image.id || image.path || index} className={`overflow-hidden rounded-2xl border border-border bg-card shadow-sm ${images.length === 3 && index === 0 ? 'col-span-2 lg:col-span-1' : ''}`}>
+            <img src={image.src} alt={`${title}: пример выполненной работы ${index + 1}`} loading="lazy" decoding="async" width="900" height="650" className="aspect-[4/3] h-full w-full object-cover" />
           </figure>
         ))}
       </div>
@@ -202,7 +218,7 @@ export default function Services() {
           {selectedCategory.direct ? (
             <>
               <PriceTable items={selectedCategory.items} />
-              <WorkGallery images={selectedCategory.gallery} title={selectedCategory.name} />
+              <WorkGallery galleryKey={selectedCategory.id} title={selectedCategory.name} />
             </>
           ) : (
             <SubcategoryGrid subcategories={selectedCategory.subcategories} onSelect={setSelectedSubcategory} />
@@ -213,7 +229,7 @@ export default function Services() {
       {selectedSubcategory && (
         <>
           <PriceTable items={selectedSubcategory.items} />
-          <WorkGallery images={selectedSubcategory.gallery} title={selectedSubcategory.name} />
+          <WorkGallery galleryKey={selectedSubcategory.id} title={selectedSubcategory.name} />
         </>
       )}
     </div>
