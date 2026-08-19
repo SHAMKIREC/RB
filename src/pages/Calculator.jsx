@@ -72,7 +72,6 @@ export default function Calculator() {
   const clearDraft = (event) => {
     event.preventDefault();
     event.stopPropagation();
-    if (!window.confirm('Очистить текущую смету?')) return;
     skipDraftSave.current = true;
     skipAutomaticReset.current = true;
     localStorage.removeItem(DRAFT_KEY);
