@@ -37,12 +37,14 @@ export const MIN_ORDER = 5000;
 /** @typedef {[string, string, string, string, string, CatalogSection[]]} CatalogCategory */
 /** @type {CatalogCategory[]} */
 const catalog = [
-  ['floors','Полы','/assets/catalog-floors.png','от 450 ₽/м²','Укладка и ремонт напольных покрытий в квартирах и домах. Подбираем технологию под основание, покрытие и нагрузку.',[
-    ['floors_finish','Напольные покрытия','https://images.unsplash.com/photo-1581858726788-75bc0f6a952d?w=800&q=80',[['Укладка ламината',600,'м²'],['Укладка кварцвинила',800,'м²'],['Укладка линолеума',450,'м²'],['Укладка паркета',1200,'м²']]],
-    ['floors_base','Подготовка пола','https://images.unsplash.com/photo-1586023492125-27b2c045efd7?w=800&q=80',[['Стяжка пола',900,'м²'],['Выравнивание пола',500,'м²'],['Монтаж плинтусов',250,'п.м']]]]],
-  ['walls','Стены','https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=800&q=80','от 300 ₽/м²','Подготавливаем стены под обои, покраску и декоративную отделку. Работаем с квартирами, домами и коммерческими помещениями.',[
-    ['walls_prep','Подготовка стен','https://images.unsplash.com/photo-1589939705384-5185137a7f0f?w=800&q=80',[['Штукатурка стен',700,'м²'],['Шпаклевка стен',350,'м²'],['Грунтовка стен',100,'м²']]],
-    ['walls_finish','Финишная отделка','https://images.unsplash.com/photo-1565008447742-97f6f38c985c?w=800&q=80',[['Поклейка обоев',450,'м²'],['Покраска стен',350,'м²'],['Декоративная штукатурка',1200,'м²']]]]],
+  ['floors','Полы','/assets/catalog-floors.png','от 200 ₽/м.п','Укладка и ремонт напольных покрытий в квартирах и домах. Подбираем технологию под основание, покрытие и нагрузку.',[
+    ['floors_base','Черновые работы','',[["Стяжка бетонная",1200,'м²'],["Стяжка ручная",900,'м²'],["Механизированная стяжка",1200,'м²'],["Наливной пол",400,'м²'],["Выравнивание пола",450,'м²'],["Шумоизоляция пола",300,'м²'],["Гидроизоляция пола",250,'м²'],["Монтаж тёплого пола",600,'м²']]],
+    ['floors_finish','Чистовые работы','',[["Ламинат",600,'м²'],["Кварцвинил",800,'м²'],["Линолеум",450,'м²'],["Коммерческий линолеум",700,'м²'],["Паркет",900,'м²'],["Шлифовка паркета",350,'м²'],["Лакировка паркета",400,'м²']]],
+    ['floors_plinth','Плинтусы','',[["ПВХ",200,'м.п'],["МДФ",350,'м.п'],["Дерево",400,'м.п']]]]],
+  ['walls','Стены','https://images.unsplash.com/photo-1562259949-e8e7689d7828?w=800&q=80','от 80 ₽/м²','Подготавливаем стены под обои, покраску и декоративную отделку. Работаем с квартирами, домами и коммерческими помещениями.',[
+    ['walls_plaster','Штукатурные работы','',[["Грунтовка",80,'м²'],["Бетоноконтакт",150,'м²'],["Кварцгрунт",150,'м²'],["Гипсовая штукатурка",800,'м²'],["Цементная штукатурка",1000,'м²'],["Безмаячная штукатурка",450,'м²'],["Армирование сеткой",120,'м²'],["Штукатурка откосов",500,'м.п'],["Установка малярного угла",150,'м.п']]],
+    ['walls_paint','Малярные работы','',[["Шпаклёвка под обои",550,'м²'],["Шпаклёвка под покраску",1050,'м²'],["Шлифовка",120,'м²'],["Поклейка стеклохолста на стены",200,'м²'],["Покраска стен",250,'м²'],["Покраска откосов",700,'м.п'],["Покраска радиаторов",800,'шт'],["Покраска труб",250,'м.п'],["Покраска дверей",1500,'шт']]],
+    ['walls_wallpaper','Обои','',[["Поклейка без подбора",250,'м²'],["Поклейка с подбором",350,'м²'],["Флизелиновые обои",320,'м²'],["Виниловые обои",350,'м²'],["Фотообои",500,'м²']]]]],
   ['tiles','Плитка','https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80','от 1 600 ₽/м²','Укладываем плитку и керамогранит в ванных, кухнях и жилых помещениях. Соблюдаем геометрию, раскладку и аккуратность швов.',[
     ['tiles_work','Плиточные работы','https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',[['Укладка плитки на стены',1800,'м²'],['Укладка плитки на пол',1600,'м²'],['Ванная комната плиткой',1800,'м²'],['Фартук кухни',2500,'м²'],['Затирка швов',250,'м²'],['Демонтаж старой плитки',350,'м²']]]]],
   ['electric','Электрика','https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80','от 400 ₽ за точку','Выполняем электромонтаж в квартирах и домах: от одной розетки до нового щита и разводки. Подбираем безопасное решение под нагрузку.',[
@@ -52,10 +54,8 @@ const catalog = [
     ['plumbing_system','Трубы и ремонт','https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80',[['Замена труб',700,'п.м'],['Устранение протечки',1500,'услуга'],['Разводка канализации',1400,'точка'],['Прочистка канализации',1800,'услуга']]]]],
   ['doors','Двери','https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=800&q=80','от 3 500 ₽/шт','Устанавливаем и регулируем входные и межкомнатные двери. Аккуратно монтируем коробку, фурнитуру, наличники и доборы.',[
     ['doors_work','Установка и ремонт дверей','https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&q=80',[['Установка межкомнатной двери',3500,'шт'],['Установка входной двери',5000,'шт'],['Демонтаж двери',800,'шт'],['Регулировка двери',800,'шт'],['Замена фурнитуры',700,'шт']]]]],
-  ['demolition','Демонтаж','https://images.unsplash.com/photo-1590859808308-3d2d9c515b1a?w=800&q=80','от 150 ₽/м²','Безопасно демонтируем старые конструкции и отделку перед ремонтом. Учитываем материал основания и объём вывоза.',[
-    ['demo_walls','Демонтаж стен','https://images.unsplash.com/photo-1590859808308-3d2d9c515b1a?w=800&q=80',[['Перегородки',650,'м²'],['Кирпичные стены',900,'м²'],['Бетонные стены',1800,'м²']]],
-    ['demo_floor','Демонтаж пола','https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&q=80',[['Старая плитка',350,'м²'],['Стяжка',600,'м²'],['Ламинат',150,'м²']]],
-    ['demo_finish','Демонтаж отделки','https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=800&q=80',[['Обои',120,'м²'],['Штукатурка',300,'м²'],['Потолки',200,'м²']]]]],
+  ['demolition','Демонтаж','https://images.unsplash.com/photo-1590859808308-3d2d9c515b1a?w=800&q=80','от 80 ₽/м.п','Безопасно демонтируем старые конструкции и отделку перед ремонтом. Учитываем материал основания и объём вывоза.',[
+    ['demo_all','Демонтажные работы','',[["Демонтаж обоев",120,'м²'],["Демонтаж краски",180,'м²'],["Демонтаж декоративной штукатурки",250,'м²'],["Демонтаж плитки",350,'м²'],["Демонтаж ПВХ-панелей",200,'м²'],["Демонтаж гипсокартона",250,'м²'],["Демонтаж ламината",150,'м²'],["Демонтаж линолеума",120,'м²'],["Демонтаж паркета",250,'м²'],["Демонтаж плитки пола",350,'м²'],["Демонтаж стяжки",600,'м²'],["Демонтаж натяжного потолка",150,'м²'],["Демонтаж подвесного потолка",200,'м²'],["Демонтаж потолка ГКЛ",250,'м²'],["Демонтаж плинтуса",80,'м.п'],["Демонтаж двери",700,'шт'],["Демонтаж сантехники",800,'шт'],["Демонтаж подоконника",300,'м.п'],["Демонтаж перегородок",650,'м²'],["Демонтаж радиатора",1500,'шт']]]]],
   ['drywall','Гипсокартон','https://images.unsplash.com/photo-1581094288338-2314dddb7ece?w=800&q=80','от 900 ₽/м²','Собираем конструкции из ГКЛ для планировки, потолков и инженерных зон. Готовим поверхность к дальнейшей отделке.',[
     ['drywall_work','Конструкции ГКЛ','https://images.unsplash.com/photo-1581094288338-2314dddb7ece?w=800&q=80',[['Стены ГКЛ',900,'м²'],['Перегородки ГКЛ',1200,'м²'],['Потолки ГКЛ',1800,'м²'],['Короба ГКЛ',1300,'п.м'],['Ниши ГКЛ',2500,'шт'],['Подготовка под отделку',350,'м²']]]]],
   ['ceilings','Потолки','https://images.unsplash.com/photo-1600210492493-0946911123ea?w=800&q=80','от 600 ₽/м²','Монтируем и обновляем потолки в жилых помещениях. Подбираем решение под высоту комнаты, свет и состояние основания.',[
@@ -101,8 +101,12 @@ const categoryImages = {
 const subcategoryImages = {
   floors_finish: floorCoveringsImage,
   floors_base: floorPreparationImage,
+  floors_plinth: catalogFloorImage,
   walls_prep: wallPreparationImage,
   walls_finish: wallFinishingImage,
+  walls_plaster: wallPreparationImage,
+  walls_paint: wallFinishingImage,
+  walls_wallpaper: wallImage,
   tiles_work: plumberImage,
   electric_work: electricianImage,
   plumbing_install: plumbingInstallationImage,
@@ -111,11 +115,23 @@ const subcategoryImages = {
   demo_walls: demolitionWallsImage,
   demo_floor: demolitionFloorImage,
   demo_finish: demolitionFinishingImage,
+  demo_all: demolitionImage,
   drywall_work: drywallImage,
   ceilings_work: ceilingImage,
   balcony_work: balconyImage,
   turnkey_work: turnkeyImage,
   metal_work: metalImage,
+};
+const categoryGalleries = {
+  demolition: [demolitionWallsImage, demolitionFloorImage, demolitionFinishingImage],
+};
+const subcategoryGalleries = {
+  floors_base: [floorPreparationImage, floorImage],
+  floors_finish: [floorCoveringsImage, catalogFloorImage],
+  floors_plinth: [catalogFloorImage, floorCoveringsImage],
+  walls_plaster: [wallPreparationImage, wallImage],
+  walls_paint: [wallFinishingImage, wallImage],
+  walls_wallpaper: [wallImage, wallFinishingImage],
 };
 const categoryMetadata = {
   floors: { alt: 'Укладка напольных покрытий и ремонт пола в Саратове', title: 'Ремонт полов в Саратове — укладка ламината, паркета и линолеума', metaDescription: 'Укладка ламината, паркета, линолеума, стяжка и выравнивание пола в Саратове. Расчёт стоимости и выезд мастера.' },
@@ -186,7 +202,7 @@ export const formatCategoryPrice = (category, price) => {
 export const SERVICE_CATEGORIES = catalog.map(([id,name,image,priceFrom,description]) => ({ id, name, slug:id, image: categoryImages[id] || image, imageAlt: categoryMetadata[id].alt, ...createCategoryPrice(id, priceFrom), description, seo: categoryMetadata[id], showOnHome: !HOME_HIDDEN_CATEGORY_IDS.has(id) }));
 export const PRICE_LIST = Object.fromEntries(catalog.flatMap(([, , , , , sections]) => sections.map(([id,name,,items]) => [id,{ name, items:items.map((item,index)=>createServiceItem(id,item,index)) }])));
 export const CATEGORY_PRICE_MAP = Object.fromEntries(catalog.map(([id,,,,,sections]) => [id,sections.map(([sectionId])=>sectionId)]));
-export const SERVICES_CATALOG = catalog.map(([id,name,image,priceFrom,,sections]) => ({ id,name,icon:'•',image:categoryImages[id] || image,imageAlt:categoryMetadata[id].alt,...createCategoryPrice(id, priceFrom),seo:categoryMetadata[id],direct:sections.length===1,items:sections.length===1?sections[0][3].map((item,index)=>createServiceItem(sections[0][0],item,index)):undefined,subcategories:sections.length>1?sections.map(([sectionId,sectionName,sectionImage,items])=>({id:sectionId,name:sectionName,image:subcategoryImages[sectionId] || sectionImage,imageAlt:categoryMetadata[id].alt,items:items.map((item,index)=>createServiceItem(sectionId,item,index))})):undefined }));
+export const SERVICES_CATALOG = catalog.map(([id,name,image,priceFrom,,sections]) => ({ id,name,icon:'•',image:categoryImages[id] || image,imageAlt:categoryMetadata[id].alt,...createCategoryPrice(id, priceFrom),seo:categoryMetadata[id],direct:sections.length===1,items:sections.length===1?sections[0][3].map((item,index)=>createServiceItem(sections[0][0],item,index)):undefined,gallery:categoryGalleries[id] || [],subcategories:sections.length>1?sections.map(([sectionId,sectionName,sectionImage,items])=>({id:sectionId,name:sectionName,image:subcategoryImages[sectionId] || sectionImage,imageAlt:categoryMetadata[id].alt,gallery:subcategoryGalleries[sectionId] || [],items:items.map((item,index)=>createServiceItem(sectionId,item,index))})):undefined }));
 export const TURNKEY_OPTIONS = [
   { id:'cosmetic', name:'Косметический', price:4500, unit:'м²' },
   { id:'capital', name:'Капитальный', price:7000, unit:'м²' },
