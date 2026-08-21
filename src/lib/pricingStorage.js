@@ -1,4 +1,5 @@
-import { supabase, requireSupabase } from './supabaseClient';
+import { supabase } from './supabaseClient';
+import { requireAdminWriteSession } from './adminSession';
 import { supabaseError } from './mediaStorage';
 
 const EVENT = 'rb-pricing-changed';
@@ -33,7 +34,8 @@ export const subscribeToPricing = (callback) => { window.addEventListener(EVENT,
 export const subscribeToPricingError = (callback) => { window.addEventListener(ERROR_EVENT, callback); return () => window.removeEventListener(ERROR_EVENT, callback); };
 export async function setPriceOverride(scope, id, price) {
   const nextPrice = Number(price); if (!Number.isFinite(nextPrice) || nextPrice < 0) return false;
-  const { error } = await requireSupabase().from('pricing_overrides').upsert({ scope, item_id: id, price: nextPrice }, { onConflict: 'scope,item_id' });
+  const client = await requireAdminWriteSession();
+  const { error } = await client.from('pricing_overrides').upsert({ scope, item_id: id, price: nextPrice }, { onConflict: 'scope,item_id' });
   if (error) throw supabaseError('Database update error (pricing_overrides)', error);
   cache = { ...cache, [scope]: { ...(cache[scope] || {}), [id]: nextPrice } }; emit(); return true;
 }

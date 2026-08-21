@@ -49,18 +49,18 @@ export default function PhotoUploader({ value = [], onChange, label = 'Фото�
     onChange(value.filter((_, itemIndex) => itemIndex !== index));
   };
 
-  return <section className="rb-card-panel rounded-2xl p-4">
-    <h2 className="flex items-center gap-1.5 font-black">{LabelIcon && <LabelIcon className="h-4 w-4 text-primary" />}{label}</h2>
-    <label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-primary/45 bg-primary/5 px-4 py-3 text-sm font-bold text-primary hover:bg-primary/10">
+  return <section className="rb-card-panel rounded-2xl p-4 text-foreground dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-100">
+    <h2 className="flex items-center gap-1.5 font-black text-foreground dark:text-white">{LabelIcon && <LabelIcon className="h-4 w-4 text-primary dark:text-orange-300" />}{label}</h2>
+    <label className="mt-3 flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-dashed border-primary/55 bg-primary/5 px-4 py-3 text-sm font-black text-primary transition hover:bg-primary/10 dark:border-orange-400/55 dark:bg-orange-400/10 dark:text-orange-200 dark:hover:bg-orange-400/15">
       <ImagePlus className="h-4 w-4" />Добавить фотографии
       <input className="sr-only" type="file" accept="image/jpeg,image/png,image/webp" multiple onChange={addFiles} />
     </label>
     {value.length > 0 && <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3">
-      {value.map((photo, index) => { const src = typeof photo === 'string' ? photo : photo?.src || ''; return <div key={`${src.slice(0, 24)}-${index}`} className="rb-card group relative overflow-hidden rounded-xl p-2">
-        <button type="button" onClick={() => setPreview(index)} className="block aspect-[4/3] w-full bg-secondary/60"><img src={src} alt={`Фото ${index + 1}`} className="h-full w-full object-contain object-center" /></button>
-        <div className="absolute left-3 top-3 flex gap-1"><button type="button" onClick={() => move(index, -1)} disabled={index === 0} aria-label="Переместить фотографию назад" className="rounded-lg bg-white/90 p-1.5 text-foreground shadow-sm disabled:opacity-40 dark:bg-card/95 dark:shadow-black/40"><ChevronLeft className="h-3.5 w-3.5" /></button><button type="button" onClick={() => move(index, 1)} disabled={index === value.length - 1} aria-label="Переместить фотографию вперёд" className="rounded-lg bg-white/90 p-1.5 text-foreground shadow-sm disabled:opacity-40 dark:bg-card/95 dark:shadow-black/40"><ChevronRight className="h-3.5 w-3.5" /></button></div>
-        <button type="button" onClick={() => remove(index)} aria-label="Удалить фотографию" className="absolute right-3 top-3 rounded-lg bg-white/90 p-1.5 text-destructive shadow-sm dark:bg-card/95 dark:shadow-black/40"><Trash2 className="h-3.5 w-3.5" /></button>
-        {showPhotoLabels && <p className="mt-2 truncate text-[11px] font-medium text-muted-foreground">{photoLabels[index] || `Фото ${index + 1}`}</p>}
+      {value.map((photo, index) => { const src = typeof photo === 'string' ? photo : photo?.src || ''; return <div key={`${src.slice(0, 24)}-${index}`} className="rb-card group relative overflow-hidden rounded-xl p-2 dark:border-slate-700 dark:bg-slate-950/80">
+        <button type="button" onClick={() => setPreview(index)} className="block aspect-[4/3] w-full bg-secondary/60 dark:bg-slate-800"><img src={src} alt={`Фото ${index + 1}`} className="h-full w-full object-contain object-center" /></button>
+        <div className="absolute left-3 top-3 flex gap-1"><button type="button" onClick={() => move(index, -1)} disabled={index === 0} aria-label="Переместить фотографию назад" className="rounded-lg bg-white/90 p-1.5 text-foreground shadow-sm disabled:opacity-40 dark:bg-slate-900/95 dark:text-white dark:shadow-black/40"><ChevronLeft className="h-3.5 w-3.5" /></button><button type="button" onClick={() => move(index, 1)} disabled={index === value.length - 1} aria-label="Переместить фотографию вперёд" className="rounded-lg bg-white/90 p-1.5 text-foreground shadow-sm disabled:opacity-40 dark:bg-slate-900/95 dark:text-white dark:shadow-black/40"><ChevronRight className="h-3.5 w-3.5" /></button></div>
+        <button type="button" onClick={() => remove(index)} aria-label="Удалить фотографию" className="absolute right-3 top-3 rounded-lg bg-white/90 p-1.5 text-destructive shadow-sm dark:bg-slate-900/95 dark:text-red-300 dark:shadow-black/40"><Trash2 className="h-3.5 w-3.5" /></button>
+        {showPhotoLabels && <p className="mt-2 truncate text-[11px] font-semibold text-muted-foreground dark:text-slate-300">{photoLabels[index] || `Фото ${index + 1}`}</p>}
       </div>})}
     </div>}
     {preview !== null && <div onClick={() => setPreview(null)} className="fixed inset-0 z-[80] flex items-center justify-center bg-black/85 p-4"><button type="button" onClick={() => setPreview(null)} className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white"><X className="h-5 w-5" /></button><img onClick={(event) => event.stopPropagation()} src={typeof value[preview] === 'string' ? value[preview] : value[preview]?.src} alt="Просмотр фотографии" className="max-h-[90vh] max-w-[95vw] object-contain" /></div>}
