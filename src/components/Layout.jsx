@@ -16,9 +16,25 @@ export default function Layout() {
   const showAdminNavigation = adminSessionActive && !isAdminRoute;
 
   useEffect(() => {
-    isAdminSessionActive().then(setAdminSessionActive);
-    return subscribeToAdminSession(setAdminSessionActive);
-  }, [pathname]);
+    let active = true;
+
+    isAdminSessionActive()
+      .then((isActive) => {
+        if (active) setAdminSessionActive(isActive);
+      })
+      .catch(() => {
+        if (active) setAdminSessionActive(false);
+      });
+
+    const unsubscribe = subscribeToAdminSession((isActive) => {
+      if (active) setAdminSessionActive(isActive);
+    });
+
+    return () => {
+      active = false;
+      unsubscribe();
+    };
+  }, []);
 
   const exitAdminSession = async () => {
     disableInlineEditMode();
