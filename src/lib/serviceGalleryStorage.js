@@ -1,4 +1,5 @@
 import { requireSupabase } from './supabaseClient';
+import { requireAdminWriteSession } from './adminSession';
 import {
   mediaPath,
   mediaUrl,
@@ -54,7 +55,7 @@ export async function getAllServiceGalleries() {
 }
 
 export async function saveServiceGallery(serviceKey, values) {
-  const client = requireSupabase();
+  const client = await requireAdminWriteSession();
   const current = await getServiceGallery(serviceKey);
   const currentPaths = new Set(current.map((photo) => photo.path));
   const normalized = (values || []).map(normalize);
