@@ -15,26 +15,16 @@ const isCredentialError = (error) =>
 
 export const getAdminSession = async () => {
   if (!supabase) return null;
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-  if (sessionError) {
-    if (isMissingSessionError(sessionError) || isExpiredSessionError(sessionError)) return null;
-    throw sessionError;
-  }
-  if (!sessionData.session) return null;
 
-  const { data: userData, error: userError } = await supabase.auth.getUser();
-  if (userError) {
-    if (isMissingSessionError(userError) || isExpiredSessionError(userError)) {
-      try { await supabase.auth.signOut({ scope: 'local' }); } catch { /* local cleanup is best-effort */ }
-      return null;
-    }
-    throw userError;
+  const { data, error } = await supabase.auth.getSession();
+  if (error) {
+    if (isMissingSessionError(error) || isExpiredSessionError(error)) return null;
+    throw error;
   }
-  if (!isAdminUser(userData.user)) {
-    try { await supabase.auth.signOut({ scope: 'local' }); } catch { /* local cleanup is best-effort */ }
-    return null;
-  }
-  return { ...sessionData.session, user: userData.user };
+
+  const session = data.session;
+  if (!session || !isAdminUser(session.user)) return null;
+  return session;
 };
 
 export const isAdminSessionActive = async () => Boolean(await getAdminSession());
@@ -42,6 +32,7 @@ export const isAdminSessionActive = async () => Boolean(await getAdminSession())
 export const startAdminSession = async (password) => {
   const email = import.meta.env.VITE_ADMIN_EMAIL;
   if (!email || !password) return false;
+
   const client = requireSupabase();
   const { data, error } = await client.auth.signInWithPassword({ email, password });
   if (error) {
@@ -49,36 +40,31 @@ export const startAdminSession = async (password) => {
     throw error;
   }
 
-  const { data: userData, error: userError } = await client.auth.getUser();
-  if (userError) {
-    if (data.session) await client.auth.signOut();
-    throw userError;
-  }
-  if (!data.session || !isAdminUser(userData.user)) {
-    if (data.session) await client.auth.signOut();
+  if (!data.session || !isAdminUser(data.session.user)) {
+    if (data.session) await client.auth.signOut({ scope: 'local' });
     return false;
   }
+
   return true;
 };
 
 export const endAdminSession = async () => {
-  if (supabase) await supabase.auth.signOut();
+  if (supabase) await supabase.auth.signOut({ scope: 'local' });
 };
 
 export const subscribeToAdminSession = (callback, onError = () => {}) => {
-  if (!supabase) return () => {};
+  if (!supabase) {
+    callback(false);
+    return () => {};
+  }
+
   const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-    if (!session) {
-      callback(false);
-      return;
+    try {
+      callback(Boolean(session && isAdminUser(session.user)));
+    } catch {
+      onError();
     }
-    Promise.resolve()
-      .then(isAdminSessionActive)
-      .then(callback)
-      .catch(() => {
-        callback(false);
-        onError();
-      });
   });
+
   return () => data.subscription.unsubscribe();
 };
