@@ -7,7 +7,7 @@ import NrvDigitalPromo from "../components/NrvDigitalPromo";
 
 export default function Home() {
   return (
-    <div>
+    <div className="min-w-0 overflow-x-clip">
       <HeroSection />
       <WhyUs />
       <ServicesGrid />
