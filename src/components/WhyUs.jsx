@@ -12,17 +12,17 @@ export default function WhyUs() {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <section className="pt-7 pb-4 sm:pt-10 sm:pb-4 bg-secondary/50 border-y border-border">
-      <div className="page-shell">
+    <section className="overflow-hidden border-y border-border bg-secondary/50 pb-4 pt-7 sm:pb-4 sm:pt-10">
+      <div className="page-shell max-w-[1440px]">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center mb-10"
+          className="mb-8 text-center sm:mb-10"
         >
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-foreground">Наши преимущества</h2>
+          <h2 className="text-4xl font-black text-foreground sm:text-5xl lg:text-6xl">Наши преимущества</h2>
         </motion.div>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
+        <div className="grid min-w-0 grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
           {ITEMS.map((item, i) => {
             const Icon = item.icon;
             return (
@@ -32,10 +32,10 @@ export default function WhyUs() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className={`rb-card rb-card-action rounded-2xl p-5 sm:p-6 ${i === 0 ? "sos-card-heartbeat relative border-primary/70" : ""}`}
+                className={`rb-card rb-card-action min-w-0 rounded-2xl p-5 sm:p-6 ${i === 0 ? "sos-card-heartbeat relative border-primary/70" : ""}`}
               >
-                <div className="w-12 h-12 rounded-xl logo-gradient flex items-center justify-center mb-4 shadow-md shadow-orange-500/20">
-                  <Icon className="w-6 h-6 text-white" />
+                <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl logo-gradient shadow-md shadow-orange-500/20">
+                  <Icon className="h-6 w-6 text-white" />
                 </div>
                 {i === 0 && (
                   <motion.span
@@ -46,8 +46,8 @@ export default function WhyUs() {
                     24/7
                   </motion.span>
                 )}
-                <h3 className="font-bold text-foreground mb-2">{item.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{item.desc}</p>
+                <h3 className="mb-2 font-bold text-foreground">{item.title}</h3>
+                <p className="text-sm leading-relaxed text-muted-foreground">{item.desc}</p>
               </motion.div>
             );
           })}
