@@ -48,7 +48,10 @@ function CalcItem({ item, mode, qty, withMaterials, onChange, onMaterialRequest 
                 min="0"
                 step="1"
                 value={qty || ""}
-                onChange={(e) => onChange(Math.max(0, Math.round(Number(e.target.value) || 0)))}
+                onChange={(e) => onChange(e.target.value)}
+                onBlur={(e) => {
+                  if (e.target.value !== "") onChange(Math.max(0, Math.round(Number(e.target.value) || 0)));
+                }}
                 placeholder="0"
                 className="calc-base-surface h-10 w-12 sm:h-7 bg-[#fffdfa] font-mono text-xs font-bold text-foreground text-center focus:outline-none placeholder:text-muted-foreground"
               />
@@ -74,7 +77,6 @@ function CalcItem({ item, mode, qty, withMaterials, onChange, onMaterialRequest 
 
       {isActive && onMaterialRequest && getMaterialsForWork(item.id).length > 0 && <button onClick={() => onMaterialRequest(item)} className="mt-1.5 text-[11px] font-bold text-primary border border-primary/30 rounded-lg px-2.5 py-1 hover:bg-primary/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary">Подобрать материал</button>}
 
-      {/* Materials detail breakdown */}
       {isActive && withMaterials && item.materials.length > 0 && (
         <div className="mt-2 pt-2 border-t border-blue-200/40 dark:border-blue-800/20">
           <p className="mb-1.5 flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400"><Package className="h-3.5 w-3.5" />Материалы (с наценкой 20%)</p>
@@ -172,9 +174,6 @@ export default function CalcCategory({ category, quantities, withMaterials, onCh
 
       {open && (
         <div className="border-t border-border">
-
-
-          {/* Groups */}
           {category.groups.map(group => (
             <CalcGroup
               key={group.id}
