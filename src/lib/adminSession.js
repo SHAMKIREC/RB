@@ -24,9 +24,20 @@ export const getAdminSession = async () => {
     throw error;
   }
 
-  const session = data.session;
-  if (!session || !isAdminUser(session.user)) return null;
-  return session;
+  if (!data.session || !isAdminUser(data.session.user)) return null;
+
+  // Refresh while opening the owner panel. This guarantees that PostgREST and
+  // Storage receive a fresh Authorization token instead of falling back to anon.
+  const { data: refreshed, error: refreshError } = await supabase.auth.refreshSession();
+  if (refreshError) {
+    if (isMissingSessionError(refreshError) || isExpiredSessionError(refreshError)) return null;
+    throw refreshError;
+  }
+  if (!refreshed.session || !isAdminUser(refreshed.session.user)) return null;
+
+  const { data: verified, error: userError } = await supabase.auth.getUser();
+  if (userError || !isAdminUser(verified.user)) return null;
+  return refreshed.session;
 };
 
 export const isAdminSessionActive = async () => Boolean(await getAdminSession());
@@ -76,6 +87,12 @@ export const startAdminSession = async (password) => {
   // owner panel, so the first database write cannot be sent as `anon`.
   const { data: refreshed, error: refreshError } = await client.auth.refreshSession();
   if (refreshError || !refreshed.session || !isAdminUser(refreshed.session.user)) {
+    await client.auth.signOut({ scope: 'local' }).catch(() => {});
+    return false;
+  }
+
+  const { data: verified, error: userError } = await client.auth.getUser();
+  if (userError || !isAdminUser(verified.user)) {
     await client.auth.signOut({ scope: 'local' }).catch(() => {});
     return false;
   }
