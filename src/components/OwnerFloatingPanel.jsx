@@ -12,12 +12,12 @@ const links = [
   { to: '/admin/backup', label: 'Резерв', icon: DatabaseBackup },
 ];
 
-const BUTTON_WIDTH = 174;
-const BUTTON_HEIGHT = 52;
+const BUTTON_WIDTH = 154;
+const BUTTON_HEIGHT = 48;
 const clamp = (value, min, max) => Math.min(Math.max(value, min), Math.max(min, max));
 const defaultPosition = () => ({
   x: Math.max(10, window.innerWidth - BUTTON_WIDTH - 12),
-  y: window.innerWidth < 640 ? 84 : 96,
+  y: Math.max(76, window.innerHeight - BUTTON_HEIGHT - 112),
 });
 
 const savedPosition = () => {
@@ -36,7 +36,7 @@ export default function OwnerFloatingPanel({ onExit }) {
 
   const keepOnScreen = (next) => ({
     x: clamp(next.x, 8, window.innerWidth - BUTTON_WIDTH - 8),
-    y: clamp(next.y, 72, window.innerHeight - BUTTON_HEIGHT - 88),
+    y: clamp(next.y, 72, window.innerHeight - BUTTON_HEIGHT - 96),
   });
 
   useEffect(() => {
@@ -71,11 +71,11 @@ export default function OwnerFloatingPanel({ onExit }) {
   return <>
     <div
       style={{ left: position.x, top: position.y, touchAction: 'none' }}
-      className="group fixed z-[75] flex h-[52px] w-[174px] select-none items-stretch overflow-hidden rounded-2xl border border-orange-400/45 bg-[#252321]/95 text-left text-white shadow-[0_14px_34px_-12px_rgba(0,0,0,.75)] backdrop-blur-xl transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_38px_-10px_rgba(249,82,22,.55)]"
+      className="group fixed z-[75] flex h-12 w-[154px] select-none items-stretch overflow-hidden rounded-2xl border border-orange-400/45 bg-[#252321]/95 text-left text-white shadow-[0_14px_34px_-12px_rgba(0,0,0,.75)] backdrop-blur-xl transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_38px_-10px_rgba(249,82,22,.55)]"
     >
-      <button type="button" onClick={() => setOpen(true)} aria-label="Открыть панель владельца" className="flex min-w-0 flex-1 items-center px-2.5 text-left active:bg-white/[.06]">
-        <span className="relative grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg shadow-orange-500/20"><ShieldCheck className="h-5 w-5"/><span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 animate-pulse rounded-full border-2 border-[#252321] bg-green-400" /></span>
-        <span className="ml-2 min-w-0 flex-1"><span className="block text-[9px] uppercase tracking-[.15em] text-white/45">Панель</span><span className="block truncate text-xs font-black">Владельца</span></span>
+      <button type="button" onClick={() => setOpen(true)} aria-label="Открыть панель владельца" className="flex min-w-0 flex-1 items-center px-2 text-left active:bg-white/[.06]">
+        <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg shadow-orange-500/20"><ShieldCheck className="h-4 w-4"/><span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 animate-pulse rounded-full border-2 border-[#252321] bg-green-400" /></span>
+        <span className="ml-1.5 min-w-0 flex-1"><span className="block text-[8px] uppercase tracking-[.15em] text-white/45">Панель</span><span className="block truncate text-[11px] font-black">Владельца</span></span>
       </button>
       <button
         type="button"
@@ -85,7 +85,7 @@ export default function OwnerFloatingPanel({ onExit }) {
         onPointerMove={pointerMove}
         onPointerUp={pointerUp}
         onPointerCancel={() => { drag.current = null; }}
-        className="grid w-11 shrink-0 touch-none place-items-center border-l border-white/10 text-white/35 transition-colors hover:bg-white/[.06] hover:text-orange-300 active:bg-orange-500/15"
+        className="grid w-10 shrink-0 touch-none place-items-center border-l border-white/10 text-white/35 transition-colors hover:bg-white/[.06] hover:text-orange-300 active:bg-orange-500/15"
       ><GripVertical className="h-5 w-5" /></button>
     </div>
 
