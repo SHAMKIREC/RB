@@ -12,14 +12,14 @@ export default function ServicesGrid() {
   const homeServices = SERVICE_CATEGORIES.filter((service) => service.showOnHome !== false);
 
   return (
-    <section className="page-shell pt-6 pb-6 sm:pt-10 sm:pb-8">
+    <section className="page-shell pt-0 pb-6 sm:pt-10 sm:pb-8">
       {/* Heading */}
       <motion.div
         initial={{ opacity: 0, y: 24 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
         transition={{ duration: 0.6 }}
-        className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10"
+        className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-5"
       >
         <div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-foreground">Наши услуги</h2>
