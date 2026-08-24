@@ -196,10 +196,17 @@ export const formatCategoryPrice = (category, price) => {
   return `от ${formatted} ₽${suffix}`.replace(/\s*\/\s*/g, '/').replace(/\s+/g, ' ').trim();
 };
 
-export const SERVICE_CATEGORIES = catalog.map(([id,name,image,priceFrom,description]) => ({ id, name, slug:id, image: categoryImages[id] || image, imageAlt: categoryMetadata[id].alt, ...createCategoryPrice(id, priceFrom), description, seo: categoryMetadata[id], showOnHome: !HOME_HIDDEN_CATEGORY_IDS.has(id) }));
-export const PRICE_LIST = Object.fromEntries(catalog.flatMap(([, , , , , sections]) => sections.map(([id,name,,items]) => [id,{ name, items:items.map((item,index)=>createServiceItem(id,item,index)) }])));
-export const CATEGORY_PRICE_MAP = Object.fromEntries(catalog.map(([id,,,,,sections]) => [id,sections.map(([sectionId])=>sectionId)]));
-export const SERVICES_CATALOG = catalog.map(([id,name,image,priceFrom,,sections]) => ({ id,name,icon:'•',image:categoryImages[id] || image,imageAlt:categoryMetadata[id].alt,...createCategoryPrice(id, priceFrom),seo:categoryMetadata[id],direct:sections.length===1,items:sections.length===1?sections[0][3].map((item,index)=>createServiceItem(sections[0][0],item,index)):undefined,subcategories:sections.length>1?sections.map(([sectionId,sectionName,sectionImage,items])=>({id:sectionId,name:sectionName,image:subcategoryImages[sectionId] || sectionImage,imageAlt:categoryMetadata[id].alt,items:items.map((item,index)=>createServiceItem(sectionId,item,index))})):undefined }));
+const CATEGORY_ORDER = ['demolition', 'walls', 'ceilings', 'floors', 'tiles', 'doors', 'plumbing', 'electric'];
+const orderedCatalog = [...catalog].sort(([a], [b]) => {
+  const ai = CATEGORY_ORDER.indexOf(a);
+  const bi = CATEGORY_ORDER.indexOf(b);
+  return (ai === -1 ? CATEGORY_ORDER.length : ai) - (bi === -1 ? CATEGORY_ORDER.length : bi);
+});
+
+export const SERVICE_CATEGORIES = orderedCatalog.map(([id,name,image,priceFrom,description]) => ({ id, name, slug:id, image: categoryImages[id] || image, imageAlt: categoryMetadata[id].alt, ...createCategoryPrice(id, priceFrom), description, seo: categoryMetadata[id], showOnHome: !HOME_HIDDEN_CATEGORY_IDS.has(id) }));
+export const PRICE_LIST = Object.fromEntries(orderedCatalog.flatMap(([, , , , , sections]) => sections.map(([id,name,,items]) => [id,{ name, items:items.map((item,index)=>createServiceItem(id,item,index)) }])));
+export const CATEGORY_PRICE_MAP = Object.fromEntries(orderedCatalog.map(([id,,,,,sections]) => [id,sections.map(([sectionId])=>sectionId)]));
+export const SERVICES_CATALOG = orderedCatalog.map(([id,name,image,priceFrom,,sections]) => ({ id,name,icon:'•',image:categoryImages[id] || image,imageAlt:categoryMetadata[id].alt,...createCategoryPrice(id, priceFrom),seo:categoryMetadata[id],direct:sections.length===1,items:sections.length===1?sections[0][3].map((item,index)=>createServiceItem(sections[0][0],item,index)):undefined,subcategories:sections.length>1?sections.map(([sectionId,sectionName,sectionImage,items])=>({id:sectionId,name:sectionName,image:subcategoryImages[sectionId] || sectionImage,imageAlt:categoryMetadata[id].alt,items:items.map((item,index)=>createServiceItem(sectionId,item,index))})):undefined }));
 export const TURNKEY_OPTIONS = [
   { id:'cosmetic', name:'Косметический', price:4500, unit:'м²' },
   { id:'capital', name:'Капитальный', price:7000, unit:'м²' },
