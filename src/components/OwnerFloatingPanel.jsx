@@ -22,7 +22,7 @@ const defaultPosition = () => ({
 
 const savedPosition = () => {
   try {
-    const value = JSON.parse(localStorage.getItem('rb-owner-panel-position') || 'null');
+    const value = JSON.parse(localStorage.getItem('rb-owner-panel-position-v2') || 'null');
     if (Number.isFinite(value?.x) && Number.isFinite(value?.y)) return value;
   } catch { /* use default position */ }
   return defaultPosition();
@@ -63,7 +63,7 @@ export default function OwnerFloatingPanel({ onExit }) {
     drag.current = null;
     const next = keepOnScreen({ x: current.x + event.clientX - current.startX, y: current.y + event.clientY - current.startY });
     setPosition(next);
-    try { localStorage.setItem('rb-owner-panel-position', JSON.stringify(next)); } catch { /* position persistence is optional */ }
+    try { localStorage.setItem('rb-owner-panel-position-v2', JSON.stringify(next)); } catch { /* position persistence is optional */ }
   };
 
   const toggleEditing = () => editMode ? disableInlineEditMode() : enableInlineEditMode();
