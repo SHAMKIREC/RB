@@ -12,7 +12,7 @@ export default function WhyUs() {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <section className="overflow-hidden border-y border-border bg-secondary/50 pb-28 pt-7 sm:pb-4 sm:pt-10">
+    <section className="overflow-hidden border-y border-border bg-secondary/50 pb-4 pt-7 sm:pb-4 sm:pt-10">
       <div className="page-shell max-w-[1440px]">
         <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-4 text-center sm:mb-10">
           <h2 className="text-4xl font-black leading-[1.05] text-foreground sm:text-5xl lg:text-6xl">Наши преимущества</h2>
