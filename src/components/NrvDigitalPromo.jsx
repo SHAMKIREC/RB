@@ -35,7 +35,7 @@ export default function NrvDigitalPromo() {
           <div>
             <p className="flex items-center gap-2 text-sm font-semibold text-slate-600 sm:text-base">
               <span className="h-1.5 w-1.5 rounded-full bg-orange-500" />
-              Понравился этот сайт?
+              Наш цифровой партнёр
             </p>
 
             <Link
@@ -51,10 +51,10 @@ export default function NrvDigitalPromo() {
             </Link>
 
             <h2 className="mt-3 text-lg font-bold leading-tight sm:text-xl">
-              Сайты и веб-приложения
+              Цифровые решения для бизнеса
             </h2>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-slate-700 sm:text-base">
-              Разрабатываю сайты, каталоги, калькуляторы и веб-приложения.
+              NRV DIGITAL — партнёр «РБ Решаем Быстро» по разработке сайтов, веб-приложений, калькуляторов, автоматизации и технической поддержке цифровых сервисов.
             </p>
 
             <div className="mt-4 flex flex-wrap gap-2">
@@ -71,13 +71,13 @@ export default function NrvDigitalPromo() {
 
           <div className="flex flex-col items-stretch justify-center lg:items-center lg:border-l lg:border-orange-200/60 lg:pl-8">
             <p className="mb-3 hidden text-center text-sm font-semibold text-slate-700 lg:block">
-              Расскажите о вашей задаче
+              Нужен сайт или цифровой сервис?
             </p>
             <Link
               to={`${NRV_DIGITAL_URL}#contacts`}
               className="group/button inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-orange-500 px-7 py-3 text-sm font-bold text-white shadow-[0_6px_16px_rgba(234,88,12,0.20)] transition duration-200 hover:-translate-y-px hover:bg-orange-600 hover:shadow-[0_10px_20px_rgba(234,88,12,0.26)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
             >
-              Обсудить проект
+              Перейти к партнёру
               <span
                 aria-hidden="true"
                 className="transition-transform duration-200 group-hover/button:translate-x-1"
