@@ -21,7 +21,7 @@ export default function WhyUs() {
           {ITEMS.map((item, i) => {
             const Icon = item.icon;
             return (
-              <motion.div key={i} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }} className={`rb-card rb-card-action min-w-0 min-h-[280px] rounded-2xl p-4 sm:rounded-2xl sm:p-6 ${i === 0 ? "sos-card-heartbeat relative border-primary/70" : ""}`}>
+              <motion.div key={i} initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }} className={`rb-card rb-card-action min-w-0 min-h-[220px] rounded-2xl p-4 sm:rounded-2xl sm:p-6 ${i === 0 ? "sos-card-heartbeat relative border-primary/70" : ""}`}>
                 <div className="mb-3.5 flex h-12 w-12 items-center justify-center rounded-lg logo-gradient shadow-md shadow-orange-500/20 sm:mb-4 sm:h-12 sm:w-12 sm:rounded-xl">
                   <Icon className="h-6 w-6 text-white sm:h-6 sm:w-6" />
                 </div>
