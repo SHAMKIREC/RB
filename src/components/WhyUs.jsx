@@ -32,22 +32,22 @@ export default function WhyUs() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className={`rb-card rb-card-action min-w-0 rounded-xl p-3 sm:rounded-2xl sm:p-6 ${i === 0 ? "sos-card-heartbeat relative border-primary/70" : ""}`}
+                className={`rb-card rb-card-action min-w-0 rounded-xl p-3.5 sm:rounded-2xl sm:p-6 ${i === 0 ? "sos-card-heartbeat relative border-primary/70" : ""}`}
               >
-                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg logo-gradient shadow-md shadow-orange-500/20 sm:mb-4 sm:h-12 sm:w-12 sm:rounded-xl">
-                  <Icon className="h-5 w-5 text-white sm:h-6 sm:w-6" />
+                <div className="mb-3.5 flex h-11 w-11 items-center justify-center rounded-lg logo-gradient shadow-md shadow-orange-500/20 sm:mb-4 sm:h-12 sm:w-12 sm:rounded-xl">
+                  <Icon className="h-[22px] w-[22px] text-white sm:h-6 sm:w-6" />
                 </div>
                 {i === 0 && (
                   <motion.span
                     animate={shouldReduceMotion ? undefined : { scale: [1, 1.13, 1, 1.2, 1, 1] }}
                     transition={shouldReduceMotion ? undefined : { duration: 1.65, times: [0, 0.08, 0.15, 0.23, 0.31, 1], ease: "easeInOut", repeat: Infinity }}
-                    className="absolute right-3 top-3 bg-gradient-to-br from-[#FF6B35] to-[#FF3300] bg-clip-text text-xl font-black leading-none tracking-tight text-transparent drop-shadow-[0_5px_11px_rgba(255,80,0,0.34)] sm:right-6 sm:top-6 sm:text-[34px]"
+                    className="absolute right-3.5 top-3.5 bg-gradient-to-br from-[#FF6B35] to-[#FF3300] bg-clip-text text-[22px] font-black leading-none tracking-tight text-transparent drop-shadow-[0_5px_11px_rgba(255,80,0,0.34)] sm:right-6 sm:top-6 sm:text-[34px]"
                   >
                     24/7
                   </motion.span>
                 )}
-                <h3 className="mb-1.5 text-sm font-bold leading-tight text-foreground sm:mb-2 sm:text-base">{item.title}</h3>
-                <p className="text-xs leading-snug text-muted-foreground sm:text-sm sm:leading-relaxed">{item.desc}</p>
+                <h3 className="mb-2 text-[15px] font-bold leading-[1.2] text-foreground min-[390px]:text-base sm:text-base">{item.title}</h3>
+                <p className="text-[13px] leading-[1.42] text-muted-foreground min-[390px]:text-sm sm:text-sm sm:leading-relaxed">{item.desc}</p>
               </motion.div>
             );
           })}
