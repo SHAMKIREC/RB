@@ -59,19 +59,21 @@ export default function WorkPicker({
       ]);
   };
   const update = (workId, quantity) => {
-    const normalizedQuantity = Math.max(0, Math.round(Number(quantity) || 0));
-    return (
+    const isEmpty = quantity === "";
+    const normalizedQuantity = isEmpty
+      ? ""
+      : Math.max(0, Math.round(Number(quantity) || 0));
+    const numericQuantity = isEmpty ? 0 : normalizedQuantity;
     onChange(
       value.map((item) =>
         item.workId === workId
           ? {
               ...item,
               quantity: normalizedQuantity,
-              totalPrice: item.unitPrice * normalizedQuantity,
+              totalPrice: item.unitPrice * numericQuantity,
             }
           : item,
       ),
-    )
     );
   };
   const remove = (workId) =>
@@ -179,9 +181,9 @@ export default function WorkPicker({
                       onChange={(event) =>
                         update(item.workId, event.target.value)
                       }
-                type="number"
-                min="0"
-                step="1"
+                      type="number"
+                      min="0"
+                      step="1"
                       className="w-16 rounded border border-border bg-background px-2 py-1"
                     />
                   </td>
