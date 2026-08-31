@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Calculator, ChevronUp, ClipboardList, FileText, FolderKanban, Info, Menu, MessageSquareText, Moon, Phone, Sparkles, Sun, Wrench, X } from "lucide-react";
-import { PHONE, WHATSAPP, TELEGRAM, VK_MSG, MAX_URL } from "../lib/calcData";
+import { PHONE, PHONE_DISPLAY, WHATSAPP, TELEGRAM, VK_MSG, MAX_URL } from "../lib/calcData";
 import { TelegramIcon, WhatsAppIcon, MaxIcon, VKIcon } from "./SocialLinks";
 
 const navItems = [
@@ -26,6 +26,7 @@ export default function Header({ theme, onToggleTheme }) {
   const location = useLocation();
   const [menuOpen, setMenuOpen] = useState(false);
   const [menuRendered, setMenuRendered] = useState(false);
+  const [desktopSosOpen, setDesktopSosOpen] = useState(false);
   const isActive = (path) => location.pathname === path || location.pathname.startsWith(`${path}/`);
 
   const closeMenu = () => setMenuOpen(false);
@@ -79,7 +80,19 @@ export default function Header({ theme, onToggleTheme }) {
               <a href={VK_MSG} target="_blank" rel="noopener noreferrer" title="ВКонтакте" className="transition-transform hover:scale-110"><VKIcon size={32} /></a>
             </div>
             <button onClick={onToggleTheme} aria-label="Сменить тему" className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 text-white/80 transition-colors hover:bg-white/10 hover:text-white">{theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}</button>
-            <a href={`tel:${PHONE}`} className="sos-pulse inline-flex h-10 items-center justify-center gap-1.5 rounded-xl logo-gradient px-3 text-xs font-black text-white shadow-lg shadow-orange-500/25 transition-all hover:opacity-90 active:scale-95 sm:h-auto sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm"><Phone className="h-4 w-4" /><span>SOS 24/7</span></a>
+
+            <button
+              type="button"
+              onClick={() => setDesktopSosOpen((open) => !open)}
+              aria-label={desktopSosOpen ? `Телефон ${PHONE_DISPLAY}` : "Показать номер SOS 24/7"}
+              className="sos-pulse hidden h-10 items-center justify-center gap-1.5 rounded-xl logo-gradient px-3 text-xs font-black text-white shadow-lg shadow-orange-500/25 transition-all hover:opacity-90 active:scale-95 sm:h-auto sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm min-[900px]:inline-flex"
+            >
+              <Phone className="h-4 w-4" />
+              <span>{desktopSosOpen ? PHONE_DISPLAY : "SOS 24/7"}</span>
+            </button>
+
+            <a href={`tel:${PHONE}`} className="sos-pulse inline-flex h-10 items-center justify-center gap-1.5 rounded-xl logo-gradient px-3 text-xs font-black text-white shadow-lg shadow-orange-500/25 transition-all hover:opacity-90 active:scale-95 sm:h-auto sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm min-[900px]:hidden"><Phone className="h-4 w-4" /><span>SOS 24/7</span></a>
+
             <button type="button" aria-label={menuOpen ? "Свернуть меню" : "Открыть меню"} aria-expanded={menuOpen} aria-controls="mobile-site-menu" onClick={() => setMenuOpen((open) => !open)} className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 text-white transition-colors duration-200 hover:bg-white/10 min-[900px]:hidden"><span className={`flex transition-transform duration-200 ease-out ${menuOpen ? "rotate-0" : "rotate-180"}`}>{menuOpen ? <ChevronUp className="h-6 w-6" /> : <Menu className="h-5 w-5" />}</span></button>
           </div>
         </div>
