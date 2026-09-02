@@ -39,7 +39,16 @@ export const clearRbProToken = () => {
 
 export async function rbProLogin(code) {
   const { data, error } = await requireSupabase().rpc('rb_pro_login', { p_code: code });
-  if (error) throw new Error(error.message?.includes('RB_PRO_INVALID_CODE') ? 'Неверный или отключённый код RB PRO.' : 'Не удалось проверить код. Попробуйте ещё раз.');
+  if (error) {
+    const message = error.message || '';
+    if (message.includes('RB_PRO_DEVICE_ALREADY_BOUND')) {
+      throw new Error('Этот код уже привязан к другому устройству. Попросите администратора сбросить старое устройство.');
+    }
+    if (message.includes('RB_PRO_INVALID_CODE')) {
+      throw new Error('Неверный или отключённый код RB PRO.');
+    }
+    throw new Error('Не удалось проверить код. Попробуйте ещё раз.');
+  }
   const token = data?.token || '';
   if (!token) throw new Error('Сервер не выдал доступ RB PRO.');
   saveRbProToken(token, data?.expires_at);
@@ -72,5 +81,12 @@ export async function setRbProCodeActive(id, active) {
   const client = await requireAdminWriteSession();
   const { data, error } = await client.rpc('rb_pro_set_code_active', { p_code_id: id, p_active: Boolean(active) });
   if (error) throw new Error(error.message || 'Не удалось изменить доступ RB PRO.');
+  return Boolean(data);
+}
+
+export async function resetRbProDevice(id) {
+  const client = await requireAdminWriteSession();
+  const { data, error } = await client.rpc('rb_pro_reset_device', { p_code_id: id });
+  if (error) throw new Error(error.message || 'Не удалось сбросить устройство RB PRO.');
   return Boolean(data);
 }
