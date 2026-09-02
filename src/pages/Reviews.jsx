@@ -80,7 +80,7 @@ export default function Reviews() {
         <>
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {reviews.map((review) => (
-              <motion.article initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} key={review.id} className="rb-card relative flex flex-col overflow-hidden rounded-3xl border-2 border-primary/35 bg-card p-5 shadow-sm transition hover:-translate-y-1 hover:border-primary/60 hover:shadow-xl sm:p-6">
+              <motion.article initial={{ opacity: 0, y: 18 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} key={review.id} className="rb-card relative overflow-hidden rounded-3xl border-2 border-primary/35 bg-card p-5 shadow-sm transition hover:-translate-y-1 hover:border-primary/60 hover:shadow-xl sm:p-6">
                 <Quote className="absolute right-5 top-5 h-12 w-12 text-primary/[.08]" />
                 <div className="flex items-start justify-between gap-3">
                   <div>
@@ -94,13 +94,13 @@ export default function Reviews() {
                 <span className="mt-4 w-fit rounded-full border border-primary/15 bg-primary/[.07] px-3 py-1.5 text-[11px] font-bold text-primary">{review.serviceTitle}</span>
                 <p className="mt-4 line-clamp-5 text-sm leading-relaxed text-foreground/75">{review.reviewText}</p>
                 {Array.isArray(review.photos) && review.photos.length > 0 && (
-                  <div className="mt-4 grid grid-cols-3 gap-2">
+                  <div className={`mt-4 grid gap-2 ${review.photos.length === 1 ? "grid-cols-1" : "grid-cols-2"}`}>
                     {review.photos.map((photo, index) => (
-                      <img key={index} src={photoSrc(photo)} alt={`Фото к отзыву ${index + 1}`} loading="lazy" decoding="async" className="aspect-square w-full rounded-lg border border-border bg-secondary/50 object-contain" />
+                      <img key={index} src={photoSrc(photo)} alt={`Фото к отзыву ${index + 1}`} loading="lazy" decoding="async" className={`w-full rounded-xl border border-border bg-secondary/50 object-cover ${review.photos.length === 1 ? "max-h-80 aspect-[4/3]" : "aspect-square"}`} />
                     ))}
                   </div>
                 )}
-                <p className="mt-auto pt-5 text-xs text-muted-foreground">{new Date(review.createdAt).toLocaleDateString("ru-RU")}</p>
+                <p className="mt-4 text-xs text-muted-foreground">{new Date(review.createdAt).toLocaleDateString("ru-RU")}</p>
               </motion.article>
             ))}
           </div>

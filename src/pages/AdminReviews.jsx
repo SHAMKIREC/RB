@@ -28,11 +28,24 @@ function FormLabel({ icon: Icon, children, privateNote = false }) {
   return <span className="flex items-center gap-1.5"><Icon className="h-3.5 w-3.5 text-primary" />{children}{privateNote && <small className="ml-1 font-normal text-muted-foreground">Не отображается публично</small>}</span>;
 }
 
-function RatingStars({ rating }) {
+function RatingStars({ rating, onChange }) {
   const value = Number(rating || 0);
-  return <span aria-label={`Оценка ${value} из 5`} className="ml-2 inline-flex gap-0.5 align-middle text-primary">
-    {Array.from({ length: 5 }).map((_, index) => <Star key={index} className={`h-3.5 w-3.5 ${index < value ? 'fill-current' : 'opacity-25'}`} />)}
-  </span>;
+  return <div role="radiogroup" aria-label="Оценка отзыва" className="mt-2 flex w-fit gap-1 rounded-xl border border-border bg-background p-2">
+    {Array.from({ length: 5 }).map((_, index) => {
+      const starValue = index + 1;
+      return <button
+        key={starValue}
+        type="button"
+        role="radio"
+        aria-checked={starValue === value}
+        aria-label={`${starValue} из 5`}
+        onClick={() => onChange(starValue)}
+        className="rounded-lg p-1 text-primary transition active:scale-90"
+      >
+        <Star className={`h-7 w-7 ${starValue <= value ? "fill-current" : "opacity-25"}`} />
+      </button>;
+    })}
+  </div>;
 }
 
 export default function AdminReviews() {
@@ -103,11 +116,7 @@ function Content() {
             <label className="text-sm font-bold"><FormLabel icon={Wrench}>Какая работа выполнялась</FormLabel>
               <input required maxLength={240} value={editing.serviceTitle || ""} onChange={(event) => setEditing({ ...editing, serviceTitle: event.target.value })} className="mt-1 block w-full rounded-xl border border-border bg-background px-3 py-2 font-normal" />
             </label>
-            <label className="text-sm font-bold"><FormLabel icon={Star}>Оценка</FormLabel><RatingStars rating={editing.rating} />
-              <select value={editing.rating ?? 5} onChange={(event) => setEditing({ ...editing, rating: event.target.value })} className="mt-1 block w-full rounded-xl border border-border bg-background px-3 py-2 font-normal">
-                {[5, 4, 3, 2, 1].map((rating) => <option key={rating} value={rating}>{rating} из 5</option>)}
-              </select>
-            </label>
+            <div className="text-sm font-bold"><FormLabel icon={Star}>Оценка</FormLabel><RatingStars rating={editing.rating} onChange={(rating) => setEditing({ ...editing, rating })} /></div>
             <label className="text-sm font-bold sm:col-span-2"><FormLabel icon={CalendarDays}>Дата отзыва</FormLabel>
               <input type="date" max={todayValue()} value={editing.reviewDate ?? reviewDateValue(editing.createdAt)} onChange={(event) => setEditing({ ...editing, reviewDate: event.target.value })} className="mt-1 block w-full rounded-xl border border-border bg-background px-3 py-2 font-normal sm:max-w-xs" />
               <span className="mt-1 block text-xs font-normal text-muted-foreground">Можно выбрать сегодняшнюю или любую прошедшую дату. Если оставить пустой — сохранится текущая дата.</span>
@@ -140,7 +149,7 @@ function Content() {
                   )}
                   <p className="mt-2 text-xs text-muted-foreground">{new Date(review.createdAt).toLocaleDateString("ru-RU")}</p>
                   <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs">
-                    <button type="button" onClick={() => { if (window.confirm("Получено разрешение заказчика на размещение текста и фотографий, персональные данные удалены, смысл отзыва не изменён.")) act(() => setReviewStatus(review.id, "published")); }} className="text-primary">Опубликовать</button>
+                    {status !== "published" && <button type="button" onClick={() => { if (window.confirm("Получено разрешение заказчика на размещение текста и фотографий, персональные данные удалены, смысл отзыва не изменён.")) act(() => setReviewStatus(review.id, "published")); }} className="text-primary">Опубликовать</button>}
                     <button type="button" onClick={() => act(() => setReviewStatus(review.id, "rejected"))}>Отклонить</button>
                     <button type="button" onClick={() => setEditing({ ...review, reviewDate: reviewDateValue(review.createdAt), photos: toPhotoRecords(review.photos) })}>Редактировать</button>
                     <button type="button" onClick={() => { if (window.confirm("Удалить отзыв?")) act(() => deleteReview(review.id)); }} className="text-destructive">Удалить</button>
