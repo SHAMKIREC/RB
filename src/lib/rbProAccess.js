@@ -90,3 +90,10 @@ export async function resetRbProDevice(id) {
   if (error) throw new Error(error.message || 'Не удалось сбросить устройство RB PRO.');
   return Boolean(data);
 }
+
+export async function deleteRbProCode(id) {
+  const client = await requireAdminWriteSession();
+  const { data, error } = await client.rpc('rb_pro_delete_code', { p_code_id: id });
+  if (error) throw new Error(error.message || 'Не удалось удалить доступ RB PRO.');
+  return Boolean(data);
+}
