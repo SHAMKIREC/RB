@@ -235,7 +235,8 @@
 .page-projects > .page-shell > .mb-5:first-child,
 .page-orders > .page-shell > .mb-5:first-child,
 .page-services > .page-shell > .mb-5:first-of-type,
-.page-documentation > .documentation-page > .mb-8:first-child {
+.page-documentation > .documentation-page > .mb-8:first-child,
+.catalog-page-hero {
   position: relative;
   overflow: hidden;
   margin-bottom: 1.75rem;
@@ -252,7 +253,8 @@
 .page-projects > .page-shell > .mb-5:first-child::after,
 .page-orders > .page-shell > .mb-5:first-child::after,
 .page-services > .page-shell > .mb-5:first-of-type::after,
-.page-documentation > .documentation-page > .mb-8:first-child::after {
+.page-documentation > .documentation-page > .mb-8:first-child::after,
+.catalog-page-hero::after {
   content: "";
   position: absolute;
   top: -4rem;
@@ -266,7 +268,8 @@
 .page-projects > .page-shell > .mb-5:first-child h1,
 .page-orders > .page-shell > .mb-5:first-child h1,
 .page-services > .page-shell > .mb-5:first-of-type h1,
-.page-documentation > .documentation-page > .mb-8:first-child h1 {
+.page-documentation > .documentation-page > .mb-8:first-child h1,
+.catalog-page-hero h1 {
   color: white;
   font-size: clamp(2rem, 5vw, 3.75rem);
   line-height: 1.02;
@@ -274,7 +277,8 @@
 .page-projects > .page-shell > .mb-5:first-child > p:last-child,
 .page-orders > .page-shell > .mb-5:first-child > p:last-child,
 .page-services > .page-shell > .mb-5:first-of-type > p:last-child,
-.page-documentation > .documentation-page > .mb-8:first-child > p:last-child {
+.page-documentation > .documentation-page > .mb-8:first-child > p:last-child,
+.catalog-page-hero > p:last-child {
   color: rgba(255, 255, 255, 0.62);
   line-height: 1.65;
 }

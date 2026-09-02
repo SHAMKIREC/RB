@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, RotateCcw, ChevronRight, X, Calculator as CalculatorIcon, CheckCircle2, Sparkles, Construction } from 'lucide-react';
+import { Search, RotateCcw, ChevronRight, X, Calculator as CalculatorIcon, Construction } from 'lucide-react';
 import { CALC_CATEGORIES } from '../lib/calcData';
 import { MATERIALS, getMaterialsForWork } from '../lib/materialsData';
 import { buildEstimateText, safeNumber } from '../lib/calculatorUtils';
@@ -119,8 +119,8 @@ export default function Calculator() {
     setResetSignal((value) => value + 1);
   };
 
-  return <div className="calculator-page pb-10 pt-6 sm:pb-14 sm:pt-9">
-    <div className="page-shell"><section className="page-top-hero relative mb-7 overflow-hidden bg-[#242321] text-white sm:mb-10"><div className="absolute inset-0 bg-[radial-gradient(circle_at_82%_15%,rgba(255,80,20,.30),transparent_34%),radial-gradient(circle_at_5%_90%,rgba(255,120,40,.12),transparent_35%)]" /><div className="relative px-5 py-9 sm:px-10 sm:py-14"><motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="max-w-3xl"><div className="mb-4 inline-flex items-center gap-2 rounded-full border border-orange-400/35 bg-orange-500/10 px-4 py-2 text-xs font-bold uppercase tracking-[.18em] text-orange-300"><CalculatorIcon className="h-4 w-4" /> Расчёт стоимости</div><h1 className="text-4xl font-black leading-none sm:text-6xl">Калькулятор-<span className="text-primary">смета</span></h1><p className="mt-5 max-w-2xl text-sm leading-relaxed text-white/70 sm:text-lg">Выберите нужные работы, укажите объём — предварительная стоимость соберётся автоматически.</p><div className="mt-6 flex flex-wrap gap-2 text-xs font-bold text-white/75 sm:text-sm"><span className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[.07] px-3 py-2"><CheckCircle2 className="h-4 w-4 text-primary" /> Понятные цены</span><span className="inline-flex items-center gap-2 rounded-xl border border-white/10 bg-white/[.07] px-3 py-2"><Sparkles className="h-4 w-4 text-primary" /> Расчёт сразу</span></div>{inlineEditMode && <button type="button" onClick={disableInlineEditMode} className="mt-4 rounded-xl border border-orange-400/40 bg-orange-500/10 px-4 py-2 text-xs font-bold text-orange-200">Выйти из режима редактирования</button>}</motion.div></div></section></div>
+  return <div className="calculator-page pb-10 sm:pb-14">
+    <div className="page-shell pt-7 sm:pt-10"><motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="catalog-page-hero mb-5"><p className="mb-1 flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-primary"><CalculatorIcon className="h-4 w-4" /> Расчёт стоимости</p><h1 className="mb-2 text-3xl font-black sm:text-4xl">Калькулятор-смета</h1><p className="max-w-2xl text-sm text-white/65">Выберите работы и укажите объём — предварительная стоимость соберётся автоматически.</p></motion.section>{inlineEditMode && <button type="button" onClick={disableInlineEditMode} className="mb-5 rounded-xl border border-primary/35 bg-primary/10 px-4 py-2 text-xs font-bold text-primary">Выйти из режима редактирования</button>}</div>
     <div className="page-shell">
     <div className="grid lg:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_21rem] gap-5 lg:gap-6 items-start"><section className="min-w-0 space-y-3">
       <NewTurnkey resetSignal={resetSignal} onTotalChange={(value) => setTurnkeyTotal(safeNumber(value))} />
