@@ -1,24 +1,25 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Calculator, ChevronUp, ClipboardList, FileText, FolderKanban, Info, Menu, MessageSquareText, Moon, Phone, Sparkles, Sun, Wrench, X } from "lucide-react";
+import { Calculator, ChevronUp, FileText, FolderKanban, Info, Menu, MessageSquareText, Moon, Phone, Sparkles, Sun, Users, Wrench, X } from "lucide-react";
 import { PHONE, PHONE_DISPLAY, WHATSAPP, TELEGRAM, VK_MSG, MAX_URL } from "../lib/calcData";
 import { TelegramIcon, WhatsAppIcon, MaxIcon, VKIcon } from "./SocialLinks";
 
 const navItems = [
   { path: "/services", label: "Услуги" },
   { path: "/calculator", label: "Калькулятор" },
-  { path: "/orders", label: "Активные заказы" },
+  { path: "/documentation", label: "Документы" },
   { path: "/projects", label: "Проекты" },
   { path: "/reviews", label: "Отзывы" },
+  { path: "/orders", label: "RB PRO" },
 ];
 
 const mobileNavItems = [
   { path: "/services", label: "Услуги", description: "Все виды работ", icon: Wrench },
   { path: "/calculator", label: "Калькулятор", description: "Рассчитать смету", icon: Calculator },
-  { path: "/orders", label: "Заказы", description: "Активные объекты", icon: ClipboardList },
+  { path: "/documentation", label: "Документы", description: "Сметы и проекты", icon: FileText },
   { path: "/projects", label: "Проекты", description: "Выполненные работы", icon: FolderKanban },
   { path: "/reviews", label: "Отзывы", description: "Мнения клиентов", icon: MessageSquareText },
-  { path: "/documentation", label: "Документы", description: "Сметы и проекты", icon: FileText },
+  { path: "/orders", label: "RB PRO", description: "Закрыто для мастеров", icon: Users },
   { path: "/about", label: "О компании", description: "Решаем Быстро", icon: Info },
 ];
 
@@ -37,7 +38,6 @@ export default function Header({ theme, onToggleTheme }) {
       setMenuRendered(true);
       return undefined;
     }
-
     const closeTimer = window.setTimeout(() => setMenuRendered(false), 200);
     return () => window.clearTimeout(closeTimer);
   }, [menuOpen]);
@@ -69,7 +69,7 @@ export default function Header({ theme, onToggleTheme }) {
           </Link>
 
           <nav className="hidden flex-1 items-center justify-center gap-0.5 min-[900px]:flex xl:gap-1">
-            {navItems.map((item) => <Link key={item.path} to={item.path} className={`rounded-xl px-1.5 py-2 text-[11px] font-semibold transition-all duration-200 xl:px-4 xl:text-sm ${isActive(item.path) ? "bg-primary/20 text-primary" : "text-white/80 hover:bg-white/10 hover:text-white"}`}>{item.label}</Link>)}
+            {navItems.map((item) => <Link key={item.path} to={item.path} className={`rounded-xl px-1.5 py-2 text-[11px] font-semibold transition-all duration-200 xl:px-3 xl:text-sm ${isActive(item.path) ? "bg-primary/20 text-primary" : "text-white/80 hover:bg-white/10 hover:text-white"}`}>{item.label}</Link>)}
           </nav>
 
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
@@ -81,14 +81,8 @@ export default function Header({ theme, onToggleTheme }) {
             </div>
             <button onClick={onToggleTheme} aria-label="Сменить тему" className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 text-white/80 transition-colors hover:bg-white/10 hover:text-white">{theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}</button>
 
-            <button
-              type="button"
-              onClick={() => setDesktopSosOpen((open) => !open)}
-              aria-label={desktopSosOpen ? `Телефон ${PHONE_DISPLAY}` : "Показать номер SOS 24/7"}
-              className="sos-pulse hidden h-10 items-center justify-center gap-1.5 rounded-xl logo-gradient px-3 text-xs font-black text-white shadow-lg shadow-orange-500/25 transition-all hover:opacity-90 active:scale-95 sm:h-auto sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm min-[900px]:inline-flex"
-            >
-              <Phone className="h-4 w-4" />
-              <span>{desktopSosOpen ? PHONE_DISPLAY : "SOS 24/7"}</span>
+            <button type="button" onClick={() => setDesktopSosOpen((open) => !open)} aria-label={desktopSosOpen ? `Телефон ${PHONE_DISPLAY}` : "Показать номер SOS 24/7"} className="sos-pulse hidden h-10 items-center justify-center gap-1.5 rounded-xl logo-gradient px-3 text-xs font-black text-white shadow-lg shadow-orange-500/25 transition-all hover:opacity-90 active:scale-95 sm:h-auto sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm min-[900px]:inline-flex">
+              <Phone className="h-4 w-4" /><span>{desktopSosOpen ? PHONE_DISPLAY : "SOS 24/7"}</span>
             </button>
 
             <a href={`tel:${PHONE}`} className="sos-pulse inline-flex h-10 items-center justify-center gap-1.5 rounded-xl logo-gradient px-3 text-xs font-black text-white shadow-lg shadow-orange-500/25 transition-all hover:opacity-90 active:scale-95 sm:h-auto sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm min-[900px]:hidden"><Phone className="h-4 w-4" /><span>SOS 24/7</span></a>
