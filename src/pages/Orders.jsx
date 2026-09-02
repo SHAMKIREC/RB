@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { BriefcaseBusiness, Clock3, MapPin, MessageCircle } from 'lucide-react';
 import { getPublishedOrders } from '../lib/ordersStorage';
 import OrderResponseModal from '../components/OrderResponseModal';
+import RbProGate from '../components/RbProGate';
 
 const PAGE_SIZE = 12;
 const appendUnique = (current, next) => {
@@ -12,6 +13,10 @@ const appendUnique = (current, next) => {
 };
 
 export default function Orders() {
+  return <RbProGate><OrdersContent /></RbProGate>;
+}
+
+function OrdersContent() {
   const [orders, setOrders] = useState([]);
   const [responseOrder, setResponseOrder] = useState(null);
   const [loadError, setLoadError] = useState(false);
@@ -52,9 +57,9 @@ export default function Orders() {
 
   return <div className="page-shell py-7 sm:py-10">
     <div className="mb-5">
-      <p className="mb-1 text-xs font-mono font-bold uppercase tracking-widest text-primary">Заказы</p>
-      <h1 className="mb-2 text-3xl font-black text-foreground sm:text-4xl">Активные заказы</h1>
-      <p className="max-w-2xl text-sm text-muted-foreground">Выберите подходящий заказ и свяжитесь с нами, указав номер сметы.</p>
+      <p className="mb-1 text-xs font-mono font-bold uppercase tracking-widest text-primary">RB PRO</p>
+      <h1 className="mb-2 text-3xl font-black text-foreground sm:text-4xl">Заказы для мастеров</h1>
+      <p className="max-w-2xl text-sm text-muted-foreground">Закрытый раздел проверенных мастеров. Выберите подходящий заказ и свяжитесь с нами, указав номер сметы.</p>
     </div>
     {loading ? <div className="rounded-2xl border border-dashed border-border px-6 py-14 text-center text-muted-foreground">Загрузка...</div>
       : loadError ? <div className="rounded-2xl border border-dashed border-border px-6 py-14 text-center text-muted-foreground">Не удалось загрузить данные. Попробуйте обновить страницу.</div>
@@ -63,7 +68,7 @@ export default function Orders() {
           {orders.map((order) => <article key={order.id} className="rb-card group flex flex-col overflow-hidden rounded-2xl">
             {order.photos?.[0] && <div className="relative aspect-[16/10] overflow-hidden"><img src={order.photos[0]} alt={`Фото заказа «${order.title}»`} loading="lazy" decoding="async" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" /><div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" /></div>}
             <div className="flex flex-1 flex-col p-5">
-              <div className="flex items-center justify-between gap-2"><span className="font-mono text-xs font-bold text-primary">Заказ №{order.number}</span><span className="inline-flex items-center gap-1 rounded-full bg-green-500/10 px-2 py-1 text-[10px] font-bold text-green-700"><span className="h-1.5 w-1.5 rounded-full bg-green-500" />Активен</span></div>
+              <div className="flex items-center justify-between gap-2"><span className="font-mono text-xs font-bold text-primary">Заказ №{order.number}</span><span className="inline-flex items-center gap-1 rounded-full bg-green-500/10 px-2 py-1 text-[10px] font-bold text-green-700 dark:text-green-400"><span className="h-1.5 w-1.5 rounded-full bg-green-500" />Активен</span></div>
               <h2 className="mt-3 text-lg font-black">{order.title}</h2>
               <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground"><MapPin className="h-3.5 w-3.5 shrink-0 text-primary" />{order.location}</p>
               <p className="mt-3 line-clamp-3 text-sm leading-relaxed text-muted-foreground">{order.description}</p>
