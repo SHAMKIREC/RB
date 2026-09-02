@@ -74,10 +74,10 @@ export default function Header({ theme, onToggleTheme }) {
 
           <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
             <div className="hidden items-center gap-1.5 xl:flex">
-              <a href={WHATSAPP} target="_blank" rel="noopener noreferrer" title="WhatsApp" className="transition-transform hover:scale-110"><WhatsAppIcon size={32} /></a>
+              <a href={VK_MSG} target="_blank" rel="noopener noreferrer" title="ВКонтакте" className="transition-transform hover:scale-110"><VKIcon size={32} /></a>
               <a href={TELEGRAM} target="_blank" rel="noopener noreferrer" title="Telegram" className="transition-transform hover:scale-110"><TelegramIcon size={32} /></a>
               <a href={MAX_URL} target="_blank" rel="noopener noreferrer" title="MAX" className="transition-transform hover:scale-110"><MaxIcon size={32} /></a>
-              <a href={VK_MSG} target="_blank" rel="noopener noreferrer" title="ВКонтакте" className="transition-transform hover:scale-110"><VKIcon size={32} /></a>
+              <a href={WHATSAPP} target="_blank" rel="noopener noreferrer" title="WhatsApp" className="transition-transform hover:scale-110"><WhatsAppIcon size={32} /></a>
             </div>
             <button onClick={onToggleTheme} aria-label="Сменить тему" className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 text-white/80 transition-colors hover:bg-white/10 hover:text-white">{theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}</button>
 
