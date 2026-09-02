@@ -4,10 +4,10 @@ import { MaxIcon, TelegramIcon, VKIcon, WhatsAppIcon } from "./SocialLinks";
 
 const contacts = [
   { label: "Позвонить", href: `tel:${PHONE}`, Icon: Phone },
-  { label: "WhatsApp", href: WHATSAPP, Icon: WhatsAppIcon },
+  { label: "ВКонтакте", href: VK_MSG, Icon: VKIcon },
   { label: "Telegram", href: TELEGRAM, Icon: TelegramIcon },
   { label: "MAX", href: MAX_URL?.startsWith("tel:") ? null : MAX_URL, Icon: MaxIcon },
-  { label: "ВКонтакте", href: VK_MSG, Icon: VKIcon },
+  { label: "WhatsApp", href: WHATSAPP, Icon: WhatsAppIcon },
 ];
 
 export default function MobileNav() {
