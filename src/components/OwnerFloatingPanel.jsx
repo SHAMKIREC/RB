@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Camera, DatabaseBackup, FolderKanban, GripVertical, LogOut, MessageSquareText, Pencil, ReceiptText, ShieldCheck, X } from 'lucide-react';
+import { Camera, DatabaseBackup, FolderKanban, GripVertical, KeyRound, LogOut, MessageSquareText, Pencil, ReceiptText, ShieldCheck, X } from 'lucide-react';
 import { useInlineEditMode } from '../hooks/usePricingState';
 import { disableInlineEditMode, enableInlineEditMode } from '../lib/pricingStorage';
 
 const links = [
   { to: '/admin/orders', label: 'Заказы', icon: ReceiptText },
+  { to: '/admin/rb-pro', label: 'RB PRO', icon: KeyRound },
   { to: '/admin/projects', label: 'Проекты', icon: FolderKanban },
   { to: '/admin/reviews', label: 'Отзывы', icon: MessageSquareText },
   { to: '/admin/service-photos', label: 'Фото услуг', icon: Camera },
@@ -69,24 +70,12 @@ export default function OwnerFloatingPanel({ onExit }) {
   const toggleEditing = () => editMode ? disableInlineEditMode() : enableInlineEditMode();
 
   return <>
-    <div
-      style={{ left: position.x, top: position.y, touchAction: 'none' }}
-      className="group fixed z-[75] flex h-12 w-[154px] select-none items-stretch overflow-hidden rounded-2xl border border-orange-400/45 bg-[#252321]/95 text-left text-white shadow-[0_14px_34px_-12px_rgba(0,0,0,.75)] backdrop-blur-xl transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_38px_-10px_rgba(249,82,22,.55)]"
-    >
+    <div style={{ left: position.x, top: position.y, touchAction: 'none' }} className="group fixed z-[75] flex h-12 w-[154px] select-none items-stretch overflow-hidden rounded-2xl border border-orange-400/45 bg-[#252321]/95 text-left text-white shadow-[0_14px_34px_-12px_rgba(0,0,0,.75)] backdrop-blur-xl transition-[box-shadow,transform] duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_38px_-10px_rgba(249,82,22,.55)]">
       <button type="button" onClick={() => setOpen(true)} aria-label="Открыть панель владельца" className="flex min-w-0 flex-1 items-center px-2 text-left active:bg-white/[.06]">
         <span className="relative grid h-8 w-8 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-orange-500 to-red-500 shadow-lg shadow-orange-500/20"><ShieldCheck className="h-4 w-4"/><span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 animate-pulse rounded-full border-2 border-[#252321] bg-green-400" /></span>
         <span className="ml-1.5 min-w-0 flex-1"><span className="block text-[8px] uppercase tracking-[.15em] text-white/45">Панель</span><span className="block truncate text-[11px] font-black">Владельца</span></span>
       </button>
-      <button
-        type="button"
-        aria-label="Передвинуть кнопку панели владельца"
-        title="Передвинуть"
-        onPointerDown={pointerDown}
-        onPointerMove={pointerMove}
-        onPointerUp={pointerUp}
-        onPointerCancel={() => { drag.current = null; }}
-        className="grid w-10 shrink-0 touch-none place-items-center border-l border-white/10 text-white/35 transition-colors hover:bg-white/[.06] hover:text-orange-300 active:bg-orange-500/15"
-      ><GripVertical className="h-5 w-5" /></button>
+      <button type="button" aria-label="Передвинуть кнопку панели владельца" title="Передвинуть" onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={() => { drag.current = null; }} className="grid w-10 shrink-0 touch-none place-items-center border-l border-white/10 text-white/35 transition-colors hover:bg-white/[.06] hover:text-orange-300 active:bg-orange-500/15"><GripVertical className="h-5 w-5" /></button>
     </div>
 
     {open && <div className="fixed inset-0 z-[90] flex items-end justify-center bg-black/55 p-3 backdrop-blur-sm sm:items-center" onClick={() => setOpen(false)}>
@@ -110,7 +99,6 @@ export default function OwnerFloatingPanel({ onExit }) {
               <span><span className="block text-sm font-black">{editMode ? 'Изменение цен включено' : 'Изменить цены на сайте'}</span><span className="mt-0.5 block text-[10px] text-white/55">{editMode ? 'Нажмите, чтобы закончить редактирование' : 'На ценниках появятся кнопки редактирования'}</span></span>
             </button>
           </div>
-
           <button type="button" onClick={onExit} className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-xs font-black text-red-200 transition hover:border-red-400/45 hover:bg-red-500/20 hover:text-white"><LogOut className="h-4 w-4" />Выйти из панели владельца</button>
         </div>
       </section>
