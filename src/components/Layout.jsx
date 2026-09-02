@@ -13,6 +13,7 @@ export default function Layout() {
   const { pathname } = useLocation();
   const [adminSessionActive, setAdminSessionActive] = useState(false);
   const isAdminRoute = pathname.startsWith('/admin');
+  const isReviewsRoute = pathname === '/reviews';
   const showAdminNavigation = adminSessionActive && !isAdminRoute;
 
   useEffect(() => {
@@ -45,7 +46,7 @@ export default function Layout() {
   return (
     <div className="min-h-screen bg-background light-grid">
       <Header theme={theme} onToggleTheme={toggle} />
-      <main className={`page-${pathname.split('/')[1] || 'home'} ${isAdminRoute ? 'pb-0' : 'pb-[calc(5.75rem+env(safe-area-inset-bottom))] md:pb-0'} pt-16 sm:pt-20`}>
+      <main className={`page-${pathname.split('/')[1] || 'home'} ${isAdminRoute || isReviewsRoute ? 'pb-0' : 'pb-[calc(5.75rem+env(safe-area-inset-bottom))] md:pb-0'} pt-16 sm:pt-20`}>
         {showAdminNavigation && <OwnerFloatingPanel onExit={exitAdminSession} />}
         <Outlet />
       </main>

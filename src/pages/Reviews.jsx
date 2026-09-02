@@ -69,7 +69,7 @@ export default function Reviews() {
   };
 
   return (
-    <div className="reviews-page pb-10 sm:pb-14">
+    <div className="reviews-page pb-2 sm:pb-6">
       <div className="page-shell pt-7 sm:pt-10"><motion.section initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="catalog-page-hero mb-3"><p className="mb-1 flex items-center gap-2 text-xs font-mono font-bold uppercase tracking-widest text-primary"><MessageSquareText className="h-4 w-4" /> Отзывы</p><h1 className="mb-2 text-3xl font-black sm:text-4xl">Говорят наши клиенты</h1><p className="max-w-2xl text-sm text-white/65">Реальные впечатления о выполненном ремонте и строительных работах.</p></motion.section><div className="mb-5 grid grid-cols-2 gap-2"><a href="https://vk.ru/club237262784" target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl bg-primary px-3 py-2.5 text-center text-xs font-black text-white shadow-md shadow-orange-600/20 transition active:scale-[.98] sm:text-sm">Оставить отзыв <ExternalLink className="h-3.5 w-3.5" /></a><span className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl border border-border bg-card px-2 py-2.5 text-center text-xs font-bold text-muted-foreground sm:text-sm"><ShieldCheck className="h-4 w-4 shrink-0 text-primary" /> После проверки</span></div></div>
       <div className="page-shell">
       {loading ? (
