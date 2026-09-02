@@ -1,1 +1,469 @@
-sed: can't read src/index.css: No such file or directory
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes calculator-quick-orbit {
+  0% { transform: rotate(0deg) scale(.82); opacity: 0; }
+  24% { opacity: 1; }
+  100% { transform: rotate(360deg) scale(1); opacity: 0; }
+}
+
+@keyframes calculator-quick-pop {
+  0%, 100% { transform: scale(1) rotate(0); }
+  45% { transform: scale(.72) rotate(-12deg); opacity: .55; }
+  75% { transform: scale(1.12) rotate(7deg); opacity: 1; }
+}
+
+.calculator-quick-ring {
+  position: absolute;
+  inset: 5px;
+  border: 2px solid transparent;
+  border-top-color: rgba(255, 255, 255, .95);
+  border-right-color: rgba(255, 255, 255, .38);
+  border-radius: 999px;
+  opacity: 0;
+}
+
+.calculator-quick-action.is-opening .calculator-quick-ring {
+  animation: calculator-quick-orbit .46s cubic-bezier(.2, .75, .25, 1);
+}
+
+.calculator-quick-action.is-opening .calculator-quick-icon {
+  animation: calculator-quick-pop .46s ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .calculator-quick-action.is-opening .calculator-quick-ring,
+  .calculator-quick-action.is-opening .calculator-quick-icon { animation: none; }
+}
+
+@layer base {
+  :root {
+    --background: 40 30% 97%;
+    --foreground: 20 10% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 20 10% 8%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 20 10% 8%;
+    --primary: 18 100% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 20% 94%;
+    --secondary-foreground: 20 10% 20%;
+    --muted: 40 15% 92%;
+    --muted-foreground: 20 8% 45%;
+    --accent: 18 100% 52%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 30 15% 88%;
+    --input: 30 15% 88%;
+    --ring: 18 100% 52%;
+    --chart-1: 18 100% 52%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 20 10% 6%;
+    --foreground: 40 20% 93%;
+    --card: 20 10% 9%;
+    --card-foreground: 40 20% 93%;
+    --popover: 20 10% 9%;
+    --popover-foreground: 40 20% 93%;
+    --primary: 18 100% 52%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 20 10% 14%;
+    --secondary-foreground: 40 20% 85%;
+    --muted: 20 10% 14%;
+    --muted-foreground: 40 10% 55%;
+    --accent: 18 100% 52%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 20 10% 18%;
+    --input: 20 10% 18%;
+    --ring: 18 100% 52%;
+  }
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    width: 100%;
+    min-height: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+  }
+}
+
+@layer components {
+  .page-shell {
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    margin-inline: auto;
+    padding-inline: clamp(24px, 3vw, 40px);
+  }
+
+  .page-top-hero {
+    border-radius: 1.75rem;
+    box-shadow: 0 24px 60px -36px rgba(0, 0, 0, 0.9);
+  }
+
+  .rb-card {
+    background: rgba(255, 255, 255, 0.94);
+    border: 1px solid hsl(var(--primary) / 0.7);
+    box-shadow: 0 8px 22px -18px rgba(15, 23, 42, 0.48);
+  }
+
+  .rb-card-action {
+    cursor: pointer;
+    transition: transform 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+  }
+
+  .rb-card-action:hover {
+    transform: translateY(-2px);
+    border-color: hsl(var(--primary) / 0.7);
+    box-shadow: 0 16px 28px -20px rgba(234, 88, 12, 0.45);
+  }
+
+  .rb-card-selected {
+    background: linear-gradient(145deg, #fff8ec 0%, #fff0d8 100%);
+    border-color: hsl(var(--primary));
+    box-shadow: 0 14px 26px -20px rgba(234, 88, 12, 0.55);
+  }
+
+  .rb-card-panel {
+    background: #fffdfa;
+    border: 1px solid hsl(var(--primary) / 0.23);
+    border-top: 3px solid hsl(var(--primary));
+    box-shadow: 0 14px 28px -22px rgba(15, 23, 42, 0.45);
+  }
+
+  /* Категории калькулятора: та же постоянная акцентная рамка, что у услуг. */
+  button[class*="min-h-[110px]"][class*="rounded-xl"] {
+    border-color: hsl(var(--primary) / 0.7) !important;
+  }
+
+  .dark .rb-card {
+    background: hsl(var(--card));
+    border-color: hsl(var(--primary) / 0.72);
+    box-shadow: 0 14px 30px -22px rgba(0, 0, 0, 0.82),
+      0 4px 12px -10px rgba(0, 0, 0, 0.72);
+  }
+
+  .dark .rb-card-action:hover {
+    border-color: hsl(var(--primary));
+    box-shadow: 0 18px 34px -22px rgba(0, 0, 0, 0.9),
+      0 0 0 1px hsl(var(--primary) / 0.12);
+  }
+
+  .dark .rb-card-selected {
+    background: linear-gradient(145deg, hsl(20 14% 13%) 0%, hsl(20 18% 11%) 100%);
+    border-color: hsl(var(--primary));
+    box-shadow: 0 16px 34px -24px rgba(0, 0, 0, 0.88),
+      0 0 22px -14px hsl(var(--primary) / 0.34);
+  }
+
+  .dark .rb-card-panel {
+    background: hsl(var(--secondary));
+    border-color: hsl(var(--primary) / 0.45);
+    box-shadow: 0 16px 32px -24px rgba(0, 0, 0, 0.85);
+  }
+
+  .page-shell article[class~="rounded-2xl"][class~="bg-card"] {
+    border-color: hsl(var(--primary) / 0.7);
+    box-shadow: 0 8px 22px -18px rgba(15, 23, 42, 0.48);
+  }
+
+  .dark .page-shell article[class~="rounded-2xl"][class~="bg-card"] {
+    border-color: hsl(var(--primary) / 0.7);
+    box-shadow: 0 14px 30px -22px rgba(0, 0, 0, 0.82);
+  }
+}
+
+/* Logo gradient */
+.logo-gradient {
+  background: linear-gradient(135deg, #FF6B35 0%, #FF3300 100%);
+}
+
+/* Distinct double heartbeat for urgent actions */
+@keyframes sos-heartbeat {
+  0%, 38%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 77, 20, .24); }
+  8% { transform: scale(1.055); box-shadow: 0 0 0 8px rgba(255, 77, 20, .15); }
+  15% { transform: scale(1); box-shadow: 0 0 0 3px rgba(255, 77, 20, .08); }
+  23% { transform: scale(1.085); box-shadow: 0 0 0 13px rgba(255, 77, 20, .12); }
+  31% { transform: scale(1); box-shadow: 0 0 0 18px rgba(255, 77, 20, 0); }
+}
+@keyframes sos-card-glow {
+  0%, 38%, 100% { box-shadow: 0 4px 18px rgba(255, 77, 20, .08); }
+  8% { box-shadow: 0 8px 26px rgba(255, 77, 20, .22); }
+  23% { box-shadow: 0 10px 34px rgba(255, 77, 20, .3); }
+}
+.sos-pulse { position: relative; isolation: isolate; animation: sos-heartbeat 1.65s ease-in-out infinite; }
+.sos-card-heartbeat { animation: sos-card-glow 1.65s ease-in-out infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .sos-pulse, .sos-card-heartbeat { animation: none; }
+}
+
+/* Documentation follows the same compact card rhythm as reviews. */
+.documentation-page .rb-card {
+  border-radius: 1rem;
+}
+.documentation-page .rb-card:hover {
+  border-color: hsl(var(--primary));
+}
+
+/* Rich presentation headers for public catalog pages; reviews stay unchanged. */
+.page-projects > .page-shell > .mb-5:first-child,
+.page-orders > .page-shell > .mb-5:first-child,
+.page-services > .page-shell > .mb-5:first-of-type,
+.page-documentation > .documentation-page > .mb-8:first-child {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 1.75rem;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.75rem;
+  color: white;
+  background:
+    radial-gradient(circle at 88% 18%, rgba(255, 80, 20, 0.34), transparent 31%),
+    radial-gradient(circle at 4% 100%, rgba(255, 135, 50, 0.13), transparent 38%),
+    #242321;
+  box-shadow: 0 24px 60px -36px rgba(0, 0, 0, 0.9);
+}
+.page-projects > .page-shell > .mb-5:first-child::after,
+.page-orders > .page-shell > .mb-5:first-child::after,
+.page-services > .page-shell > .mb-5:first-of-type::after,
+.page-documentation > .documentation-page > .mb-8:first-child::after {
+  content: "";
+  position: absolute;
+  top: -4rem;
+  right: -3rem;
+  width: 11rem;
+  height: 11rem;
+  border: 1px solid rgba(255, 140, 70, 0.13);
+  border-radius: 999px;
+  pointer-events: none;
+}
+.page-projects > .page-shell > .mb-5:first-child h1,
+.page-orders > .page-shell > .mb-5:first-child h1,
+.page-services > .page-shell > .mb-5:first-of-type h1,
+.page-documentation > .documentation-page > .mb-8:first-child h1 {
+  color: white;
+  font-size: clamp(2rem, 5vw, 3.75rem);
+  line-height: 1.02;
+}
+.page-projects > .page-shell > .mb-5:first-child > p:last-child,
+.page-orders > .page-shell > .mb-5:first-child > p:last-child,
+.page-services > .page-shell > .mb-5:first-of-type > p:last-child,
+.page-documentation > .documentation-page > .mb-8:first-child > p:last-child {
+  color: rgba(255, 255, 255, 0.62);
+  line-height: 1.65;
+}
+
+/* Subtle grid for light mode */
+.light-grid {
+  background-image:
+    linear-gradient(rgba(82, 59, 37, 0.105) 1.2px, transparent 1.2px),
+    linear-gradient(90deg, rgba(82, 59, 37, 0.095) 1.2px, transparent 1.2px);
+  background-size: 48px 48px;
+}
+.dark .light-grid {
+  background-image:
+    linear-gradient(rgba(255, 224, 186, 0.125) 1.2px, transparent 1.2px),
+    linear-gradient(90deg, rgba(255, 224, 186, 0.115) 1.2px, transparent 1.2px);
+  background-size: 48px 48px;
+}
+
+/* Калькулятор использует общий фон Layout, не перекрывая фирменную сетку. */
+.calculator-page {
+  background: transparent;
+}
+
+.calculator-page [class*="border-dashed"][class*="text-center"] {
+  display: none;
+}
+
+.calculator-page label:has(input[placeholder="Поиск по работам"]) {
+  border: 1px solid hsl(var(--primary) / 0.7);
+  border-radius: 0.75rem;
+  background: hsl(var(--card));
+  box-shadow: 0 8px 18px -16px rgba(15, 23, 42, 0.48);
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+
+.calculator-page div:has(> div > label > input[placeholder="Поиск по работам"]) {
+  background: linear-gradient(135deg, #fff7ea 0%, #fff0dc 100%);
+}
+
+.dark .calculator-page div:has(> div > label > input[placeholder="Поиск по работам"]) {
+  background: linear-gradient(135deg, rgba(67, 31, 12, 0.48) 0%, rgba(56, 35, 17, 0.55) 100%);
+}
+
+.calculator-page label:has(input[placeholder="Поиск по работам"]):hover {
+  box-shadow: 0 14px 24px -18px rgba(234, 88, 12, 0.45);
+}
+
+.calculator-page input[placeholder="Поиск по работам"] {
+  border-color: transparent !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.calculator-page label:has(input[placeholder="Поиск по работам"]) + button {
+  border-color: hsl(var(--primary) / 0.7);
+  background: hsl(var(--card));
+  box-shadow: 0 8px 18px -16px rgba(15, 23, 42, 0.48);
+  transition: box-shadow 200ms ease, transform 200ms ease;
+}
+
+.calculator-page label:has(input[placeholder="Поиск по работам"]) + button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 24px -18px rgba(234, 88, 12, 0.45);
+}
+
+.dark .calculator-page label:has(input[placeholder="Поиск по работам"]),
+.dark .calculator-page label:has(input[placeholder="Поиск по работам"]) + button {
+  box-shadow: 0 10px 22px -18px rgba(0, 0, 0, 0.9);
+}
+
+.dark .calculator-page div[class*="border-slate-200"][class*="bg-white/90"] {
+  border-color: hsl(var(--border));
+  box-shadow: 0 14px 28px -22px rgba(0, 0, 0, 0.9);
+}
+
+.dark .calculator-page button[class*="min-h-[110px]"] {
+  border-color: hsl(var(--primary) / 0.7);
+  background: hsl(var(--card));
+  box-shadow: 0 12px 24px -20px rgba(0, 0, 0, 0.9);
+}
+
+.dark .calculator-page button[class*="min-h-[110px]"][class*="ring-1"] {
+  background: linear-gradient(145deg, rgba(67, 31, 12, 0.82) 0%, rgba(48, 29, 16, 0.94) 100%);
+  border-color: hsl(var(--primary));
+  box-shadow: 0 14px 28px -20px rgba(0, 0, 0, 0.94), 0 0 18px -14px hsl(var(--primary) / 0.35);
+}
+
+/* Exact surface used by the active calculator category card. */
+.dark .calculator-page .calc-active-surface {
+  background: linear-gradient(145deg, rgba(67, 31, 12, 0.82) 0%, rgba(48, 29, 16, 0.94) 100%);
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+/* Same neutral surface as a non-active calculator category card. */
+.dark .calculator-page .calc-base-surface {
+  background: hsl(var(--card));
+  border-color: hsl(var(--primary) / 0.7);
+}
+
+/* Work hierarchy: neutral surfaces, with orange reserved for selected work only. */
+.dark .calculator-page .calc-work-group,
+.dark .calculator-page .calc-work-group-trigger,
+.dark .calculator-page .calc-work-items {
+  background: hsl(var(--secondary));
+  border-color: hsl(var(--border));
+}
+
+.dark .calculator-page .calc-work-row {
+  background: hsl(var(--card));
+  border-color: hsl(var(--border));
+}
+
+.dark .calculator-page .calc-work-row-active {
+  background: linear-gradient(145deg, hsl(20 14% 13%) 0%, hsl(20 18% 11%) 100%);
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+.dark .calculator-page section[class*="bg-[#fffdfa]"] {
+  border-color: hsl(var(--primary) / 0.5);
+  box-shadow: 0 16px 30px -22px rgba(0, 0, 0, 0.92);
+}
+
+.dark .calculator-page section[class*="bg-[#fffdfa]"] > div:first-child {
+  background: linear-gradient(90deg, rgba(67, 31, 12, 0.7) 0%, rgba(38, 28, 19, 0.92) 100%);
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+.dark .calculator-page aside {
+  scrollbar-color: hsl(var(--primary) / 0.52) hsl(var(--secondary));
+}
+
+.dark .calculator-page aside::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dark .calculator-page aside::-webkit-scrollbar-track {
+  background: hsl(var(--secondary));
+}
+
+.dark .calculator-page aside::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.52);
+  border: 2px solid hsl(var(--secondary));
+  border-radius: 999px;
+}
+
+.dark .calculator-page aside::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.72);
+}
+
+/* The theme switch uses the .dark class, so this must not rely on the
+   prefers-color-scheme media query generated for Tailwind dark: utilities. */
+.dark .turnkey-calculator-card,
+.dark .turnkey-calculator-header {
+  background: linear-gradient(135deg, rgba(67, 31, 12, 0.48) 0%, rgba(56, 35, 17, 0.55) 100%) !important;
+}
+
+.dark .turnkey-calculator-card {
+  border-color: hsl(var(--primary) / 0.7);
+}
+
+.dark .turnkey-calculator-header {
+  border-color: hsl(var(--primary) / 0.3);
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+@media (max-width: 639px) {
+  .page-shell {
+    padding-inline: 1rem;
+  }
+
+  .calculator-page .grid.grid-cols-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+}
+
+@media (max-width: 599px) {
+  .page-shell {
+    padding-inline: 1.25rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
