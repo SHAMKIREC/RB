@@ -81,6 +81,16 @@ export default function Header({ theme, onToggleTheme }) {
             </div>
             <button onClick={onToggleTheme} aria-label="Сменить тему" className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/20 text-white/80 transition-colors hover:bg-white/10 hover:text-white">{theme === "light" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}</button>
 
+            <Link
+              to="/calculator"
+              aria-label="Открыть калькулятор сметы"
+              title="Калькулятор сметы"
+              className={`calculator-quick-action group relative grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-xl border text-white shadow-lg transition-all active:scale-90 min-[900px]:hidden ${isActive('/calculator') ? 'border-orange-300 bg-gradient-to-br from-orange-500 to-red-500 shadow-orange-500/35' : 'border-orange-400/55 bg-gradient-to-br from-orange-500/95 to-red-500/95 shadow-orange-500/25'}`}
+            >
+              <span className="absolute -left-5 top-0 h-full w-3 rotate-12 bg-white/25 blur-[1px] transition-transform duration-700 group-hover:translate-x-16" aria-hidden="true" />
+              <Calculator className="relative h-5 w-5 transition-transform duration-300 group-hover:rotate-6 group-hover:scale-110" />
+            </Link>
+
             <button type="button" onClick={() => setDesktopSosOpen((open) => !open)} aria-label={desktopSosOpen ? `Телефон ${PHONE_DISPLAY}` : "Показать номер SOS 24/7"} className="sos-pulse hidden h-10 items-center justify-center gap-1.5 rounded-xl logo-gradient px-3 text-xs font-black text-white shadow-lg shadow-orange-500/25 transition-all hover:opacity-90 active:scale-95 sm:h-auto sm:gap-2 sm:px-5 sm:py-2.5 sm:text-sm min-[900px]:inline-flex">
               <Phone className="h-4 w-4" /><span>{desktopSosOpen ? PHONE_DISPLAY : "SOS 24/7"}</span>
             </button>
