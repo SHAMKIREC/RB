@@ -21,7 +21,6 @@ import AdminServicePhotos from './pages/AdminServicePhotos';
 import AdminBackup from './pages/AdminBackup';
 import Documentation from './pages/Documentation';
 import About from './pages/About';
-import NrvDigital from './pages/NrvDigital';
 import ScrollToTop from './components/ScrollToTop';
 import PageSeo from './components/PageSeo';
 import Privacy from './pages/Privacy';
@@ -34,7 +33,6 @@ const LegacyCategoryRedirect = () => {
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
 
-  // Show loading spinner while checking app public settings or auth
   if (isLoadingPublicSettings || isLoadingAuth) {
     return (
       <div className="fixed inset-0 flex items-center justify-center">
@@ -43,18 +41,15 @@ const AuthenticatedApp = () => {
     );
   }
 
-  // Handle authentication errors
   if (authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
     } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
       navigateToLogin();
       return null;
     }
   }
 
-  // Render the main app
   return (
     <Routes>
       <Route element={<Layout />}>
@@ -62,7 +57,6 @@ const AuthenticatedApp = () => {
         <Route path="/services" element={<Services />} />
         <Route path="/documentation" element={<Documentation />} />
         <Route path="/about" element={<About />} />
-        <Route path="/nrv-digital" element={<NrvDigital />} />
         <Route path="/calculator" element={<Calculator />} />
         <Route path="/reviews" element={<Reviews />} />
         <Route path="/reviews/new" element={<Navigate to="/reviews" replace />} />
@@ -83,9 +77,7 @@ const AuthenticatedApp = () => {
   );
 };
 
-
 function App() {
-
   return (
     <AuthProvider>
       <QueryClientProvider client={queryClientInstance}>
