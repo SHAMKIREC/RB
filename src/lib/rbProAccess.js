@@ -91,6 +91,13 @@ export async function resetRbProDevice(id) {
   return Boolean(data);
 }
 
+export async function rotateRbProCode(id) {
+  const client = await requireAdminWriteSession();
+  const { data, error } = await client.rpc('rb_pro_rotate_code', { p_code_id: id });
+  if (error) throw new Error(error.message || 'Не удалось выдать новый код RB PRO.');
+  return data;
+}
+
 export async function deleteRbProCode(id) {
   const client = await requireAdminWriteSession();
   const { data, error } = await client.rpc('rb_pro_delete_code', { p_code_id: id });
