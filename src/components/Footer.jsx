@@ -8,7 +8,7 @@ import AppInstallSection from "./AppInstallSection";
 const COMPANY_INFO = {
   location: "г. Саратов, работаем 24/7",
   pricing: "Цены без учёта материалов · Мин. заказ 5 000 ₽",
-  copyright: "© 2026 Решаем Быстро · Строительство и ремонт в Саратове",
+  copyright: "© 2020 Решаем Быстро · Строительство и ремонт в Саратове",
 };
 
 const contacts = [
