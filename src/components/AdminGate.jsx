@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { BadgeRussianRuble, Camera, Crown, DatabaseBackup, ExternalLink, FolderKanban, LogOut, MessageSquareText, ReceiptText, ShieldCheck } from 'lucide-react';
+import { BadgeRussianRuble, Camera, Crown, DatabaseBackup, ExternalLink, FolderKanban, House, LogOut, MessageSquareText, ReceiptText, ShieldCheck } from 'lucide-react';
 import adminBuilderLeft from '@/assets/images/admin/admin-builder-left.png';
 import adminBuilderRight from '@/assets/images/admin/admin-builder-right.png';
 import adminLoginBackground from '@/assets/images/admin/admin-login-background.png';
@@ -11,6 +11,7 @@ import { enableInlineEditMode } from '../lib/pricingStorage';
 
 export function AdminNavigation({ onExit }) {
   const items = [
+    { to: '/admin', label: 'Главная', icon: House, end: true },
     { to: '/admin/orders', label: 'Заказы', icon: ReceiptText },
     { to: '/admin/projects', label: 'Проекты', icon: FolderKanban },
     { to: '/admin/reviews', label: 'Отзывы', icon: MessageSquareText },
@@ -27,7 +28,7 @@ export function AdminNavigation({ onExit }) {
         </div>
 
         <nav aria-label="Разделы админки" className="order-3 flex min-w-0 basis-full gap-2 overflow-x-auto scroll-smooth pb-0.5 pt-0.5 [scroll-padding-inline:4px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:order-none sm:flex-1 sm:basis-auto sm:pt-0">
-          {items.map(({ to, label, icon: Icon }) => <NavLink key={to} to={to} className={itemClass}>
+          {items.map(({ to, label, icon: Icon, end }) => <NavLink key={to} to={to} end={end} className={itemClass}>
             <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
             <Icon className="relative h-4 w-4"/><span className="relative whitespace-nowrap">{label}</span>
           </NavLink>)}

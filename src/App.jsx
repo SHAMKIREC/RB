@@ -20,6 +20,7 @@ import AdminReviews from './pages/AdminReviews';
 import AdminServicePhotos from './pages/AdminServicePhotos';
 import AdminBackup from './pages/AdminBackup';
 import AdminRbPro from './pages/AdminRbPro';
+import AdminHome from './pages/AdminHome';
 import Documentation from './pages/Documentation';
 import About from './pages/About';
 import ScrollToTop from './components/ScrollToTop';
@@ -66,6 +67,7 @@ const AuthenticatedApp = () => {
         <Route path="/orders/:orderId" element={<OrderDetail />} />
         <Route path="/projects" element={<Projects />} />
         <Route path="/projects/:projectId" element={<ProjectDetail />} />
+        <Route path="/admin" element={<AdminHome />} />
         <Route path="/admin/orders" element={<AdminOrders />} />
         <Route path="/admin/rb-pro" element={<AdminRbPro />} />
         <Route path="/admin/projects" element={<AdminProjects />} />

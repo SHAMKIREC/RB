@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Camera, DatabaseBackup, FolderKanban, GripVertical, KeyRound, LogOut, MessageSquareText, Pencil, ReceiptText, ShieldCheck, X } from 'lucide-react';
+import { Camera, DatabaseBackup, FolderKanban, GripVertical, House, KeyRound, LogOut, MessageSquareText, Pencil, ReceiptText, ShieldCheck, X } from 'lucide-react';
 import { useInlineEditMode } from '../hooks/usePricingState';
 import { disableInlineEditMode, enableInlineEditMode } from '../lib/pricingStorage';
 
 const links = [
+  { to: '/admin', label: 'Главная', icon: House },
   { to: '/admin/orders', label: 'Заказы', icon: ReceiptText },
   { to: '/admin/rb-pro', label: 'RB PRO', icon: KeyRound },
   { to: '/admin/projects', label: 'Проекты', icon: FolderKanban },

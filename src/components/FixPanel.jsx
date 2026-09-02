@@ -4,10 +4,10 @@ import { WhatsAppIcon, TelegramIcon, MaxIcon, VKIcon } from "./SocialLinks";
 
 const panelItems = [
   { label: "Позвонить", href: `tel:${PHONE}`, Icon: Phone, surface: "bg-gradient-to-br from-[#ff7138] to-[#ff3218]", glow: "shadow-[0_9px_22px_-10px_rgba(255,80,0,.8)]" },
-  { label: "WhatsApp", href: WHATSAPP, Icon: WhatsAppIcon, surface: "bg-gradient-to-br from-[#32dc73] to-[#18b957]", glow: "shadow-[0_9px_22px_-10px_rgba(37,211,102,.8)]" },
+  { label: "ВКонтакте", href: VK_MSG, Icon: VKIcon, surface: "bg-gradient-to-br from-[#248dff] to-[#0069e7]", glow: "shadow-[0_9px_22px_-10px_rgba(0,119,255,.8)]" },
   { label: "Telegram", href: TELEGRAM, Icon: TelegramIcon, surface: "bg-gradient-to-br from-[#36b5ed] to-[#168dcc]", glow: "shadow-[0_9px_22px_-10px_rgba(34,158,217,.8)]" },
   { label: "MAX", href: MAX_URL, Icon: MaxIcon, surface: "bg-gradient-to-br from-[#5ca7ff] via-[#765af5] to-[#bd35ea]", glow: "shadow-[0_9px_22px_-10px_rgba(126,100,255,.85)]" },
-  { label: "ВКонтакте", href: VK_MSG, Icon: VKIcon, surface: "bg-gradient-to-br from-[#248dff] to-[#0069e7]", glow: "shadow-[0_9px_22px_-10px_rgba(0,119,255,.8)]" },
+  { label: "WhatsApp", href: WHATSAPP, Icon: WhatsAppIcon, surface: "bg-gradient-to-br from-[#32dc73] to-[#18b957]", glow: "shadow-[0_9px_22px_-10px_rgba(37,211,102,.8)]" },
 ];
 
 export default function FixPanel() {
