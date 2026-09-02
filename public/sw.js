@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rb-24-app-v2';
+const CACHE_NAME = 'rb-24-app-v3';
 const APP_SHELL = ['/', '/site.webmanifest', '/pwa-192x192.png', '/pwa-512x512.png'];
 
 self.addEventListener('install', (event) => {

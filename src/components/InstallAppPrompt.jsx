@@ -61,9 +61,12 @@ export default function InstallAppPrompt() {
     document.addEventListener('visibilitychange', recheckInstallation);
 
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch((error) => {
-        console.error('Не удалось зарегистрировать service worker:', error);
-      });
+      navigator.serviceWorker
+        .register('/sw.js', { updateViaCache: 'none' })
+        .then((registration) => registration.update())
+        .catch((error) => {
+          console.error('Не удалось зарегистрировать service worker:', error);
+        });
     }
 
     const handleInstalled = () => {
