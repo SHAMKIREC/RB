@@ -1,5 +1,6 @@
 import { requireSupabase } from './supabaseClient';
 import { requireAdminWriteSession } from './adminSession';
+import { getRbProToken } from './rbProAccess';
 import { errorMessage, removeFiles, signedImageUrl, signedUrls, STORAGE_BUCKETS, uploadOrderPhotos } from './mediaStorage';
 
 const numberValue = (value) => Number(value || 0);
@@ -23,15 +24,23 @@ export async function getOrders() {
 }
 
 export async function getPublishedOrders(from = 0, to = 11) {
-  const { data, error, count } = await requireSupabase().from('published_orders_list').select('id,number,title,location,description,preferred_deadline,contractor_payment,cover_path,works_count,created_at,updated_at', { count: 'exact' }).order('updated_at', { ascending: false }).order('id', { ascending: false }).range(from, to);
-  if (error) throw new Error(`Database read error (published orders): ${errorMessage(error)}`);
-  const items = await Promise.all((data || []).map((row) => withCoverUrl(camelOrder({ ...row, photos: row.cover_path ? [row.cover_path] : [], status: 'active', is_published: true }))));
-  return { items, hasMore: count == null ? items.length === to - from + 1 : from + items.length < count };
+  const { data, error } = await requireSupabase().rpc('rb_pro_orders_list', {
+    p_token: getRbProToken() || null,
+    p_from: from,
+    p_to: to,
+  });
+  if (error) throw new Error(error.code === '42501' || error.message?.includes('RB_PRO_ACCESS_REQUIRED') ? 'RB_PRO_ACCESS_REQUIRED' : `Database read error (published orders): ${errorMessage(error)}`);
+  const rows = Array.isArray(data?.items) ? data.items : [];
+  const items = await Promise.all(rows.map((row) => withCoverUrl(camelOrder({ ...row, photos: row.cover_path ? [row.cover_path] : [], status: 'active', is_published: true }))));
+  return { items, hasMore: Boolean(data?.has_more) };
 }
 
 export async function getOrder(id) {
-  const { data, error } = await requireSupabase().from('published_orders').select('*').eq('id', id).maybeSingle();
-  if (error) throw error;
+  const { data, error } = await requireSupabase().rpc('rb_pro_order_detail', {
+    p_order_id: id,
+    p_token: getRbProToken() || null,
+  });
+  if (error) throw new Error(error.code === '42501' || error.message?.includes('RB_PRO_ACCESS_REQUIRED') ? 'RB_PRO_ACCESS_REQUIRED' : errorMessage(error));
   return data ? withPhotoUrls(camelOrder({ ...data, status: 'active', is_published: true }), false) : null;
 }
 
