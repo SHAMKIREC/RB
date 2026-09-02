@@ -5,6 +5,8 @@ const isRunningAsApp = () =>
   window.matchMedia('(display-mode: standalone)').matches ||
   window.navigator.standalone === true;
 
+const INSTALL_FLAG = 'rb-app-installed';
+
 export default function InstallAppPrompt() {
   const [installPrompt, setInstallPrompt] = useState(null);
   const [isInstalled, setIsInstalled] = useState(true);
@@ -24,6 +26,7 @@ export default function InstallAppPrompt() {
 
     const checkInstallation = async () => {
       const standalone = isRunningAsApp();
+      const rememberedInstalled = localStorage.getItem(INSTALL_FLAG) === 'true';
       let relatedAppInstalled = false;
 
       if ('getInstalledRelatedApps' in navigator) {
@@ -38,7 +41,8 @@ export default function InstallAppPrompt() {
       }
 
       if (!cancelled) {
-        const installed = standalone || relatedAppInstalled;
+        const installed = standalone || relatedAppInstalled || rememberedInstalled;
+        if (standalone || relatedAppInstalled) localStorage.setItem(INSTALL_FLAG, 'true');
         setIsInstalled(installed);
         setIsIos(/iphone|ipad|ipod/i.test(navigator.userAgent) && !installed);
       }
@@ -63,6 +67,7 @@ export default function InstallAppPrompt() {
     }
 
     const handleInstalled = () => {
+      localStorage.setItem(INSTALL_FLAG, 'true');
       setIsInstalled(true);
       setInstallPrompt(null);
       setShowInstructions(false);
@@ -93,6 +98,7 @@ export default function InstallAppPrompt() {
     const choice = await promptEvent.userChoice;
 
     if (choice.outcome === 'accepted') {
+      localStorage.setItem(INSTALL_FLAG, 'true');
       setIsInstalled(true);
     }
 
@@ -100,7 +106,9 @@ export default function InstallAppPrompt() {
     window.__rbInstallPrompt = null;
   };
 
-  if (isInstalled || isDismissed) return null;
+  // Chrome does not expose an install event when the PWA is already installed.
+  // In that case the custom offer must stay hidden instead of showing manual instructions.
+  if (isInstalled || isDismissed || (!installPrompt && !isIos)) return null;
 
   return (
     <aside
