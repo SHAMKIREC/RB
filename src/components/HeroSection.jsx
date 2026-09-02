@@ -1,16 +1,15 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { Phone, ArrowRight } from "lucide-react";
 import { PHONE_NUMBER } from "../lib/servicesData";
+import { PHONE_DISPLAY } from "../lib/calcData";
 import HeroBrushAnimation from './hero/HeroBrushAnimation';
 
 const HERO_IMAGE = "/assets/hero-image.png";
 
 export default function HeroSection() {
-  const callEmergency = (event) => {
-    event.preventDefault();
-    window.location.href = PHONE_NUMBER;
-  };
+  const [desktopSosOpen, setDesktopSosOpen] = useState(false);
 
   return (
     <section className="relative flex min-h-[350px] items-center overflow-hidden sm:min-h-[368px] xl:min-h-[66vh]">
@@ -82,12 +81,23 @@ export default function HeroSection() {
               Узнать условия
               <ArrowRight className="h-4 w-4 shrink-0 transition-transform group-hover:translate-x-1 sm:h-5 sm:w-5" />
             </Link>
+
+            <button
+              type="button"
+              onClick={() => setDesktopSosOpen((open) => !open)}
+              aria-label={desktopSosOpen ? `Телефон ${PHONE_DISPLAY}` : "Показать номер SOS 24/7"}
+              title={desktopSosOpen ? PHONE_DISPLAY : "Показать номер телефона"}
+              className="sos-pulse relative z-30 hidden min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-primary px-3 py-4 text-sm font-bold text-primary transition-all hover:bg-primary/5 active:scale-95 sm:flex-none sm:gap-3 sm:px-8 sm:text-base min-[900px]:inline-flex"
+            >
+              <Phone className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" />
+              {desktopSosOpen ? PHONE_DISPLAY : "SOS 24/7"}
+            </button>
+
             <a
               href={PHONE_NUMBER}
-              onClick={callEmergency}
               aria-label="Позвонить в Решаем быстро, срочный вызов 24/7"
-              title="Позвонить: +7 906 305-28-28"
-              className="sos-pulse relative z-30 inline-flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-primary px-3 py-4 text-sm font-bold text-primary transition-all hover:bg-primary/5 active:scale-95 sm:flex-none sm:gap-3 sm:px-8 sm:text-base"
+              title={`Позвонить: ${PHONE_DISPLAY}`}
+              className="sos-pulse relative z-30 inline-flex min-w-0 flex-1 cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-primary px-3 py-4 text-sm font-bold text-primary transition-all hover:bg-primary/5 active:scale-95 sm:flex-none sm:gap-3 sm:px-8 sm:text-base min-[900px]:hidden"
             >
               <Phone className="h-4 w-4 shrink-0 sm:h-5 sm:w-5" />
               SOS 24/7
