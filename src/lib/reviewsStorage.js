@@ -22,7 +22,7 @@ const hydratePreview = async (review) => {
 };
 
 export async function getReviews() { const { data, error } = await requireSupabase().from('reviews').select('*').order('updated_at', { ascending: false }); if (error) throw error; return Promise.all((data || []).map((row) => { const review = mapReview(row); return hydrate(review, true).catch(() => ({ ...review, photos: [] })); })); }
-export async function getPublishedReviews(from = 0, to = 11) { const { data, error, count } = await requireSupabase().from('published_reviews_list').select('id,client_name,location,service_title,review_text,rating,cover_path,created_at,updated_at', { count: 'exact' }).order('updated_at', { ascending: false }).order('id', { ascending: false }).range(from, to); if (error) throw error; const items = await Promise.all((data || []).map((row) => { const review = mapReview({ ...row, photos: row.cover_path ? [row.cover_path] : [], status: 'published', is_published: true }); return hydratePreview(review).catch(() => ({ ...review, photos: [] })); })); return { items, hasMore: count == null ? items.length === to - from + 1 : from + items.length < count }; }
+export async function getPublishedReviews(from = 0, to = 11) { const { data, error, count } = await requireSupabase().from('published_reviews_list').select('id,client_name,location,service_title,review_text,rating,cover_path,created_at,updated_at', { count: 'exact' }).order('created_at', { ascending: false }).order('id', { ascending: false }).range(from, to); if (error) throw error; const items = await Promise.all((data || []).map((row) => { const review = mapReview({ ...row, photos: row.cover_path ? [row.cover_path] : [], status: 'published', is_published: true }); return hydratePreview(review).catch(() => ({ ...review, photos: [] })); })); return { items, hasMore: count == null ? items.length === to - from + 1 : from + items.length < count }; }
 
 export async function getPublishedReviewForProject(clientName, serviceTitle) {
   if (!clientName || !serviceTitle) return null;
@@ -41,7 +41,14 @@ export async function saveReview(review) {
   const { data: current, error: currentError } = review.id ? await client.from('reviews').select('*').eq('id', id).maybeSingle() : { data: null, error: null };
   if (currentError) throw new Error(`Database read error (reviews): ${errorMessage(currentError)}`);
   const isPublished = Boolean(review.isPublished);
+  const today = new Date().toLocaleDateString('sv-SE');
+  const parsedReviewDate = review.reviewDate ? new Date(`${review.reviewDate}T12:00:00.000Z`) : null;
+  if (review.reviewDate && (!/^\d{4}-\d{2}-\d{2}$/.test(review.reviewDate) || Number.isNaN(parsedReviewDate.getTime()) || parsedReviewDate.toISOString().slice(0, 10) !== review.reviewDate || review.reviewDate > today)) {
+    throw new Error('Дата отзыва должна быть сегодняшней или прошедшей.');
+  }
   const base = { id, client_name: 'Клиент RB-24', location: '', service_title: review.serviceTitle, review_text: review.reviewText, rating: Math.min(5, Math.max(1, Number(review.rating) || 5)), photos: [], order_number: '', contact: '', consent: true, publish_review: isPublished, publish_name: false, publish_location: false, publish_photos: false, status: isPublished ? 'published' : (review.status || 'pending'), is_published: isPublished, is_demo: false };
+  if (review.reviewDate) base.created_at = `${review.reviewDate}T12:00:00.000Z`;
+  else if (current?.created_at) base.created_at = current.created_at;
   const { data, error } = await client.from('reviews').upsert(base).select().single(); if (error) throw new Error(`Database insert error (reviews): ${errorMessage(error)}`);
   let paths = [];
   try {
@@ -56,7 +63,7 @@ export async function saveReview(review) {
     const oldPhotos = current?.photos || [];
     await removeFiles(STORAGE_BUCKETS.reviews, paths.filter((path) => !(oldPhotos || []).some((item) => photoPath(item) === path))).catch(() => {});
     if (review.id) {
-      const oldReview = Object.fromEntries(Object.entries(current).filter(([key]) => !['id', 'created_at', 'updated_at'].includes(key)));
+      const oldReview = Object.fromEntries(Object.entries(current).filter(([key]) => !['id', 'updated_at'].includes(key)));
       await client.from('reviews').update(oldReview).eq('id', id);
     }
     else await client.from('reviews').delete().eq('id', id);

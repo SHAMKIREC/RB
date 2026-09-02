@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Image, MessageCircle, Star, Wrench } from "lucide-react";
+import { CalendarDays, Image, MessageCircle, Star, Wrench } from "lucide-react";
 import AdminGate from "../components/AdminGate";
 import PhotoUploader from "../components/PhotoUploader";
 import {
@@ -15,6 +15,8 @@ const statusLabel = {
   rejected: "Отклонённые",
 };
 const photoSrc = (photo) => (typeof photo === "string" ? photo : photo?.src || "");
+const todayValue = () => new Date().toLocaleDateString("sv-SE");
+const reviewDateValue = (value) => value ? String(value).slice(0, 10) : "";
 const toPhotoRecords = (photos) => (Array.isArray(photos) ? photos : [])
   .map((photo, index) => {
     const src = photoSrc(photo);
@@ -73,6 +75,10 @@ function Content() {
   const saveEditing = async (event) => {
     event.preventDefault();
     if (!editing) return;
+    if (editing.reviewDate && editing.reviewDate > todayValue()) {
+      setActionError("Дата отзыва не может быть в будущем.");
+      return;
+    }
     const saved = await act(() => saveReview({
       ...editing,
       rating: Number(editing.rating),
@@ -82,7 +88,7 @@ function Content() {
   };
 
   return (
-    <div className="page-shell min-w-0 py-6 sm:py-10"><p className="mt-3 rounded-xl border border-amber-300/60 bg-amber-50 px-3 py-2 text-sm text-amber-950">Размещайте только фотографии и тексты, на публикацию которых заказчик дал разрешение. Не загружайте лица людей, документы, номера автомобилей, точные адреса и другие персональные сведения.</p><button type="button" onClick={() => setEditing({ id: null, clientName: "Клиент RB-24", location: "", serviceTitle: "", reviewText: "", rating: 5, photos: [], status: "pending", isPublished: false, adminPublicationConsent: false })} className="mt-4 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white">Создать отзыв</button>
+    <div className="page-shell min-w-0 py-6 sm:py-10"><p className="mt-3 rounded-xl border border-amber-300/60 bg-amber-50 px-3 py-2 text-sm text-amber-950">Размещайте только фотографии и тексты, на публикацию которых заказчик дал разрешение. Не загружайте лица людей, документы, номера автомобилей, точные адреса и другие персональные сведения.</p><button type="button" onClick={() => setEditing({ id: null, clientName: "Клиент RB-24", location: "", serviceTitle: "", reviewText: "", rating: 5, photos: [], reviewDate: "", status: "pending", isPublished: false, adminPublicationConsent: false })} className="mt-4 rounded-xl bg-primary px-4 py-2 text-sm font-bold text-white">Создать отзыв</button>
       <h1 className="text-2xl font-black leading-tight sm:text-3xl">Управление отзывами</h1>
       <p className="mt-2 text-sm text-muted-foreground">Скопируйте разрешённый отзыв из ВКонтакте, при необходимости добавьте оценку и фотографии работы.</p>
       {actionError && <p role="alert" className="mt-3 rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">{actionError}</p>}
@@ -101,6 +107,10 @@ function Content() {
               <select value={editing.rating ?? 5} onChange={(event) => setEditing({ ...editing, rating: event.target.value })} className="mt-1 block w-full rounded-xl border border-border bg-background px-3 py-2 font-normal">
                 {[5, 4, 3, 2, 1].map((rating) => <option key={rating} value={rating}>{rating} из 5</option>)}
               </select>
+            </label>
+            <label className="text-sm font-bold sm:col-span-2"><FormLabel icon={CalendarDays}>Дата отзыва</FormLabel>
+              <input type="date" max={todayValue()} value={editing.reviewDate ?? reviewDateValue(editing.createdAt)} onChange={(event) => setEditing({ ...editing, reviewDate: event.target.value })} className="mt-1 block w-full rounded-xl border border-border bg-background px-3 py-2 font-normal sm:max-w-xs" />
+              <span className="mt-1 block text-xs font-normal text-muted-foreground">Можно выбрать сегодняшнюю или любую прошедшую дату. Если оставить пустой — сохранится текущая дата.</span>
             </label>
           </div>
           <label className="block text-sm font-bold"><FormLabel icon={MessageCircle}>Текст отзыва</FormLabel>
@@ -132,7 +142,7 @@ function Content() {
                   <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-xs">
                     <button type="button" onClick={() => { if (window.confirm("Получено разрешение заказчика на размещение текста и фотографий, персональные данные удалены, смысл отзыва не изменён.")) act(() => setReviewStatus(review.id, "published")); }} className="text-primary">Опубликовать</button>
                     <button type="button" onClick={() => act(() => setReviewStatus(review.id, "rejected"))}>Отклонить</button>
-                    <button type="button" onClick={() => setEditing({ ...review, photos: toPhotoRecords(review.photos) })}>Редактировать</button>
+                    <button type="button" onClick={() => setEditing({ ...review, reviewDate: reviewDateValue(review.createdAt), photos: toPhotoRecords(review.photos) })}>Редактировать</button>
                     <button type="button" onClick={() => { if (window.confirm("Удалить отзыв?")) act(() => deleteReview(review.id)); }} className="text-destructive">Удалить</button>
                   </div>
                 </article>
