@@ -15,7 +15,7 @@ function PriceTable({ items }) {
   const inlineEditMode = useInlineEditMode();
 
   return (
-    <div className="rounded-2xl border-2 border-primary/30 bg-[#fff0df] p-2 shadow-[0_16px_38px_-28px_rgba(154,52,18,.65)] dark:bg-[#33251f] sm:p-3">
+    <div className="rounded-2xl border-2 border-primary/30 bg-[#fff0df] p-2 shadow-[0_16px_38px_-28px_rgba(154,52,18,.65)] dark:border-primary/45 dark:bg-[#171311] dark:shadow-[0_18px_42px_-26px_rgba(0,0,0,.9)] sm:p-3">
       <table className="w-full border-separate border-spacing-y-2">
         <thead>
           <tr>
@@ -26,11 +26,12 @@ function PriceTable({ items }) {
         <tbody>
           {items.map((item, i) => {
             const price = getServiceItemPrice(item, overrides);
+            const rowBg = i % 2 === 0 ? 'bg-white dark:bg-[#24201e]' : 'bg-[#fffaf5] dark:bg-[#1e1b19]';
             return <tr key={item.id}>
-              <td className={`rounded-l-xl border-y border-l border-primary/15 px-4 py-3 text-sm font-semibold text-foreground ${i % 2 === 0 ? 'bg-white dark:bg-card' : 'bg-[#fffaf5] dark:bg-secondary/40'}`}>{item.name}</td>
-              <td className={`rounded-r-xl border-y border-r border-primary/15 px-4 py-3 text-right whitespace-nowrap ${i % 2 === 0 ? 'bg-white dark:bg-card' : 'bg-[#fffaf5] dark:bg-secondary/40'}`}>
+              <td className={`rounded-l-xl border-y border-l border-primary/15 px-4 py-3 text-sm font-semibold text-[#201b18] dark:border-primary/20 dark:text-[#f5eee8] ${rowBg}`}>{item.name}</td>
+              <td className={`rounded-r-xl border-y border-r border-primary/15 px-4 py-3 text-right whitespace-nowrap dark:border-primary/20 ${rowBg}`}>
                 <div className="inline-flex flex-col items-end">
-                  <span className="text-sm font-mono font-black text-[#d9470b] dark:text-primary sm:text-base">{price.toLocaleString("ru-RU")} ₽{item.unit ? ` / ${item.unit}` : ""}</span>
+                  <span className="text-sm font-mono font-black text-[#d9470b] dark:text-[#ff6a32] sm:text-base">{price.toLocaleString("ru-RU")} ₽{item.unit ? ` / ${item.unit}` : ""}</span>
                   {inlineEditMode && <InlinePriceEditor value={price} onSave={(value) => setPriceOverride(item.pricingScope || 'serviceItems', item.pricingId || item.id, value)} />}
                 </div>
               </td>
@@ -177,9 +178,7 @@ export default function Services() {
   return (
     <div className="page-shell py-7 sm:py-10">
       <ServiceSeo category={selectedCategory} />
-      {/* Header */}
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="mb-5">
-        {/* Breadcrumb */}
         {selectedCategory && <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-4 flex-wrap">
           {breadcrumb.map((crumb, i) => (
             <span key={i} className="flex items-center gap-1.5">
@@ -214,7 +213,6 @@ export default function Services() {
         )}
       </motion.div>
 
-      {/* Content */}
       {!selectedCategory && (
         <CategoryGrid categories={SERVICES_CATALOG} onSelect={handleCategorySelect} />
       )}
