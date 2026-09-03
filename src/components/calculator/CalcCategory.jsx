@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { ChevronDown, ChevronRight, Package } from "lucide-react";
 import { getMaterialsForWork } from "../../lib/materialsData";
 import { setPriceOverride } from "../../lib/pricingStorage";
@@ -143,19 +143,6 @@ export default function CalcCategory({ category, quantities, withMaterials, onCh
   const [localOpen, setLocalOpen] = useState(false);
   const open = isOpen ?? localOpen;
   const mode = "mount";
-  const previousCategoryId = useRef(category.id);
-
-  useEffect(() => {
-    const previousId = previousCategoryId.current;
-    previousCategoryId.current = category.id;
-    if (previousId === category.id) return;
-    if (typeof window === "undefined" || !window.matchMedia("(max-width: 1023px)").matches) return;
-    const hasEstimate = Object.values(quantities).some((value) => Number(value) > 0);
-    if (!hasEstimate) return;
-    window.setTimeout(() => {
-      document.getElementById("calculator-estimate")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 120);
-  }, [category.id, quantities]);
 
   const categoryTotal = category.groups.reduce((cs, group) =>
     cs + group.items.reduce((gs, item) => {
