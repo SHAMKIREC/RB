@@ -45,7 +45,7 @@ export default function EstimateSidebar({ works, materials, worksSubtotal, mater
     copyForFallback(VK_COMMUNITY_URL);
   };
 
-  return <aside className="rb-card calc-base-surface flex h-auto max-h-none flex-col overflow-hidden rounded-2xl bg-white dark:bg-card lg:sticky lg:top-20 lg:h-[calc(100vh-6rem)] lg:max-h-[calc(100vh-6rem)]">
+  return <aside id="calculator-estimate" className="rb-card calc-base-surface flex h-auto max-h-none flex-col overflow-hidden rounded-2xl bg-white dark:bg-card lg:sticky lg:top-20 lg:h-[calc(100vh-6rem)] lg:max-h-[calc(100vh-6rem)]">
     <div className="flex-none bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 px-3.5 py-3 text-white">
       {hasEstimate ? <div className="flex items-start justify-between gap-3"><div><p className="text-[10px] font-mono font-bold uppercase tracking-widest text-white/55">Смета составлена</p><p className="mt-1 text-[11px] text-white/65">{works.length} раб. · {materials.length} мат.</p></div><p className="font-mono text-2xl font-black leading-none">{money(grandTotal)} <span className="text-orange-400">₽</span></p></div> : <div className="flex items-center gap-3"><span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10"><ClipboardList className="h-4 w-4 text-orange-300" /></span><div><p className="text-sm font-black">Выберите работы</p><p className="text-[11px] text-white/60">Добавьте позиции для расчёта.</p></div></div>}
     </div>
