@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown, ChevronRight, Package } from "lucide-react";
 import { getMaterialsForWork } from "../../lib/materialsData";
 import { setPriceOverride } from "../../lib/pricingStorage";
@@ -16,16 +16,6 @@ function CalcItem({ item, mode, qty, withMaterials, onChange, onMaterialRequest 
   const lineTotal = workTotal + matTotal;
   const isActive = qty > 0;
   const inlineEditMode = useInlineEditMode();
-  const estimateScrollTimer = useRef(null);
-
-  const changeWithEstimateScroll = (nextValue) => {
-    onChange(nextValue);
-    if (typeof window === "undefined" || !window.matchMedia("(max-width: 1023px)").matches) return;
-    window.clearTimeout(estimateScrollTimer.current);
-    estimateScrollTimer.current = window.setTimeout(() => {
-      document.getElementById("calculator-estimate")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 1800);
-  };
 
   return (
     <div className={`calc-work-row ${isActive ? "calc-work-row-active bg-[linear-gradient(90deg,rgba(255,247,234,.95),rgba(255,253,250,.7))] shadow-[inset_3px_0_0_hsl(var(--primary))]" : "bg-[#fffaf3] hover:bg-orange-50/75"} border-b border-slate-200/80 px-3 py-3 last:border-b-0 transition-colors`}>
@@ -49,7 +39,7 @@ function CalcItem({ item, mode, qty, withMaterials, onChange, onMaterialRequest 
           <div className="flex items-center gap-2 flex-shrink-0">
             <div className="calc-quantity-control calc-base-surface flex items-center overflow-hidden rounded-lg border border-slate-300 bg-white shadow-sm">
               <button
-                onClick={() => changeWithEstimateScroll(Math.max(0, (qty || 0) - 1))}
+                onClick={() => onChange(Math.max(0, (qty || 0) - 1))}
                 aria-label={`Уменьшить количество: ${item.name}`}
                 className="h-10 w-10 sm:h-7 sm:w-7 flex items-center justify-center text-muted-foreground hover:bg-orange-50 hover:text-primary transition-colors text-base font-bold dark:hover:bg-primary/15"
               >−</button>
@@ -66,7 +56,7 @@ function CalcItem({ item, mode, qty, withMaterials, onChange, onMaterialRequest 
                 className="calc-base-surface h-10 w-12 sm:h-7 bg-[#fffdfa] font-mono text-xs font-bold text-foreground text-center focus:outline-none placeholder:text-muted-foreground"
               />
               <button
-                onClick={() => changeWithEstimateScroll((qty || 0) + 1)}
+                onClick={() => onChange((qty || 0) + 1)}
                 aria-label={`Увеличить количество: ${item.name}`}
                 className="h-10 w-10 sm:h-7 sm:w-7 flex items-center justify-center text-muted-foreground hover:bg-orange-50 hover:text-primary transition-colors text-base font-bold dark:hover:bg-primary/15"
               >+</button>
@@ -153,6 +143,19 @@ export default function CalcCategory({ category, quantities, withMaterials, onCh
   const [localOpen, setLocalOpen] = useState(false);
   const open = isOpen ?? localOpen;
   const mode = "mount";
+  const previousCategoryId = useRef(category.id);
+
+  useEffect(() => {
+    const previousId = previousCategoryId.current;
+    previousCategoryId.current = category.id;
+    if (previousId === category.id) return;
+    if (typeof window === "undefined" || !window.matchMedia("(max-width: 1023px)").matches) return;
+    const hasEstimate = Object.values(quantities).some((value) => Number(value) > 0);
+    if (!hasEstimate) return;
+    window.setTimeout(() => {
+      document.getElementById("calculator-estimate")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 120);
+  }, [category.id, quantities]);
 
   const categoryTotal = category.groups.reduce((cs, group) =>
     cs + group.items.reduce((gs, item) => {
