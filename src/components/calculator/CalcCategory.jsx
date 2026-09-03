@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChevronDown, ChevronRight, Package } from "lucide-react";
 import { getMaterialsForWork } from "../../lib/materialsData";
 import { setPriceOverride } from "../../lib/pricingStorage";
 import { useInlineEditMode } from "../../hooks/usePricingState";
 import InlinePriceEditor from "../admin/InlinePriceEditor";
+
+let lastCalculatorCategoryId = null;
 
 function CalcItem({ item, mode, qty, withMaterials, onChange, onMaterialRequest }) {
   const price = mode === "dismount" ? item.dismount : item.mount;
@@ -143,6 +145,18 @@ export default function CalcCategory({ category, quantities, withMaterials, onCh
   const [localOpen, setLocalOpen] = useState(false);
   const open = isOpen ?? localOpen;
   const mode = "mount";
+
+  useEffect(() => {
+    const previousId = lastCalculatorCategoryId;
+    lastCalculatorCategoryId = category.id;
+    if (!previousId || previousId === category.id) return;
+    if (typeof window === "undefined" || !window.matchMedia("(max-width: 1023px)").matches) return;
+    const hasEstimate = Object.values(quantities).some((value) => Number(value) > 0);
+    if (!hasEstimate) return;
+    window.setTimeout(() => {
+      document.getElementById("calculator-estimate")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 180);
+  }, [category.id, quantities]);
 
   const categoryTotal = category.groups.reduce((cs, group) =>
     cs + group.items.reduce((gs, item) => {
