@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ChevronDown, ChevronRight, Package } from "lucide-react";
 import { getMaterialsForWork } from "../../lib/materialsData";
 import { setPriceOverride } from "../../lib/pricingStorage";
@@ -16,13 +16,15 @@ function CalcItem({ item, mode, qty, withMaterials, onChange, onMaterialRequest 
   const lineTotal = workTotal + matTotal;
   const isActive = qty > 0;
   const inlineEditMode = useInlineEditMode();
+  const estimateScrollTimer = useRef(null);
 
   const changeWithEstimateScroll = (nextValue) => {
     onChange(nextValue);
     if (typeof window === "undefined" || !window.matchMedia("(max-width: 1023px)").matches) return;
-    window.setTimeout(() => {
+    window.clearTimeout(estimateScrollTimer.current);
+    estimateScrollTimer.current = window.setTimeout(() => {
       document.getElementById("calculator-estimate")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 80);
+    }, 900);
   };
 
   return (
