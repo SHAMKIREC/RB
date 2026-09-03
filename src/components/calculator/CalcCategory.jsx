@@ -17,6 +17,14 @@ function CalcItem({ item, mode, qty, withMaterials, onChange, onMaterialRequest 
   const isActive = qty > 0;
   const inlineEditMode = useInlineEditMode();
 
+  const changeWithEstimateScroll = (nextValue) => {
+    onChange(nextValue);
+    if (typeof window === "undefined" || !window.matchMedia("(max-width: 1023px)").matches) return;
+    window.setTimeout(() => {
+      document.getElementById("calculator-estimate")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 80);
+  };
+
   return (
     <div className={`calc-work-row ${isActive ? "calc-work-row-active bg-[linear-gradient(90deg,rgba(255,247,234,.95),rgba(255,253,250,.7))] shadow-[inset_3px_0_0_hsl(var(--primary))]" : "bg-[#fffaf3] hover:bg-orange-50/75"} border-b border-slate-200/80 px-3 py-3 last:border-b-0 transition-colors`}>
       <div className="flex items-center gap-2">
@@ -39,7 +47,7 @@ function CalcItem({ item, mode, qty, withMaterials, onChange, onMaterialRequest 
           <div className="flex items-center gap-2 flex-shrink-0">
             <div className="calc-quantity-control calc-base-surface flex items-center overflow-hidden rounded-lg border border-slate-300 bg-white shadow-sm">
               <button
-                onClick={() => onChange(Math.max(0, (qty || 0) - 1))}
+                onClick={() => changeWithEstimateScroll(Math.max(0, (qty || 0) - 1))}
                 aria-label={`Уменьшить количество: ${item.name}`}
                 className="h-10 w-10 sm:h-7 sm:w-7 flex items-center justify-center text-muted-foreground hover:bg-orange-50 hover:text-primary transition-colors text-base font-bold dark:hover:bg-primary/15"
               >−</button>
@@ -56,7 +64,7 @@ function CalcItem({ item, mode, qty, withMaterials, onChange, onMaterialRequest 
                 className="calc-base-surface h-10 w-12 sm:h-7 bg-[#fffdfa] font-mono text-xs font-bold text-foreground text-center focus:outline-none placeholder:text-muted-foreground"
               />
               <button
-                onClick={() => onChange((qty || 0) + 1)}
+                onClick={() => changeWithEstimateScroll((qty || 0) + 1)}
                 aria-label={`Увеличить количество: ${item.name}`}
                 className="h-10 w-10 sm:h-7 sm:w-7 flex items-center justify-center text-muted-foreground hover:bg-orange-50 hover:text-primary transition-colors text-base font-bold dark:hover:bg-primary/15"
               >+</button>
