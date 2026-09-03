@@ -24,7 +24,7 @@ function CalcItem({ item, mode, qty, withMaterials, onChange, onMaterialRequest 
     window.clearTimeout(estimateScrollTimer.current);
     estimateScrollTimer.current = window.setTimeout(() => {
       document.getElementById("calculator-estimate")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 900);
+    }, 1800);
   };
 
   return (
