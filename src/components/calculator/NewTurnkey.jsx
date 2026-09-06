@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { TURNKEY_NEW } from "../../lib/calcData";
+import { TURNKEY_NEW } from "../../lib/calcDataSupplemented";
 import { getTurnkeyPrice, setPriceOverride } from "../../lib/pricingStorage";
 import { useInlineEditMode, usePricingOverrides } from "../../hooks/usePricingState";
 import InlinePriceEditor from "../admin/InlinePriceEditor";
