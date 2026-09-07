@@ -43,6 +43,32 @@ function PriceTable({ items }) {
   );
 }
 
+function PackageDetails({ details, note }) {
+  if (!details?.length && !note) return null;
+  return (
+    <div className="mt-4 rounded-2xl border border-primary/25 bg-card p-4 sm:p-5">
+      {details?.length > 0 && (
+        <>
+          <h2 className="mb-3 text-base font-black text-foreground">Что входит</h2>
+          <ul className="space-y-2 text-sm text-muted-foreground">
+            {details.map((detail, index) => (
+              <li key={`${detail}-${index}`} className="flex gap-2">
+                <span className="mt-2 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-primary" />
+                <span>{detail}</span>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+      {note && (
+        <p className="mt-4 rounded-xl bg-primary/10 px-3 py-2 text-sm font-semibold text-foreground">
+          <span className="text-primary">Важно:</span> {note}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function WorkGallery({ galleryKey, title }) {
   const [images, setImages] = useState([]);
   useEffect(() => {
@@ -233,6 +259,7 @@ export default function Services() {
       {selectedSubcategory && (
         <>
           <PriceTable items={selectedSubcategory.items} />
+          <PackageDetails details={selectedSubcategory.details} note={selectedSubcategory.note} />
           <WorkGallery galleryKey={selectedSubcategory.id} title={selectedSubcategory.name} />
         </>
       )}
