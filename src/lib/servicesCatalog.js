@@ -1,110 +1,93 @@
 import { SERVICES_CATALOG as BASE_SERVICES_CATALOG } from './servicesData';
-import { CALC_CATEGORIES } from './calcDataRamilFinal';
+import { RAMIL_SERVICE_SECTIONS } from './ramilServicesCatalog';
 
-const normalizeName = (value) => String(value || '')
-  .trim()
-  .toLowerCase()
-  .replace(/ё/g, 'е')
-  .replace(/[–—]/g, '-')
-  .replace(/\s+/g, ' ');
-
-const CALC_TO_SERVICE = {
-  demolition: 'demolition',
-  roughworks: 'floors',
-  floor: 'floors',
-  plaster: 'walls',
-  painting: 'walls',
-  ceiling: 'ceilings',
-  tiling: 'tiles',
-  doors: 'doors',
-  plumbing: 'plumbing',
-  electric: 'electric',
-  gkl: 'drywall',
-  balcony: 'balcony',
-  welding: 'metal',
-  fences: 'fences',
-  canopies: 'canopies',
-  stairs: 'stairs',
-  gazebo: 'gazebos',
-  bathhouse: 'bathhouses',
+const GROUPED_ORDER = {
+  walls: ['walls_plaster', 'walls_paint', 'walls_wallpaper', 'walls_decor', 'walls_slopes'],
+  ceilings: ['ceilings_stretch', 'ceilings_paint'],
+  floors: ['floors_base', 'floors_finish', 'floors_plinth'],
+  plumbing: ['plumbing_install', 'plumbing_system'],
+  turnkey: ['turnkey_cosmetic', 'turnkey_capital', 'turnkey_design'],
 };
 
-const calcByService = CALC_CATEGORIES.reduce((result, category) => {
-  const serviceId = CALC_TO_SERVICE[category.id];
-  if (!serviceId) return result;
-  if (!result[serviceId]) result[serviceId] = [];
-  result[serviceId].push(category);
-  return result;
-}, {});
-
-const existingItemsOf = (category) => category.direct
-  ? (category.items || [])
-  : (category.subcategories || []).flatMap((sub) => sub.items || []);
-
-const asSubcategories = (category) => {
-  if (!category.direct) return (category.subcategories || []).map((sub) => ({ ...sub, items: [...(sub.items || [])] }));
-  return [{
-    id: `${category.id}_main`,
-    name: 'Основные работы',
-    image: category.image,
-    imageAlt: category.imageAlt,
-    items: [...(category.items || [])],
-  }];
+const toServiceItem = (categoryId, sectionId, row, index) => {
+  const [name, price, unit] = row;
+  const id = `ramil_${categoryId}_${sectionId}_${index + 1}`;
+  return {
+    id,
+    name,
+    price: Number(price) || 0,
+    unit: unit || '',
+    pricingScope: 'serviceItems',
+    pricingId: id,
+  };
 };
 
-const toServiceItem = (serviceId, groupId, item, index) => ({
-  id: `ramil_${serviceId}_${groupId}_${item.id || index}`,
-  name: item.name,
-  price: Number(item.mount) || 0,
-  unit: item.unit || '',
-  pricingScope: 'serviceItems',
-  pricingId: `ramil_${serviceId}_${item.id || `${groupId}_${index}`}`,
+const sectionMapFor = (sections = []) => new Map(sections.map((section) => [section.id, section]));
+
+const makeRamilSubcategory = (category, section) => ({
+  id: section.id,
+  name: section.name,
+  image: category.image,
+  imageAlt: `${category.imageAlt || category.name}: ${section.name}`,
+  details: section.details,
+  items: section.items.map((row, index) => toServiceItem(category.id, section.id, row, index)),
 });
 
-const mergeCategory = (category) => {
-  const calcCategories = calcByService[category.id];
-  if (!calcCategories?.length) return category;
-
-  const existingNames = new Set(existingItemsOf(category).map((item) => normalizeName(item.name)));
-  const subcategories = asSubcategories(category);
-  const subByName = new Map(subcategories.map((sub) => [normalizeName(sub.name), sub]));
-
-  calcCategories.forEach((calcCategory) => {
-    calcCategory.groups.forEach((group) => {
-      const newItems = group.items
-        .filter((item) => !existingNames.has(normalizeName(item.name)))
-        .map((item, index) => {
-          existingNames.add(normalizeName(item.name));
-          return toServiceItem(category.id, group.id, item, index);
-        });
-
-      if (!newItems.length) return;
-
-      const key = normalizeName(group.name);
-      const current = subByName.get(key);
-      if (current) {
-        current.items = [...current.items, ...newItems];
-        return;
-      }
-
-      const sub = {
-        id: `ramil_${category.id}_${group.id}`,
-        name: group.name,
-        image: category.image,
-        imageAlt: `${category.imageAlt || category.name}: ${group.name}`,
-        items: newItems,
-      };
-      subcategories.push(sub);
-      subByName.set(key, sub);
-    });
-  });
-
-  const totalItems = subcategories.reduce((sum, sub) => sum + sub.items.length, 0);
-  if (!totalItems) return category;
-
-  // The full price list is grouped into subcategories so a large catalogue remains readable.
+const withRamilPriceFrom = (category, sections) => {
+  const rows = sections.flatMap((section) => section.items || []);
+  if (!rows.length) return category;
+  const [name, price, unit] = rows.reduce((best, row) => Number(row[1]) < Number(best[1]) ? row : best, rows[0]);
+  const value = Number(price) || category.priceFromValue || 0;
+  const suffix = unit ? `/${unit}` : '';
   return {
     ...category,
+    priceFrom: `от ${value.toLocaleString('ru-RU')} ₽${suffix}`,
+    priceFromValue: value,
+    priceFromSuffix: suffix,
+  };
+};
+
+const mergeCategory = (category) => {
+  const ramilSections = RAMIL_SERVICE_SECTIONS[category.id];
+  if (!ramilSections?.length) return category;
+
+  const groupedOrder = GROUPED_ORDER[category.id];
+  const pricedCategory = withRamilPriceFrom(category, ramilSections);
+
+  // Категории без нумерованных подпунктов остаются обычными длинными карточками,
+  // как в старом интерфейсе. Никаких «Основных работ» не создаём.
+  if (!groupedOrder) {
+    const rows = ramilSections.flatMap((section) => section.items || []);
+    return {
+      ...pricedCategory,
+      direct: true,
+      subcategories: undefined,
+      items: rows.map((row, index) => toServiceItem(category.id, 'main', row, index)),
+    };
+  }
+
+  const ramilById = sectionMapFor(ramilSections);
+  const existingById = new Map((category.subcategories || []).map((section) => [section.id, section]));
+
+  const subcategories = groupedOrder.map((sectionId) => {
+    const ramil = ramilById.get(sectionId);
+    if (ramil) {
+      const existing = existingById.get(sectionId);
+      return {
+        ...makeRamilSubcategory(category, ramil),
+        image: existing?.image || category.image,
+        imageAlt: existing?.imageAlt || `${category.imageAlt || category.name}: ${ramil.name}`,
+      };
+    }
+
+    // В присланном тексте Рамиля нет отдельного прайса 2.2 «Малярные работы»,
+    // поэтому оставляем уже существующий список этой подкатегории, ничего не выдумывая.
+    const existing = existingById.get(sectionId);
+    return existing ? { ...existing, items: [...(existing.items || [])] } : null;
+  }).filter(Boolean);
+
+  return {
+    ...pricedCategory,
     direct: false,
     items: undefined,
     subcategories,
