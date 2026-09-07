@@ -1,5 +1,6 @@
 import { SERVICES_CATALOG as BASE_SERVICES_CATALOG } from './servicesData';
-import { RAMIL_SERVICE_SECTIONS } from './ramilServicesCatalog';
+import { RAMIL_SERVICE_SECTIONS, RAMIL_TURNKEY_NOTE } from './ramilServicesCatalog';
+import { RAMIL_SERVICE_CORRECTIONS } from './ramilServiceCorrections';
 
 const GROUPED_ORDER = {
   walls: ['walls_plaster', 'walls_paint', 'walls_wallpaper', 'walls_decor', 'walls_slopes'],
@@ -24,19 +25,43 @@ const toServiceItem = (categoryId, sectionId, row, index) => {
 
 const sectionMapFor = (sections = []) => new Map(sections.map((section) => [section.id, section]));
 
+const mergeRamilSections = (baseSections = [], correctionSections = []) => {
+  const result = baseSections.map((section) => ({
+    ...section,
+    items: [...(section.items || [])],
+  }));
+  const byId = new Map(result.map((section) => [section.id, section]));
+
+  correctionSections.forEach((correction) => {
+    const current = byId.get(correction.id);
+    if (current) {
+      current.items.push(...(correction.items || []));
+      if (correction.details) current.details = correction.details;
+      if (correction.note) current.note = correction.note;
+      return;
+    }
+    const added = { ...correction, items: [...(correction.items || [])] };
+    result.push(added);
+    byId.set(added.id, added);
+  });
+
+  return result;
+};
+
 const makeRamilSubcategory = (category, section) => ({
   id: section.id,
   name: section.name,
   image: category.image,
   imageAlt: `${category.imageAlt || category.name}: ${section.name}`,
   details: section.details,
+  note: section.note || (section.id === 'turnkey_design' ? RAMIL_TURNKEY_NOTE : undefined),
   items: section.items.map((row, index) => toServiceItem(category.id, section.id, row, index)),
 });
 
 const withRamilPriceFrom = (category, sections) => {
   const rows = sections.flatMap((section) => section.items || []);
   if (!rows.length) return category;
-  const [name, price, unit] = rows.reduce((best, row) => Number(row[1]) < Number(best[1]) ? row : best, rows[0]);
+  const [, price, unit] = rows.reduce((best, row) => Number(row[1]) < Number(best[1]) ? row : best, rows[0]);
   const value = Number(price) || category.priceFromValue || 0;
   const suffix = unit ? `/${unit}` : '';
   return {
@@ -48,13 +73,16 @@ const withRamilPriceFrom = (category, sections) => {
 };
 
 const mergeCategory = (category) => {
-  const ramilSections = RAMIL_SERVICE_SECTIONS[category.id];
-  if (!ramilSections?.length) return category;
+  const ramilSections = mergeRamilSections(
+    RAMIL_SERVICE_SECTIONS[category.id] || [],
+    RAMIL_SERVICE_CORRECTIONS[category.id] || [],
+  );
+  if (!ramilSections.length) return category;
 
   const groupedOrder = GROUPED_ORDER[category.id];
   const pricedCategory = withRamilPriceFrom(category, ramilSections);
 
-  // Категории без нумерованных подпунктов остаются обычными длинными карточками,
+  // Категории без нумерованных подпунктов остаются обычными длинными списками,
   // как в старом интерфейсе. Никаких «Основных работ» не создаём.
   if (!groupedOrder) {
     const rows = ramilSections.flatMap((section) => section.items || []);
@@ -80,8 +108,6 @@ const mergeCategory = (category) => {
       };
     }
 
-    // В присланном тексте Рамиля нет отдельного прайса 2.2 «Малярные работы»,
-    // поэтому оставляем уже существующий список этой подкатегории, ничего не выдумывая.
     const existing = existingById.get(sectionId);
     return existing ? { ...existing, items: [...(existing.items || [])] } : null;
   }).filter(Boolean);
