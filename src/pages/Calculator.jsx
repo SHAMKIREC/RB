@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, RotateCcw, ChevronRight, X, Calculator as CalculatorIcon, Construction } from 'lucide-react';
-import { CALC_CATEGORIES } from '../lib/calcDataSupplemented';
+import { CALC_CATEGORIES } from '../lib/calcDataRamilFinal';
 import { MATERIALS, getMaterialsForWork } from '../lib/materialsData';
 import { buildEstimateText, safeNumber } from '../lib/calculatorUtils';
 import CalcCategory from '../components/calculator/CalcCategory';
