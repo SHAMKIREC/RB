@@ -1,11 +1,12 @@
 import { SERVICES_CATALOG as BASE_SERVICES_CATALOG } from './servicesData';
 import { RAMIL_SERVICE_SECTIONS, RAMIL_TURNKEY_NOTE } from './ramilServicesCatalog';
 import { RAMIL_SERVICE_CORRECTIONS } from './ramilServiceCorrections';
-import wallDecorImage from '../assets/images/services/steny_finishnaya_otdelka.webp';
-import wallSlopesImage from '../assets/images/services/steny_podgotovka.webp';
-import ceilingStretchImage from '../assets/images/services/09_potolki.webp';
-import ceilingPaintImage from '../assets/images/services/remont_potolka.webp';
+import wallDecorImage from '../assets/images/services/walls_decor_rb24.webp';
+import wallSlopesImage from '../assets/images/services/walls_slopes_rb24.webp';
+import ceilingStretchImage from '../assets/images/services/ceilings_stretch_rb24.webp';
+import ceilingPaintImage from '../assets/images/services/ceilings_paint_rb24.webp';
 import turnkeyCosmeticImage from '../assets/images/services/remont_kvartiry2.webp';
+import turnkeyCapitalImage from '../assets/images/services/turnkey_capital_rb24.webp';
 
 const GROUPED_ORDER = {
   walls: ['walls_plaster', 'walls_paint', 'walls_wallpaper', 'walls_decor', 'walls_slopes'],
@@ -15,15 +16,13 @@ const GROUPED_ORDER = {
   turnkey: ['turnkey_cosmetic', 'turnkey_capital', 'turnkey_design'],
 };
 
-// Старые подкатегории уже имеют свои изображения. Здесь задаём изображения только
-// новым подпунктам Рамиля, которые раньше получали одну и ту же картинку категории.
 const RAMIL_SUBCATEGORY_IMAGES = {
   walls_decor: wallDecorImage,
   walls_slopes: wallSlopesImage,
   ceilings_stretch: ceilingStretchImage,
   ceilings_paint: ceilingPaintImage,
   turnkey_cosmetic: turnkeyCosmeticImage,
-  turnkey_capital: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?w=1200&q=82',
+  turnkey_capital: turnkeyCapitalImage,
   turnkey_design: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?w=1200&q=82',
 };
 
