@@ -9,6 +9,10 @@ export default function ServiceSeo({ category }) {
   const description = isCategory
     ? category.seo.metaDescription
     : 'Каталог строительных и ремонтных услуг РБ в Саратове: полы, стены, плитка, электрика, сантехника, демонтаж и ремонт под ключ.';
+  const socialTitle = isCategory ? `${category.name} в Саратове — РБ` : 'Услуги РБ — ремонт и строительство';
+  const socialDescription = isCategory
+    ? `Услуги по направлению «${category.name}» в Саратове. Посмотрите работы и рассчитайте стоимость.`
+    : 'Полы, стены, плитка, электрика, сантехника, демонтаж и ремонт под ключ.';
   const breadcrumbs = [
     { name: 'Главная', path: '/' },
     { name: 'Услуги', path: '/services' },
@@ -30,5 +34,5 @@ export default function ServiceSeo({ category }) {
     });
   }
 
-  return <SeoHead title={title} description={description} canonicalPath={canonicalPath} image={category?.image} imageAlt={category?.imageAlt} schemas={schemas} />;
+  return <SeoHead title={title} description={description} socialTitle={socialTitle} socialDescription={socialDescription} canonicalPath={canonicalPath} image={category?.image} imageAlt={category?.imageAlt} schemas={schemas} />;
 }
