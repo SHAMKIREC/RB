@@ -34,6 +34,17 @@
   ],
   "rewrites": [
     {
+      "source": "^/(services(?:/[^/]+)?|calculator|orders(?:/[^/]+)?|projects(?:/[^/]+)?|reviews|documentation|about|nrv-digital|privacy)$",
+      "has": [
+        {
+          "type": "header",
+          "key": "user-agent",
+          "value": ".*(facebookexternalhit|Facebot|Twitterbot|LinkedInBot|Slackbot|TelegramBot|WhatsApp|Discordbot|vkShare|VKontakte|Pinterest|SkypeUriPreview).*"
+        }
+      ],
+      "destination": "/api/social-preview?path=$1"
+    },
+    {
       "source": "/((?!.*\\.).*)",
       "destination": "/index.html"
     }
