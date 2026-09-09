@@ -10,21 +10,21 @@
   <url><loc>https://www.rb-24.ru/about</loc><priority>0.6</priority></url>
   <url><loc>https://www.rb-24.ru/privacy</loc><priority>0.3</priority></url>
   <url><loc>https://www.rb-24.ru/nrv-digital</loc><priority>0.6</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=floors</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=walls</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=tiles</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=electric</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=plumbing</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=doors</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=demolition</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=drywall</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=ceilings</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=balcony</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=turnkey</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=metal</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=fences</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=canopies</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=stairs</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=gazebos</loc><priority>0.7</priority></url>
-  <url><loc>https://www.rb-24.ru/services?category=bathhouses</loc><priority>0.7</priority></url>
+  <url><loc>https://www.rb-24.ru/services/remont-polov</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/remont-sten</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/ukladka-plitki</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/elektrika</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/santehnika</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/ustanovka-dverey</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/demontazh</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/gipsokarton</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/remont-potolkov</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/remont-balkonov</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/remont-pod-klyuch</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/metallokonstrukcii</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/zabory</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/navesy</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/lestnicy</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/besedki</loc><priority>0.8</priority></url>
+  <url><loc>https://www.rb-24.ru/services/bani</loc><priority>0.8</priority></url>
 </urlset>
