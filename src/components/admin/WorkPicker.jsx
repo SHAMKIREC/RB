@@ -63,7 +63,7 @@ export default function WorkPicker({
     const normalizedQuantity = isEmpty
       ? ""
       : Math.max(0, Math.round(Number(quantity) || 0));
-    const numericQuantity = isEmpty ? 0 : normalizedQuantity;
+    const numericQuantity = isEmpty ? 0 : Number(normalizedQuantity);
     onChange(
       value.map((item) =>
         item.workId === workId

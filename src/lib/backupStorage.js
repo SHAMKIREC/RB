@@ -84,6 +84,7 @@ const gzipJson = async (json) => {
   return new Blob([await new Response(stream).arrayBuffer()], { type: 'application/gzip' });
 };
 
+/** @param {(message: string) => void} onProgress */
 export async function createFullBackup(onProgress = () => {}) {
   const client = requireSupabase();
   const createdAt = new Date();
