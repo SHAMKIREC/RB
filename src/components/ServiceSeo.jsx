@@ -1,9 +1,10 @@
 import SeoHead from './SeoHead';
 import { absoluteUrl, breadcrumbSchema } from '../lib/seo';
+import { getServiceSeoPath } from '../lib/serviceSeoRoutes';
 
 export default function ServiceSeo({ category }) {
   const isCategory = Boolean(category);
-  const canonicalPath = isCategory ? `/services?category=${encodeURIComponent(category.id)}` : '/services';
+  const canonicalPath = isCategory ? getServiceSeoPath(category.id) : '/services';
   const title = isCategory ? category.seo.title : 'Строительные и ремонтные услуги в Саратове | РБ';
   const description = isCategory
     ? category.seo.metaDescription
