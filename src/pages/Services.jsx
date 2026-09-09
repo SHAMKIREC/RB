@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { ChevronRight, ArrowLeft } from "lucide-react";
 import { SERVICES_CATALOG } from "../lib/servicesCatalog";
@@ -9,6 +9,7 @@ import { getServiceCategoryPrice, getServiceItemPrice, setPriceOverride } from "
 import { useInlineEditMode, usePricingOverrides } from "../hooks/usePricingState";
 import InlinePriceEditor from "../components/admin/InlinePriceEditor";
 import { getServiceGallery, SERVICE_GALLERY_CHANGED_EVENT } from "../lib/serviceGalleryStorage";
+import { getServiceIdFromSeoSlug, getServiceSeoPath } from "../lib/serviceSeoRoutes";
 
 function PriceTable({ items }) {
   const overrides = usePricingOverrides();
@@ -163,20 +164,28 @@ function CategoryGrid({ categories, onSelect }) {
 }
 
 export default function Services() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const initialCategory = SERVICES_CATALOG.find((category) => category.id === searchParams.get("category")) || null;
+  const navigate = useNavigate();
+  const { serviceSlug } = useParams();
+  const [searchParams] = useSearchParams();
+  const routeCategoryId = serviceSlug ? getServiceIdFromSeoSlug(serviceSlug) : null;
+  const requestedCategoryId = routeCategoryId || searchParams.get("category");
+  const initialCategory = SERVICES_CATALOG.find((category) => category.id === requestedCategoryId) || null;
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
 
   useEffect(() => {
-    setSelectedCategory(SERVICES_CATALOG.find((category) => category.id === searchParams.get("category")) || null);
+    setSelectedCategory(SERVICES_CATALOG.find((category) => category.id === requestedCategoryId) || null);
     setSelectedSubcategory(null);
-  }, [searchParams]);
+  }, [requestedCategoryId]);
+
+  if (serviceSlug && !routeCategoryId) {
+    return <Navigate to="/services" replace />;
+  }
 
   const handleCategorySelect = (cat) => {
     setSelectedCategory(cat);
     setSelectedSubcategory(null);
-    setSearchParams({ category: cat.id });
+    navigate(getServiceSeoPath(cat.id));
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   };
 
@@ -190,13 +199,19 @@ export default function Services() {
       setSelectedSubcategory(null);
     } else {
       setSelectedCategory(null);
-      setSearchParams({});
+      navigate('/services');
     }
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
   };
 
+  const showAllServices = () => {
+    setSelectedCategory(null);
+    setSelectedSubcategory(null);
+    navigate('/services');
+  };
+
   const breadcrumb = [
-    { label: "Все услуги", onClick: () => { setSelectedCategory(null); setSelectedSubcategory(null); setSearchParams({}); } },
+    { label: "Все услуги", onClick: showAllServices },
     selectedCategory && { label: selectedCategory.name, onClick: () => setSelectedSubcategory(null) },
     selectedSubcategory && { label: selectedSubcategory.name, onClick: null },
   ].filter(Boolean);
