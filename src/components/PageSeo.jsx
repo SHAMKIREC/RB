@@ -54,7 +54,7 @@ const pages = {
 export default function PageSeo() {
   const { pathname } = useLocation();
 
-  if (pathname === '/services' || pathname.startsWith('/category/')) return null;
+  if (pathname === '/services' || pathname.startsWith('/services/') || pathname.startsWith('/category/')) return null;
   if (/^\/(projects|orders)\/[^/]+$/.test(pathname)) return null;
 
   const isAdmin = pathname === '/admin' || pathname.startsWith('/admin/');
