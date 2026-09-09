@@ -9,6 +9,7 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import Layout from './components/Layout';
 import ScrollToTop from './components/ScrollToTop';
 import PageSeo from './components/PageSeo';
+import { getServiceSeoPath } from './lib/serviceSeoRoutes';
 
 const Home = lazy(() => import('./pages/Home'));
 const Services = lazy(() => import('./pages/Services'));
@@ -38,7 +39,7 @@ const PageLoader = () => (
 
 const LegacyCategoryRedirect = () => {
   const { slug } = useParams();
-  return <Navigate to={`/services?category=${slug}`} replace />;
+  return <Navigate to={getServiceSeoPath(slug)} replace />;
 };
 
 const AuthenticatedApp = () => {
@@ -67,6 +68,7 @@ const AuthenticatedApp = () => {
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
+          <Route path="/services/:serviceSlug" element={<Services />} />
           <Route path="/documentation" element={<Documentation />} />
           <Route path="/about" element={<About />} />
           <Route path="/calculator" element={<Calculator />} />
