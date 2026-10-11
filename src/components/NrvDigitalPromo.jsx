@@ -1,6 +1,6 @@
 import nrvDigitalBackground from "../assets/images/services/nrv-digital-background.webp";
 
-export const NRV_DIGITAL_URL = "https://nrv-digital.vercel.app";
+export const NRV_DIGITAL_URL = "https://nrv64.ru";
 
 const DIRECTIONS = [
   "Проектирование",
